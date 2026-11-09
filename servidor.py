@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request, session, render_template
 from flask_cors import CORS
 from pymongo import MongoClient
 from bson import ObjectId
@@ -14,6 +14,42 @@ client = MongoClient("mongodb://localhost:27017/")
 db = client["aroma_cafe"]
 coleccion_pedidos = db["pedidos"]
 coleccion_comentarios = db["comentarios"]
+
+
+# --- RUTAS PARA LAS VISTAS HTML ---
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/menu")
+def menu():
+    return render_template("menu.html")
+
+@app.route("/ordenar")
+def ordenar():
+    return render_template("ordenar.html")
+
+@app.route("/admin")
+def admin():
+    return render_template("admin.html")
+
+@app.route("/contacto")
+def contacto():
+    return render_template("contacto.html")
+
+@app.route("/servicios")
+def servicios():
+    return render_template("servicios.html")
+
+@app.route("/galeria")
+def galeria():
+    return render_template("galeria.html")
+
+@app.route("/nosotros")
+def nosotros():
+    return render_template("nosotros.html")
+
 
 # --- RUTAS DE PEDIDOS ---
 
@@ -86,7 +122,6 @@ def guardar_comentario():
     if not datos or "comentario" not in datos:
         return jsonify({"error": "No se recibió el comentario"}), 400
 
-    # Captura el correo enviado desde el fetch de JavaScript, o usa sesión, o asigna "usuario desconocido"
     correo_usuario = datos.get("correo") or session.get("user_email") or "usuario desconocido"
 
     nuevo_comentario = {
