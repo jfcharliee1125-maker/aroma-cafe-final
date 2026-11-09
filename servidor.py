@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from flask import Flask, jsonify, request, session, render_template
 from flask_cors import CORS
@@ -10,7 +11,8 @@ app.secret_key = "tu_clave_secreta_super_segura"
 
 CORS(app)
 
-client = MongoClient("mongodb://localhost:27017/")
+# Conexión directa a tu base de datos en MongoDB Atlas
+client = MongoClient("mongodb+srv://jfcharliee1125_db_user:bqt3ve2VARr-PjN@cluster0.mongodb.net/?retryWrites=true&w=majority")
 db = client["aroma_cafe"]
 coleccion_pedidos = db["pedidos"]
 coleccion_comentarios = db["comentarios"]
