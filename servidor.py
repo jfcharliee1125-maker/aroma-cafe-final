@@ -21,34 +21,42 @@ coleccion_comentarios = db["comentarios"]
 # --- RUTAS PARA LAS VISTAS HTML ---
 
 @app.route("/")
-def index():
+@app.route("/index.html")
+def inicio():
     return render_template("index.html")
 
 @app.route("/menu")
+@app.route("/menu.html")
 def menu():
     return render_template("menu.html")
 
 @app.route("/ordenar")
+@app.route("/ordenar.html")
 def ordenar():
     return render_template("ordenar.html")
 
 @app.route("/admin")
+@app.route("/admin.html")
 def admin():
     return render_template("admin.html")
 
 @app.route("/contacto")
+@app.route("/contacto.html")
 def contacto():
     return render_template("contacto.html")
 
 @app.route("/servicios")
+@app.route("/servicios.html")
 def servicios():
     return render_template("servicios.html")
 
 @app.route("/galeria")
+@app.route("/galeria.html")
 def galeria():
     return render_template("galeria.html")
 
 @app.route("/nosotros")
+@app.route("/nosotros.html")
 def nosotros():
     return render_template("nosotros.html")
 
@@ -186,9 +194,8 @@ def responder_comentario(id):
         return jsonify({"mensaje": "Respuesta guardada con éxito"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-@app.route('/')
-def inicio():
-    return render_template('index.html')
+
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
