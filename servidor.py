@@ -186,7 +186,9 @@ def responder_comentario(id):
         return jsonify({"mensaje": "Respuesta guardada con éxito"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
+@app.route('/')
+def inicio():
+    return render_template('index.html')
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

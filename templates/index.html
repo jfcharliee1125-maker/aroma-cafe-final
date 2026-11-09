@@ -43,11 +43,9 @@
         .frase h2 { font-family: Georgia, serif; font-style: italic; font-size: clamp(28px, 4vw, 42px); margin-bottom: 15px; letter-spacing: 0.5px; }
         .frase p { color: #d4b58e; font-size: 17px; }
 
-        /* Estilos para la sección de comentarios */
         .seccion-comentarios { max-width: 800px; margin: 50px auto; padding: 30px; background: #fff8ed; border-radius: 15px; box-shadow: 0 10px 25px rgba(62,39,35,0.08); border: 1px solid #e8c99b; }
         .seccion-comentarios h3, .seccion-comentarios h4 { color: #38251e; font-family: Georgia, serif; margin-bottom: 20px; }
         
-        /* Tarjeta de Promedio General */
         .caja-promedio-general { background: linear-gradient(135deg, #38251e, #593724); color: #fff8ed; padding: 20px; border-radius: 12px; display: flex; align-items: center; justify-content: space-around; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .promedio-numero { font-size: 38px; font-weight: bold; color: #e8c99b; font-family: Georgia, serif; }
 
@@ -82,7 +80,6 @@
             <div style="position: relative; display: inline-block;">
                 <a href="#" id="btnSesionNav" onclick="manejarClickSesion(event)" class="btn-login-nav">👤 Iniciar Sesión</a>
                 
-                <!-- Menú desplegable dinámico para clientes o personal administrativo -->
                 <div id="menuDesplegable" style="display: none; position: absolute; right: 0; top: 45px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); width: 210px; z-index: 3000; overflow: hidden; text-align: left;">
                     <div id="opcionesAdminContainer"></div>
                     <a href="#" onclick="cerrarSesionCliente()" style="display: block; padding: 12px 15px; color: #3e2723; text-decoration: none; font-size: 14px; border-bottom: 1px solid #f0e1cc;">🚪 Cerrar Sesión</a>
@@ -99,7 +96,8 @@
             <p>Descubre el aroma envolvente del café recién molido, sabores irresistibles y un santuario de paz perfecto para disfrutar, crear y compartir.</p>
             <a href="ordenar.html" class="boton">¡Haz tu pedido aquí! →</a>
         </div>
-        <img src="c.jpg" alt="Una deliciosa taza de café">
+        <!-- Corrección de ruta de imagen estática para Flask -->
+        <img src="{{ url_for('static', filename='c.jpg') }}" alt="Una deliciosa taza de café">
     </section>
 
     <section class="frase">
@@ -107,11 +105,9 @@
         <p>Tu pausa favorita comienza aquí. ☕</p>
     </section>
 
-    <!-- SECCIÓN DE COMENTARIOS Y CALIFICACIONES -->
     <section class="seccion-comentarios">
         <h3 style="text-align: center;">Comentarios y Calificaciones</h3>
         
-        <!-- Bloque de Promedio Dinámico -->
         <div class="caja-promedio-general">
             <div>
                 <h4 style="color: #e8c99b; margin-bottom: 5px; font-family: Georgia, serif;">Calificación Promedio</h4>
@@ -123,7 +119,6 @@
             </div>
         </div>
 
-        <!-- Formulario para enviar comentario -->
         <form id="form-comentario" class="form-comentario-box">
             <div>
                 <label for="calificacion" style="font-weight: bold; display: block; margin-bottom: 5px;">Calificación (1 a 5 estrellas):</label>
@@ -146,14 +141,11 @@
 
         <hr style="border: 0; border-top: 1px solid #d4b58e; margin: 30px 0;">
 
-        <!-- Listado de opiniones -->
         <h4>Opiniones recientes de nuestros clientes</h4>
         <div id="lista-opiniones" class="lista-opiniones">
-            <!-- Los comentarios se cargarán dinámicamente aquí -->
         </div>
     </section>
 
-    <!-- Modal de Iniciar Sesión -->
     <div id="modalLogin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center;">
         <div style="background: white; padding: 35px; border-radius: 15px; width: 320px; text-align: center; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.3);">
             <span onclick="cerrarModalLogin()" style="position: absolute; top: 12px; right: 18px; cursor: pointer; font-size: 22px; color: #593724; font-weight: bold;">&times;</span>
@@ -182,7 +174,6 @@
                 let userDisplay = clienteActivo || (adminAuth ? "Admin (Jefe)" : `Encargado (${turnoEncargado})`);
                 btn.innerHTML = `👤 ${userDisplay}`;
                 
-                // Mostrar la opción directa de "Ver Panel de Control" si es jefe o encargado
                 if (adminAuth || turnoEncargado) {
                     let contenedorAdmin = document.getElementById("opcionesAdminContainer");
                     let textoRol = adminAuth ? "👑 Ir al Panel (Jefe)" : `📋 Panel Turno ${turnoEncargado}`;
@@ -229,7 +220,6 @@
                 return;
             }
 
-            // 1. Acceso del Jefe Principal
             if (user === "amorycafe@gmail.com" && pass === "lara") {
                 sessionStorage.setItem("adminAuth", "true");
                 sessionStorage.removeItem("turnoEncargado");
@@ -238,7 +228,6 @@
                 cerrarModalLogin();
                 setTimeout(() => { window.location.href = "admin.html"; }, 100);
             } 
-            // 2. Acceso Encargado Turno Matutino
             else if (user === "matutino@gmail.com" && pass === "matutino2026") {
                 sessionStorage.setItem("turnoEncargado", "Matutino");
                 sessionStorage.removeItem("adminAuth");
@@ -247,7 +236,6 @@
                 cerrarModalLogin();
                 setTimeout(() => { window.location.href = "admin.html"; }, 100);
             } 
-            // 3. Acceso Encargado Turno Vespertino
             else if (user === "vespertino@gmail.com" && pass === "vespertino2026") {
                 sessionStorage.setItem("turnoEncargado", "Vespertino");
                 sessionStorage.removeItem("adminAuth");
@@ -256,7 +244,6 @@
                 cerrarModalLogin();
                 setTimeout(() => { window.location.href = "admin.html"; }, 100);
             } 
-            // 4. Clientes normales
             else {
                 sessionStorage.setItem("clienteActivo", user);
                 sessionStorage.removeItem("adminAuth");
@@ -284,11 +271,11 @@
             }
         }
 
-        // --- CARGAR Y ENVIAR COMENTARIOS ---
+        // --- CARGAR Y ENVIAR COMENTARIOS CON RUTAS RELATIVAS ---
 
         async function cargarComentarios() {
             try {
-                const respuesta = await fetch("http://127.0.0.1:5000/api/comentarios");
+                const respuesta = await fetch("/api/comentarios");
                 const comentarios = await respuesta.json();
                 
                 const contenedor = document.getElementById("lista-opiniones");
@@ -328,7 +315,6 @@
                         `;
                     }
                     
-                    // Muestra el correo real si está disponible
                     let correoMostrar = c.correo || "usuario desconocido";
                     
                     const div = document.createElement("div");
@@ -355,7 +341,6 @@
             const calificacion = document.getElementById("calificacion").value;
             const comentario = document.getElementById("texto-comentario").value;
             
-            // Obtener el correo actual guardado en sesión
             let correoUsuario = sessionStorage.getItem("clienteActivo");
             if (!correoUsuario) {
                 if (sessionStorage.getItem("adminAuth")) correoUsuario = "amorycafe@gmail.com";
@@ -365,7 +350,7 @@
             }
 
             try {
-                const respuesta = await fetch("http://127.0.0.1:5000/api/comentarios", {
+                const respuesta = await fetch("/api/comentarios", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
