@@ -12,7 +12,7 @@ app.secret_key = "tu_clave_secreta_super_segura"
 CORS(app)
 
 # Conexión directa a tu base de datos en MongoDB Atlas
-client = MongoClient("mongodb+srv://jfcharliee1125_db_user:bqt3ve2VARr-PjN@cluster0.yxxzf9.mongodb.net/aroma_cafe?retryWrites=true&w=majority")
+client = MongoClient("mongodb://jfcharliee1125_db_user:bqt3ve2VARr-PjN@ac-fswlmxg-shard-00-00.yxxfzf9.mongodb.net:27017,ac-fswlmxg-shard-00-01.yxxfzf9.mongodb.net:27017,ac-fswlmxg-shard-00-02.yxxfzf9.mongodb.net:27017/aroma_cafe?ssl=true&replicaSet=atlas-7rnzw2-shard-0&authSource=admin&retryWrites=true&w=majority")
 db = client["aroma_cafe"]
 coleccion_pedidos = db["pedidos"]
 coleccion_comentarios = db["comentarios"]
