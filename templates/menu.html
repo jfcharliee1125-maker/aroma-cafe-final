@@ -35,13 +35,13 @@
     <nav class="menu">
         <div class="logo">☕ Aroma & Café</div>
         <div class="menu-links">
-            <a href="index.html">Inicio</a>
-            <a href="nosotros.html">Nosotros</a>
-            <a href="menu.html" class="activo">Menú</a>
-            <a href="galeria.html">Galería</a>
-            <a href="servicios.html">Servicios</a>
-            <a href="contacto.html">Contacto</a>
-            <a href="ordenar.html" class="btn-ordenar-nav">🛒 Ordenar</a>
+            <a href="/">Inicio</a>
+            <a href="/nosotros">Nosotros</a>
+            <a href="/menu" class="activo">Menú</a>
+            <a href="/galeria">Galería</a>
+            <a href="/servicios">Servicios</a>
+            <a href="/contacto">Contacto</a>
+            <a href="/ordenar" class="btn-ordenar-nav">🛒 Ordenar</a>
         </div>
     </nav>
 
@@ -56,7 +56,7 @@
             <div class="tarjeta">
                 <div>
                     <h3>Café Espresso</h3>
-                    <img src="exp.webp" alt="Café Espresso">
+                    <img src="{{ url_for('static', filename='exp.jpg') }}" alt="Café Espresso">
                     <p><b>Descripción:</b> Café intenso y aromático preparado con granos seleccionados.</p>
                     <div class="precio">$50 MXN</div>
                 </div>
@@ -65,7 +65,7 @@
             <div class="tarjeta">
                 <div>
                     <h3>Capuchino clásico</h3>
-                    <img src="capu.webp" alt="Capuchino clásico">
+                    <img src="{{ url_for('static', filename='capu.jpg') }}" alt="Capuchino clásico">
                     <p><b>Descripción:</b> Deliciosa combinación de espresso, leche vaporizada y espuma cremosa.</p>
                     <div class="precio">$45 MXN</div>
                 </div>
@@ -74,7 +74,7 @@
             <div class="tarjeta">
                 <div>
                     <h3>Chocomilk</h3>
-                    <img src="choco.webp" alt="Chocomilk">
+                    <img src="{{ url_for('static', filename='choco.jpg') }}" alt="Chocomilk">
                     <p><b>Descripción:</b> Bebida dulce y refrescante elaborada con leche y chocolate.</p>
                     <div class="precio">$35 MXN</div>
                 </div>
@@ -83,7 +83,7 @@
             <div class="tarjeta">
                 <div>
                     <h3>Pastel de chocolate</h3>
-                    <img src="pa.webp" alt="Pastel de chocolate">
+                    <img src="{{ url_for('static', filename='pa.jpg') }}" alt="Pastel de chocolate">
                     <p><b>Descripción:</b> Suave y esponjoso pastel elaborado con chocolate de alta calidad.</p>
                     <div class="precio">$90 MXN</div>
                 </div>
@@ -92,7 +92,7 @@
             <div class="tarjeta">
                 <div>
                     <h3>Baguette</h3>
-                    <img src="ba.webp" alt="Baguette">
+                    <img src="{{ url_for('static', filename='ba.jpg') }}" alt="Baguette">
                     <p><b>Descripción:</b> Pan crujiente relleno de ingredientes frescos.</p>
                     <div class="precio">$75 MXN</div>
                 </div>

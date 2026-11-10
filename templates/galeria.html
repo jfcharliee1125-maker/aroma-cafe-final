@@ -45,13 +45,13 @@
     <nav class="menu">
         <div class="logo">☕ Aroma & Café</div>
         <div class="menu-links">
-            <a href="index.html">Inicio</a>
-            <a href="nosotros.html">Nosotros</a>
-            <a href="menu.html">Menú</a>
-            <a href="galeria.html" class="activo">Galería</a>
-            <a href="servicios.html">Servicios</a>
-            <a href="contacto.html">Contacto</a>
-            <a href="ordenar.html" class="btn-ordenar-nav">🛒 Ordenar</a>
+            <a href="/">Inicio</a>
+            <a href="/nosotros">Nosotros</a>
+            <a href="/menu">Menú</a>
+            <a href="/galeria" class="activo">Galería</a>
+            <a href="/servicios">Servicios</a>
+            <a href="/contacto">Contacto</a>
+            <a href="/ordenar" class="btn-ordenar-nav">🛒 Ordenar</a>
         </div>
     </nav>
 
@@ -65,25 +65,25 @@
         <div class="galeria-contenedor">
             <ul>
                 <li>Café Espresso: <span style="font-weight: normal; color: #705748;">Café intenso y aromático preparado con granos seleccionados.</span></li>
-                <img src="exp.webp" alt="Café Espresso">
+                <img src="{{ url_for('static', filename='exp.jpg') }}" alt="Café Espresso">
                 <p>Una taza de espresso recién preparado, con un sabor fuerte y un aroma que despierta los sentidos.</p>
 
                 <li>Capuchino clásico: <span style="font-weight: normal; color: #705748;">Deliciosa combinación de espresso, leche vaporizada y espuma cremosa.</span></li>
-                <img src="capu.webp" alt="Capuchino clásico">
+                <img src="{{ url_for('static', filename='capu.jpg') }}" alt="Capuchino clásico">
                 <p>Nuestro capuchino destaca por su cremosa espuma y el equilibrio perfecto entre café y leche.</p>
 
                 <li>Chocomilk: <span style="font-weight: normal; color: #705748;">Bebida dulce y refrescante elaborada con leche y chocolate.</span>
                 </li>
-                <img src="choco.webp" alt="Chocomilk">
+                <img src="{{ url_for('static', filename='choco.jpg') }}" alt="Chocomilk">
                 <p>Ideal para quienes prefieren una bebida suave y dulce, perfecta para cualquier momento del día.</p>
 
-                <li>Pastel de chocolate (por porciones): <span style="font-weight: normal; color: #705748;"
+                <li>Pastel de chocolate (por porciones): <span style="font-weight: normal; color: #705748;">
                     Suave y esponjoso pastel elaborado con chocolate de alta calidad.</span></li>
-                <img src="pa.webp" alt="Pastel de chocolate">
+                <img src="{{ url_for('static', filename='pa.jpg') }}" alt="Pastel de chocolate">
                 <p>Una deliciosa porción de pastel con un intenso sabor a chocolate que complementa cualquier café.</p>
 
                 <li>Baguette: <span style="font-weight: normal; color: #705748;">Pan crujiente relleno de ingredientes frescos.</span></li>
-                <img src="ba.webp" alt="Baguette">
+                <img src="{{ url_for('static', filename='ba.jpg') }}" alt="Baguette">
             </ul>
         </div>
     </section>

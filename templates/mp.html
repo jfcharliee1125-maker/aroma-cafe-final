@@ -298,14 +298,26 @@ function finalizarCompra() {
     }
 
     if (folioActual) {
-        fetch(`http://127.0.0.1:5000/api/pedidos/${folioActual}/pago`, {
+        fetch(`/api/pedidos/${folioActual}/pago`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ metodoPago: metodoSelect })
         }).catch(err => console.log("Actualización de pago local activa"));
     }
 
-    completarGuardado(metodoSelect);
+    let inputArchivo = document.getElementById("imagenComprobante");
+
+    if (metodoSelect === "Transferencia" && inputArchivo && inputArchivo.files && inputArchivo.files[0]) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            localStorage.setItem("comprobanteImagen", e.target.result);
+            completarGuardado(metodoSelect);
+        };
+        reader.readAsDataURL(inputArchivo.files[0]);
+    } else {
+        localStorage.removeItem("comprobanteImagen");
+        completarGuardado(metodoSelect);
+    }
 }
 
 function completarGuardado(metodo) {
@@ -320,7 +332,7 @@ function completarGuardado(metodo) {
     localStorage.setItem("tipoEntrega", "pickup");
     localStorage.setItem("fechaCompra", new Date().toLocaleString());
 
-    window.location.href = "ticket.html";
+    window.location.href = "/ticket";
 }
 </script>
 

@@ -36,13 +36,13 @@
     <nav class="menu">
         <div class="logo">☕ Aroma & Café</div>
         <div class="menu-links">
-            <a href="index.html">Inicio</a>
-            <a href="nosotros.html" class="activo">Nosotros</a>
-            <a href="menu.html">Menú</a>
-            <a href="galeria.html">Galería</a>
-            <a href="servicios.html">Servicios</a>
-            <a href="contacto.html">Contacto</a>
-            <a href="ordenar.html" class="btn-ordenar-nav">🛒 Ordenar</a>
+            <a href="/">Inicio</a>
+            <a href="/nosotros" class="activo">Nosotros</a>
+            <a href="/menu">Menú</a>
+            <a href="/galeria">Galería</a>
+            <a href="/servicios">Servicios</a>
+            <a href="/contacto">Contacto</a>
+            <a href="/ordenar" class="btn-ordenar-nav">🛒 Ordenar</a>
         </div>
     </nav>
 
@@ -62,7 +62,7 @@
                     Nació de la pasión por el café y el deseo de crear un lugar donde las personas pudieran reunirse, trabajar o simplemente relajarse.
                 </p>
             </div>
-            <img src="c.jpg" alt="Ambiente cálido de Aroma y Café">
+            <img src="{{ url_for('static', filename='c.jpg') }}" alt="Ambiente cálido de Aroma y Café">
         </div>
 
         <div class="mision-vision">
