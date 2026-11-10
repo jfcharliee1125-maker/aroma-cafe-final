@@ -69,13 +69,13 @@
     <nav class="menu">
         <div class="logo">☕ Aroma & Café</div>
         <div class="menu-links">
-            <a href="index.html" class="activo">Inicio</a>
-            <a href="nosotros.html">Nosotros</a>
-            <a href="menu.html">Menú</a>
-            <a href="galeria.html">Galería</a>
-            <a href="servicios.html">Servicios</a>
-            <a href="contacto.html">Contacto</a>
-            <a href="ordenar.html" class="btn-ordenar-nav">🛒 Ordenar</a>
+            <a href="/" class="activo">Inicio</a>
+            <a href="/nosotros">Nosotros</a>
+            <a href="/menu">Menú</a>
+            <a href="/galeria">Galería</a>
+            <a href="/servicios">Servicios</a>
+            <a href="/contacto">Contacto</a>
+            <a href="/ordenar" class="btn-ordenar-nav">🛒 Ordenar</a>
             
             <div style="position: relative; display: inline-block;">
                 <a href="#" id="btnSesionNav" onclick="manejarClickSesion(event)" class="btn-login-nav">👤 Iniciar Sesión</a>
@@ -83,7 +83,7 @@
                 <div id="menuDesplegable" style="display: none; position: absolute; right: 0; top: 45px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); width: 210px; z-index: 3000; overflow: hidden; text-align: left;">
                     <div id="opcionesAdminContainer"></div>
                     <a href="#" onclick="cerrarSesionCliente()" style="display: block; padding: 12px 15px; color: #3e2723; text-decoration: none; font-size: 14px; border-bottom: 1px solid #f0e1cc;">🚪 Cerrar Sesión</a>
-                    <a href="#" onclick="cerrarSesionCliente()" style="display: block; padding: 12px 15px; color: #c08a54; text-decoration: none; font-size: 14px; font-weight: bold;">🔄 Cambiar de cuenta</a>
+                    <a href="#" onclick="cambiarCuenta()" style="display: block; padding: 12px 15px; color: #c08a54; text-decoration: none; font-size: 14px; font-weight: bold;">🔄 Cambiar de cuenta</a>
                 </div>
             </div>
         </div>
@@ -94,9 +94,8 @@
             <span class="etiqueta">☕ Café artesanal de especialidad</span>
             <h1>Cada taza,<br>un <span>momento especial.</span></h1>
             <p>Descubre el aroma envolvente del café recién molido, sabores irresistibles y un santuario de paz perfecto para disfrutar, crear y compartir.</p>
-            <a href="ordenar.html" class="boton">¡Haz tu pedido aquí! →</a>
+            <a href="/ordenar" class="boton">¡Haz tu pedido aquí! →</a>
         </div>
-        <!-- Corrección de ruta de imagen estática para Flask -->
         <img src="{{ url_for('static', filename='c.jpg') }}" alt="Una deliciosa taza de café">
     </section>
 
@@ -177,7 +176,7 @@
                 if (adminAuth || turnoEncargado) {
                     let contenedorAdmin = document.getElementById("opcionesAdminContainer");
                     let textoRol = adminAuth ? "👑 Ir al Panel (Jefe)" : `📋 Panel Turno ${turnoEncargado}`;
-                    contenedorAdmin.innerHTML = `<a href="admin.html" style="display: block; padding: 12px 15px; background: #faf3e7; color: #3e2723; text-decoration: none; font-size: 14px; font-weight: bold; border-bottom: 1px solid #f0e1cc;">${textoRol}</a>`;
+                    contenedorAdmin.innerHTML = `<a href="/admin" style="display: block; padding: 12px 15px; background: #faf3e7; color: #3e2723; text-decoration: none; font-size: 14px; font-weight: bold; border-bottom: 1px solid #f0e1cc;">${textoRol}</a>`;
                 }
             }
 
@@ -226,7 +225,7 @@
                 sessionStorage.removeItem("clienteActivo");
                 alert("Bienvenido Administrador (Jefe)");
                 cerrarModalLogin();
-                setTimeout(() => { window.location.href = "admin.html"; }, 100);
+                setTimeout(() => { window.location.href = "/admin"; }, 100);
             } 
             else if (user === "matutino@gmail.com" && pass === "matutino2026") {
                 sessionStorage.setItem("turnoEncargado", "Matutino");
@@ -234,7 +233,7 @@
                 sessionStorage.removeItem("clienteActivo");
                 alert("Bienvenido Encargado - Turno Matutino");
                 cerrarModalLogin();
-                setTimeout(() => { window.location.href = "admin.html"; }, 100);
+                setTimeout(() => { window.location.href = "/admin"; }, 100);
             } 
             else if (user === "vespertino@gmail.com" && pass === "vespertino2026") {
                 sessionStorage.setItem("turnoEncargado", "Vespertino");
@@ -242,7 +241,7 @@
                 sessionStorage.removeItem("clienteActivo");
                 alert("Bienvenido Encargado - Turno Vespertino");
                 cerrarModalLogin();
-                setTimeout(() => { window.location.href = "admin.html"; }, 100);
+                setTimeout(() => { window.location.href = "/admin"; }, 100);
             } 
             else {
                 sessionStorage.setItem("clienteActivo", user);
@@ -259,7 +258,21 @@
             sessionStorage.removeItem("adminAuth");
             sessionStorage.removeItem("turnoEncargado");
             alert("Has cerrado sesión.");
-            window.location.href = "index.html";
+            window.location.href = "/";
+        }
+
+        function cambiarCuenta() {
+            // Limpia los datos de sesión actual para cerrar sesión
+            sessionStorage.removeItem("clienteActivo");
+            sessionStorage.removeItem("adminAuth");
+            sessionStorage.removeItem("turnoEncargado");
+            
+            // Oculta el menú desplegable
+            let menu = document.getElementById("menuDesplegable");
+            if (menu) menu.style.display = "none";
+            
+            // Abre de inmediato el modal de Acceso al Sistema
+            document.getElementById('modalLogin').style.display = 'flex';
         }
 
         window.onclick = function(event) {
