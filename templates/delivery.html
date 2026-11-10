@@ -106,6 +106,21 @@
         color: #4b3024;
     }
 
+    .btn-monto {
+        background-color: #e7d4ba;
+        border: 1px solid #c08a54;
+        color: #4b3024;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .btn-monto:hover {
+        background-color: #c08a54;
+        color: white;
+    }
+
     .resumen-monto {
         background: #e8c99b;
         padding: 15px;
@@ -166,8 +181,8 @@
         </div>
 
         <div class="grupo-campo">
-            <label for="telefono">📞 Teléfono de contacto *</label>
-            <input type="tel" id="telefono" placeholder="Ej. 921 123 4567" required>
+            <label for="telefono">📞 Teléfono de contacto (10 dígitos) *</label>
+            <input type="tel" id="telefono" placeholder="Ej. 9211234567" maxlength="10" required>
         </div>
 
         <div class="grupo-campo">
@@ -181,7 +196,7 @@
                 <input type="text" id="colonia" placeholder="Ej. Centro" required>
             </div>
             <div class="grupo-campo">
-                <label for="codigoPostal">📮 Código Postal *</label>
+                <label for="codigoPostal">📮 Código Postal (5 dígitos) *</label>
                 <input type="text" id="codigoPostal" placeholder="Ej. 96400" maxlength="5" required>
             </div>
         </div>
@@ -203,8 +218,17 @@
             </div>
 
             <div id="detalleEfectivo" class="opcion-pago-detalle">
-                <label for="cambioEfectivo" style="font-size: 13px; color: #593724;">Cantidad con la que pagarás:</label>
-                <input type="number" id="cambioEfectivo" placeholder="Ej. 200, 500">
+                <label style="font-size: 13px; color: #593724; margin-bottom: 6px; display: block;">Selecciona un billete rápido o ingresa otra cantidad:</label>
+                
+                <!-- Botones rápidos de billetes comunes -->
+                <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+                    <button type="button" onclick="seleccionarMonto(100)" class="btn-monto">$100</button>
+                    <button type="button" onclick="seleccionarMonto(200)" class="btn-monto">$200</button>
+                    <button type="button" onclick="seleccionarMonto(500)" class="btn-monto">$500</button>
+                    <button type="button" onclick="seleccionarMonto(1000)" class="btn-monto">$1,000</button>
+                </div>
+
+                <input type="number" id="cambioEfectivo" placeholder="Otra cantidad (Máx. $2,000)" step="0.50">
                 <div id="errorEfectivo" class="mensaje-error"></div>
             </div>
 
@@ -228,7 +252,7 @@
                 </div>
 
                 <div class="grupo-campo" style="margin-bottom: 10px;">
-                    <label for="referenciaCliente" style="font-size: 13px; color: #593724;">Número de referencia o folio de transferencia:</label>
+                    <label for="referenciaCliente" style="font-size: 13px; color: #593724;">Número de referencia o folio de transferencia (Mín. 6 caracteres):</label>
                     <input type="text" id="referenciaCliente" placeholder="Ej. 12345678 o clave de rastreo">
                 </div>
 
@@ -285,12 +309,41 @@
         }
     }
 
+    function seleccionarMonto(monto) {
+        document.getElementById("cambioEfectivo").value = monto;
+        document.getElementById("errorEfectivo").style.display = "none";
+    }
+
     function guardarYContinuar(event) {
         event.preventDefault();
 
+        let telefono = document.getElementById("telefono").value.trim();
+        let codigoPostal = document.getElementById("codigoPostal").value.trim();
+        let direccion = document.getElementById("calleNumero").value.trim();
         let metodoPago = document.getElementById("metodoPagoDelivery").value;
         let divError = document.getElementById("errorEfectivo");
         divError.style.display = "none";
+
+        // 1. Validar que el teléfono tenga exactamente 10 dígitos numéricos
+        let regexTelefono = /^\d{10}$/;
+        if (!regexTelefono.test(telefono)) {
+            alert("⚠️ El teléfono de contacto debe contener exactamente 10 dígitos numéricos.");
+            return;
+        }
+
+        // 2. Validar que el Código Postal sean exactamente 5 números
+        let regexCP = /^\d{5}$/;
+        if (!regexCP.test(codigoPostal)) {
+            alert("⚠️ El código postal debe ser un número válido de 5 dígitos (Ej. 96400).");
+            return;
+        }
+
+        // 3. Evitar textos trampa o spam como "xxxx", "asdf"
+        let regexRepetidos = /(.)\1{3,}/; 
+        if (regexRepetidos.test(direccion) || regexRepetidos.test(codigoPostal)) {
+            alert("⚠️ Por favor ingresa datos de domicilio reales, evita escribir caracteres repetidos sin sentido.");
+            return;
+        }
 
         if (!metodoPago) {
             alert("Por favor selecciona un método de pago.");
@@ -304,24 +357,37 @@
             let montoIngresado = parseFloat(montoIngresadoInput);
 
             if (isNaN(montoIngresado) || montoIngresado <= 0) {
-                divError.innerText = "Por favor ingresa una cantidad válida.";
+                divError.innerText = "Por favor selecciona o ingresa una cantidad válida con la que vas a pagar.";
                 divError.style.display = "block";
                 return;
             }
 
             if (montoIngresado < totalConIva) {
                 let faltante = totalConIva - montoIngresado;
-                divError.innerText = `No te alcanza. Te faltan $${faltante.toFixed(2)} MXN. Debes retirar algún producto o llevar más dinero.`;
+                divError.innerText = `No te alcanza. Te faltan $${faltante.toFixed(2)} MXN para cubrir el total del pedido.`;
                 divError.style.display = "block";
                 return;
             }
 
-            detallesPagoFinal = montoIngresado.toString();
+            // Límite lógico de seguridad para efectivo en entregas a domicilio
+            if (montoIngresado > 2000) {
+                divError.innerText = "Por seguridad, el monto máximo en efectivo es de $2,000 MXN. Para cantidades mayores usa tarjeta o transferencia.";
+                divError.style.display = "block";
+                return;
+            }
+
+            detallesPagoFinal = "Paga con: $" + montoIngresado.toFixed(2);
         } else if (metodoPago === "Tarjeta") {
             detallesPagoFinal = "Pago con Tarjeta (Terminal móvil)";
         } else if (metodoPago === "Transferencia") {
             let bancoInput = document.getElementById("bancoCliente").value.trim() || "No especificado";
-            let refInput = document.getElementById("referenciaCliente").value.trim() || "N/A";
+            let refInput = document.getElementById("referenciaCliente").value.trim();
+
+            if (refInput.length < 6 || regexRepetidos.test(refInput)) {
+                alert("⚠️ Por favor ingresa un número de referencia o clave de rastreo bancaria válida (mínimo 6 caracteres).");
+                return;
+            }
+
             detallesPagoFinal = "Banco cliente: " + bancoInput + " | Ref: " + refInput;
         }
 
