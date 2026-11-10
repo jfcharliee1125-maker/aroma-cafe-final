@@ -195,7 +195,7 @@
 
         // --- Cargar Pedidos y Calcular KPIs ---
         function cargarPedidos() {
-            fetch("http://127.0.0.1:5000/api/pedidos")
+            fetch("/api/pedidos")
                 .then(res => res.json())
                 .then(pedidos => {
                     let tbody = document.getElementById('tabla-pedidos');
@@ -318,7 +318,7 @@
         function cambiarEstado(folio, estadoActual) {
             let nuevoEstado = estadoActual.toLowerCase() === 'pendiente' ? 'Completado' : 'Pendiente';
 
-            fetch(`http://127.0.0.1:5000/api/pedidos/${folio}`, {
+            fetch(`/api/pedidos/${folio}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ estado: nuevoEstado })
@@ -331,7 +331,7 @@
         function eliminarCompletados() {
             if (!confirm("¿Estás seguro de eliminar todos los pedidos marcados como completados?")) return;
 
-            fetch("http://127.0.0.1:5000/api/pedidos/completados", { method: 'DELETE' })
+            fetch("/api/pedidos/completados", { method: 'DELETE' })
             .then(res => res.json())
             .then(data => {
                 alert(data.mensaje || "Pedidos completados eliminados.");
@@ -342,7 +342,7 @@
 
         // --- Cargar y Administrar Comentarios ---
         function cargarComentariosAdmin() {
-            fetch("http://127.0.0.1:5000/api/comentarios")
+            fetch("/api/comentarios")
                 .then(res => res.json())
                 .then(comentarios => {
                     let tbody = document.getElementById('tabla-comentarios-admin');
@@ -393,7 +393,7 @@
         function eliminarComentario(id) {
             if (!confirm("¿Deseas eliminar este comentario permanentemente?")) return;
 
-            fetch(`http://127.0.0.1:5000/api/comentarios/${id}`, { method: 'DELETE' })
+            fetch(`/api/comentarios/${id}`, { method: 'DELETE' })
                 .then(res => res.json())
                 .then(data => {
                     alert(data.mensaje || "Comentario eliminado.");
@@ -413,7 +413,7 @@
 
             if (!confirm(`¿Estás seguro de eliminar los ${idsSeleccionados.length} comentarios seleccionados?`)) return;
 
-            fetch("http://127.0.0.1:5000/api/comentarios/multiples", {
+            fetch("/api/comentarios/multiples", {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ids: idsSeleccionados })
@@ -430,7 +430,7 @@
             let respuesta = prompt("Escribe tu respuesta para el cliente:");
             if (!respuesta || respuesta.trim() === "") return;
 
-            fetch(`http://127.0.0.1:5000/api/comentarios/${id}/responder`, {
+            fetch(`/api/comentarios/${id}/responder`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ respuesta: respuesta.trim() })
