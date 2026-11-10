@@ -86,8 +86,14 @@ h1, h2 {
     height: 220px;
 }
 
+.contenedor-botones {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 25px;
+}
+
 .boton {
-    margin-top: 20px;
     background: #6f4530;
     color: white;
     border: none;
@@ -95,10 +101,22 @@ h1, h2 {
     border-radius: 20px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
 }
 
 .boton:hover {
     background: #a76b3f;
+}
+
+.boton-secundario {
+    background: #806653;
+}
+
+.boton-secundario:hover {
+    background: #593724;
 }
 
 .gracias {
@@ -223,10 +241,13 @@ h1, h2 {
         ¡Gracias por tu compra!
     </div>
 
-    <div style="text-align: center;">
+    <div class="contenedor-botones">
         <button class="boton" id="btnDescargar">
             Descargar Ticket
         </button>
+        <a href="/" class="boton boton-secundario">
+            🏠 Volver al Inicio
+        </a>
     </div>
 </div>
 
@@ -242,7 +263,6 @@ if (!folio) {
 document.getElementById("folio").innerHTML = "<b>Folio:</b> " + folio;
 document.getElementById("fecha").innerHTML = "<b>Fecha:</b> " + (localStorage.getItem("fechaCompra") || new Date().toLocaleString());
 
-// Mostrar el turno guardado automáticamente
 let turnoActual = localStorage.getItem("turnoPedido") || "Matutino";
 document.getElementById("turnoTicket").innerHTML = `☀️ Turno: ${turnoActual}`;
 
@@ -282,7 +302,6 @@ agregar("Baguette", bag, 75);
 let totalArticulos = esp + cap + cho + pas + bag;
 document.getElementById("articulos").innerHTML = "<b>Total de artículos:</b> " + totalArticulos;
 
-// Mostrar notas si el cliente escribió alguna
 let notasCliente = localStorage.getItem("notasPedido") || "";
 if (notasCliente.trim() !== "" && notasCliente !== "Sin observaciones") {
     document.getElementById("seccionNotas").innerHTML = `
