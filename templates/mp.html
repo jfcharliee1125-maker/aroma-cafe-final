@@ -170,16 +170,16 @@ select, input {
 
     <div id="efectivo" class="ventana oculto">
         <h3>Pago en efectivo</h3>
-        <label>Selecciona un billete rápido o ingresa otra cantidad (Máx. $2,000):</label>
+        <label>Selecciona un billete rápido o ingresa otra cantidad:</label>
         
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button type="button" onclick="seleccionarMonto(100)" class="btn-monto">$100</button>
             <button type="button" onclick="seleccionarMonto(200)" class="btn-monto">$200</button>
             <button type="button" onclick="seleccionarMonto(500)" class="btn-monto">$500</button>
             <button type="button" onclick="seleccionarMonto(1000)" class="btn-monto">$1,000</button>
+            <button type="button" onclick="seleccionarMonto(2000)" class="btn-monto">$2,000</button>
         </div>
 
-        <input type="number" id="montoEfectivo" placeholder="Ingresa el monto" step="0.50">
+        <input type="number" id="montoEfectivo" placeholder="Ingresa otra cantidad" step="0.50">
         <button type="button" class="boton" onclick="validarEfectivo()" style="margin-top: 10px;">Verificar Pago</button>
         <p id="resultadoEfectivo" style="margin-top:10px;font-weight:bold;"></p>
     </div>
@@ -292,10 +292,6 @@ function validarEfectivo() {
         resultado.style.color = "red";
         resultado.innerHTML = "No te alcanza. Te faltan $" + faltante.toFixed(2) + " MXN. Debes retirar algún producto o llevar más dinero.";
         return false;
-    } else if (monto > 2000) {
-        resultado.style.color = "red";
-        resultado.innerHTML = "Por seguridad, el monto máximo en efectivo es de $2,000 MXN.";
-        return false;
     } else {
         let cambio = monto - totalConIva;
         resultado.style.color = "green";
@@ -365,8 +361,8 @@ function finalizarCompra() {
 
     if (metodoSelect === "Efectivo") {
         let monto = parseFloat(document.getElementById("montoEfectivo").value) || 0;
-        if (monto < totalConIva || monto > 2000) {
-            alert("El monto en efectivo no es válido o supera el límite permitido ($2,000 MXN).");
+        if (monto < totalConIva) {
+            alert("El dinero ingresado no cubre el total de la compra.");
             return;
         }
     }
