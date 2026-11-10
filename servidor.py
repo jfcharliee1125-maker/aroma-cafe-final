@@ -18,7 +18,7 @@ coleccion_pedidos = db["pedidos"]
 coleccion_comentarios = db["comentarios"]
 
 
-# --- RUTAS PARA LAS VISTAS HTML ---
+# --- RUTAS PARA LAS VISTAS HTML PRINCIPALES ---
 
 @app.route("/")
 @app.route("/index.html")
@@ -194,6 +194,17 @@ def responder_comentario(id):
         return jsonify({"mensaje": "Respuesta guardada con éxito"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+
+# --- RUTA COMODÍN PARA CUALQUIER OTRA VISTA HTML ADICIONAL (Delivery, Ticket, etc.) ---
+@app.route('/<path:pagina>')
+def cargar_pagina_generica(pagina):
+    if not pagina.endswith('.html'):
+        pagina += '.html'
+    try:
+        return render_template(pagina)
+    except Exception:
+        return render_template('index.html')
 
 
 if __name__ == "__main__":

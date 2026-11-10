@@ -111,13 +111,13 @@
     <nav class="menu">
         <div class="logo">☕ Aroma & Café</div>
         <div class="menu-links">
-            <a href="index.html">Inicio</a>
-            <a href="nosotros.html">Nosotros</a>
-            <a href="menu.html">Menú</a>
-            <a href="galeria.html">Galería</a>
-            <a href="servicios.html">Servicios</a>
-            <a href="contacto.html">Contacto</a>
-            <a href="ordenar.html" class="btn-ordenar-nav activo">🛒 Ordenar</a>
+            <a href="/">Inicio</a>
+            <a href="/nosotros">Nosotros</a>
+            <a href="/menu">Menú</a>
+            <a href="/galeria">Galería</a>
+            <a href="/servicios">Servicios</a>
+            <a href="/contacto">Contacto</a>
+            <a href="/ordenar" class="btn-ordenar-nav activo">🛒 Ordenar</a>
         </div>
     </nav>
 
@@ -285,7 +285,7 @@
             localStorage.setItem("totalCompra", calculo.totalConIva.toFixed(2));
             localStorage.setItem("tipoEntrega", tipoEntregaSeleccionada);
             localStorage.setItem("turnoPedido", turnoAutomatico);
-            localStorage.setItem("notasPedido", notas); // Guardamos las notas localmente para el ticket
+            localStorage.setItem("notasPedido", notas);
 
             let productosArray = [];
             if (espresso > 0) productosArray.push(`Café Espresso x${espresso}`);
@@ -301,19 +301,19 @@
                 metodoPago: "Pendiente",
                 entrega: tipoEntregaSeleccionada,
                 turno: turnoAutomatico,
-                notas: notas || "Sin observaciones" // Se envía a MongoDB
+                notas: notas || "Sin observaciones"
             };
 
-            fetch("http://127.0.0.1:5000/api/guardar-pedido", {
+            fetch("/api/guardar-pedido", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(datosPedido)
-            }).catch(err => console.log("Modo local activo"));
+            }).catch(err => console.log("Error al conectar con la API"));
 
             if (tipoEntregaSeleccionada === "pickup") {
-                window.location.href = "mp.html";
+                window.location.href = "/mp";
             } else {
-                window.location.href = "delivery.html";
+                window.location.href = "/delivery";
             }
         }
     </script>
