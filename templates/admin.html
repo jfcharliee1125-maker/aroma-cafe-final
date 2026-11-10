@@ -106,14 +106,14 @@
         </div>
     </header>
 
-    <!-- BANNER DE ALERTA VISUAL DINÁMICO DE PEDIDOS -->
+    <!-- BANNER DE ALERTA DE PEDIDOS -->
     <div id="alertaNuevoPedido" class="alerta-pedido-nuevo" onclick="ocultarAlertaNuevoPedido()">
-        <span id="textoAlertaPedido">🔔 ¡Nuevo pedido recibido!</span> (Haz clic aquí para ocultar aviso)
+        <span id="textoAlertaPedido">🔔 ¡Tienes nuevos pedidos registrados!</span> (Haz clic aquí para ocultar aviso)
     </div>
 
-    <!-- BANNER DE ALERTA VISUAL DINÁMICO DE COMENTARIOS NUEVOS -->
+    <!-- BANNER DE ALERTA DE COMENTARIOS -->
     <div id="alertaNuevoComentario" class="alerta-pedido-nuevo" style="background-color: #2980b9; box-shadow: 0 4px 15px rgba(41, 128, 185, 0.4);" onclick="ocultarAlertaNuevoComentario()">
-        <span id="textoAlertaComentario">💬 ¡Nuevas opiniones recibidas!</span> (Haz clic aquí para ocultar aviso)
+        <span id="textoAlertaComentario">💬 ¡Tienes nuevos comentarios de clientes!</span> (Haz clic aquí para ocultar aviso)
     </div>
 
     <!-- TARJETAS DE RESUMEN (KPIS) -->
@@ -219,14 +219,8 @@
                         });
                     }
 
-                    // Detección dinámica de cuántos pedidos nuevos entraron
                     if (cantidadPedidosAnterior !== null && pedidosFiltrados.length > cantidadPedidosAnterior) {
-                        let diferencia = pedidosFiltrados.length - cantidadPedidosAnterior;
-                        let textoMensaje = diferencia === 1 
-                            ? "🔔 ¡Se ha recibido 1 nuevo pedido!" 
-                            : `🔔 ¡Se han recibido ${diferencia} nuevos pedidos!`;
-                        
-                        document.getElementById("textoAlertaPedido").innerText = textoMensaje;
+                        document.getElementById("textoAlertaPedido").innerText = "🔔 ¡Tienes nuevos pedidos registrados!";
                         document.getElementById("alertaNuevoPedido").style.display = "block";
                     }
                     cantidadPedidosAnterior = pedidosFiltrados.length;
@@ -350,7 +344,7 @@
             .catch(err => console.error("Error al eliminar completados:", err));
         }
 
-        // --- Cargar y Administrar Comentarios (Con Alerta Dinámica de Nuevos Comentarios) ---
+        // --- Cargar y Administrar Comentarios ---
         function cargarComentariosAdmin() {
             fetch("/api/comentarios")
                 .then(res => res.json())
@@ -360,15 +354,9 @@
                     let masterCb = document.getElementById("seleccionarTodos");
                     if (masterCb) masterCb.checked = false;
 
-                    // Alerta dinámica si entran nuevos comentarios
                     if (cantidadComentariosAnterior !== null && comentarios.length > cantidadComentariosAnterior) {
-                        let diferenciaC = comentarios.length - cantidadComentariosAnterior;
-                        let textoMensajeC = diferenciaC === 1 
-                            ? "💬 ¡Se ha recibido 1 nueva opinión de cliente!" 
-                            : `💬 ¡Se han recibido ${diferenciaC} nuevas opiniones de clientes!`;
-                        
                         let alertaC = document.getElementById("textoAlertaComentario");
-                        if (alertaC) alertaC.innerText = textoMensajeC;
+                        if (alertaC) alertaC.innerText = "💬 ¡Tienes nuevos comentarios de clientes!";
                         let bannerC = document.getElementById("alertaNuevoComentario");
                         if (bannerC) bannerC.style.display = "block";
                     }

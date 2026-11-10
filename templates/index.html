@@ -145,14 +145,15 @@
         </div>
     </section>
 
+    <!-- MODAL DE LOGIN ACTUALIZADO CON VALIDACIÓN DE CONTRASEÑA -->
     <div id="modalLogin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center;">
         <div style="background: white; padding: 35px; border-radius: 15px; width: 320px; text-align: center; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.3);">
             <span onclick="cerrarModalLogin()" style="position: absolute; top: 12px; right: 18px; cursor: pointer; font-size: 22px; color: #593724; font-weight: bold;">&times;</span>
             
             <h3 style="color: #38251e; margin-bottom: 15px; font-family: Georgia, serif;">Acceso al Sistema</h3>
             
-            <input type="text" id="loginUsuario" placeholder="Correo electrónico / Usuario" style="width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 8px;">
-            <input type="password" id="loginPass" placeholder="Contraseña" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px;">
+            <input type="email" id="loginUsuario" placeholder="usuario@gmail.com" style="width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 8px;" required>
+            <input type="password" id="loginPass" placeholder="Contraseña (mín. 6 caracteres)" minlength="6" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px;" required>
             
             <button onclick="procesarLogin()" class="boton" style="width: 100%; background-color: #38251e;">Ingresar</button>
         </div>
@@ -207,15 +208,22 @@
 
         function procesarLogin() {
             let user = document.getElementById('loginUsuario').value.trim().toLowerCase();
-            let pass = document.getElementById('loginPass').value.trim();
+            let pass = document.getElementById('loginPass').value;
 
             if (user === "" || pass === "") {
                 alert("Por favor ingresa usuario y contraseña.");
                 return;
             }
 
-            if (!user.includes("@gmail.com")) {
-                alert("Acceso denegado. El usuario debe ser un correo de Gmail (@gmail.com).");
+            // Validación estricta del dominio @gmail.com
+            if (!user.endsWith("@gmail.com")) {
+                alert("Acceso denegado. El usuario debe ser obligatoriamente un correo de Gmail (@gmail.com).");
+                return;
+            }
+
+            // Validación estricta de la contraseña (mínimo 6 caracteres)
+            if (pass.length < 6) {
+                alert("⚠️ La contraseña debe tener un mínimo de 6 caracteres.");
                 return;
             }
 
@@ -262,16 +270,13 @@
         }
 
         function cambiarCuenta() {
-            // Limpia los datos de sesión actual para cerrar sesión
             sessionStorage.removeItem("clienteActivo");
             sessionStorage.removeItem("adminAuth");
             sessionStorage.removeItem("turnoEncargado");
             
-            // Oculta el menú desplegable
             let menu = document.getElementById("menuDesplegable");
             if (menu) menu.style.display = "none";
             
-            // Abre de inmediato el modal de Acceso al Sistema
             document.getElementById('modalLogin').style.display = 'flex';
         }
 
@@ -283,8 +288,6 @@
                 }
             }
         }
-
-        // --- CARGAR Y ENVIAR COMENTARIOS CON RUTAS RELATIVAS ---
 
         async function cargarComentarios() {
             try {
