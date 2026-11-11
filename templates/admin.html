@@ -102,13 +102,18 @@
         </div>
         <div class="acciones-header">
             <button onclick="eliminarCompletados()" class="btn-eliminar-completados">🗑️ Eliminar completados</button>
-            <a href="index.html" class="btn-volver">Volver a la página</a>
+            <a href="/" class="btn-volver">Volver a la página</a>
         </div>
     </header>
 
-    <!-- BANNER DE ALERTA VISUAL DINÁMICO -->
+    <!-- BANNER DE ALERTA VISUAL DINÁMICO DE PEDIDOS -->
     <div id="alertaNuevoPedido" class="alerta-pedido-nuevo" onclick="ocultarAlertaNuevoPedido()">
         <span id="textoAlertaPedido">🔔 ¡Nuevo pedido recibido!</span> (Haz clic aquí para ocultar aviso)
+    </div>
+
+    <!-- BANNER DE ALERTA VISUAL DINÁMICO DE COMENTARIOS NUEVOS -->
+    <div id="alertaNuevoComentario" class="alerta-pedido-nuevo" style="background-color: #2980b9; box-shadow: 0 4px 15px rgba(41, 128, 185, 0.4);" onclick="ocultarAlertaNuevoComentario()">
+        <span id="textoAlertaComentario">💬 ¡Nuevas opiniones recibidas!</span> (Haz clic aquí para ocultar aviso)
     </div>
 
     <!-- TARJETAS DE RESUMEN (KPIS) -->
@@ -177,10 +182,11 @@
         let turnoEncargado = sessionStorage.getItem("turnoEncargado");
 
         let cantidadPedidosAnterior = null;
+        let cantidadComentariosAnterior = null;
 
         if (!esJefe && !turnoEncargado) {
             alert("Acceso denegado. Debes iniciar sesión como administrador o encargado de turno.");
-            window.location.href = "index.html";
+            window.location.href = "/";
         }
 
         if (esJefe) {
@@ -191,6 +197,10 @@
 
         function ocultarAlertaNuevoPedido() {
             document.getElementById("alertaNuevoPedido").style.display = "none";
+        }
+
+        function ocultarAlertaNuevoComentario() {
+            document.getElementById("alertaNuevoComentario").style.display = "none";
         }
 
         // --- Cargar Pedidos y Calcular KPIs ---
@@ -340,14 +350,29 @@
             .catch(err => console.error("Error al eliminar completados:", err));
         }
 
-        // --- Cargar y Administrar Comentarios ---
+        // --- Cargar y Administrar Comentarios (Con Alerta Dinámica de Nuevos Comentarios) ---
         function cargarComentariosAdmin() {
             fetch("/api/comentarios")
                 .then(res => res.json())
                 .then(comentarios => {
                     let tbody = document.getElementById('tabla-comentarios-admin');
                     tbody.innerHTML = "";
-                    document.getElementById("seleccionarTodos").checked = false;
+                    let masterCb = document.getElementById("seleccionarTodos");
+                    if (masterCb) masterCb.checked = false;
+
+                    // Alerta dinámica si entran nuevos comentarios
+                    if (cantidadComentariosAnterior !== null && comentarios.length > cantidadComentariosAnterior) {
+                        let diferenciaC = comentarios.length - cantidadComentariosAnterior;
+                        let textoMensajeC = diferenciaC === 1 
+                            ? "💬 ¡Se ha recibido 1 nueva opinión de cliente!" 
+                            : `💬 ¡Se han recibido ${diferenciaC} nuevas opiniones de clientes!`;
+                        
+                        let alertaC = document.getElementById("textoAlertaComentario");
+                        if (alertaC) alertaC.innerText = textoMensajeC;
+                        let bannerC = document.getElementById("alertaNuevoComentario");
+                        if (bannerC) bannerC.style.display = "block";
+                    }
+                    cantidadComentariosAnterior = comentarios.length;
 
                     document.getElementById("kpi-comentarios").innerText = comentarios.length;
 
