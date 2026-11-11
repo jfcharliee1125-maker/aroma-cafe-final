@@ -228,6 +228,17 @@ h1, h2 {
 </div>
 
 <script>
+// Catálogo completo de precios unitarios para los 20 productos
+const catalogoPrecios = {
+    "Pastel de chocolate": 90, "Baguette": 75, "Croissant de Jamón y Queso": 105,
+    "Panini de Pollo al Pesto": 130, "Bagel de Salmón": 145, "Club Sandwich Clásico": 155,
+    "Toast de Aguacate": 120, "Chilaquiles con Pollo": 135, "Ensalada César con Pollo": 140,
+    "Waffles con Frutos Rojos": 110, "Café Espresso": 50, "Capuchino clásico": 45,
+    "Chocomilk": 35, "Latte de Vainilla o Caramelo": 75, "Chai Tea Latte": 75,
+    "Iced Caramel Macchiato": 80, "Matcha Latte Helado": 80, "Frappuccino Moka": 85,
+    "Smoothie de Frutos Rojos": 80, "Tisana Frutal Fría": 60
+};
+
 let folio = localStorage.getItem("folio");
 if(!folio){
     folio = "CAF-" + Math.floor(100000 + Math.random() * 900000);
@@ -239,42 +250,40 @@ document.getElementById("folio").innerHTML = "<b>Folio:</b> " + folio;
 let fechaCompraStr = localStorage.getItem("fechaCompra") || new Date().toLocaleString();
 document.getElementById("fecha").innerHTML = "<b>Fecha:</b> " + fechaCompraStr;
 
-// Mostrar turno automático
-let turnoActual = localStorage.getItem("turnoPedido") || "Matutino";
+let turnoActual = localStorage.getItem("turnoPedido") || "Matutino/Vespertino";
 document.getElementById("turnoTicket").innerHTML = `☀️ Turno: ${turnoActual}`;
 
-let productos = document.getElementById("productos");
+let productosContainer = document.getElementById("productos");
+let carrito = JSON.parse(localStorage.getItem("carritoAroma")) || {};
+let subtotalCalculado = 0;
+let totalArticulos = 0;
 
-function agregar(nombre, cantidad, precio){
-    if(cantidad > 0){
-        let importe = cantidad * precio;
-        productos.innerHTML += `
-        <div class="producto">
-            <div class="col-producto">${nombre}</div>
-            <div class="col-precio">$${precio}</div>
-            <div class="col-cantidad">${cantidad}</div>
-            <div class="col-importe">$${importe}</div>
-        </div>
-        `;
-    }
+let keys = Object.keys(carrito);
+if (keys.length === 0) {
+    productosContainer.innerHTML = `<p style="padding: 15px; text-align: center; color: #806653;">No hay productos registrados en este pedido.</p>`;
+} else {
+    keys.forEach(nombreProd => {
+        let cantidad = parseInt(carrito[nombreProd]) || 0;
+        if (cantidad > 0) {
+            let precio = catalogoPrecios[nombreProd] || 50;
+            let importe = cantidad * precio;
+            subtotalCalculado += importe;
+            totalArticulos += cantidad;
+
+            productosContainer.innerHTML += `
+            <div class="producto">
+                <div class="col-producto">${nombreProd}</div>
+                <div class="col-precio">$${precio.toFixed(2)}</div>
+                <div class="col-cantidad">${cantidad}</div>
+                <div class="col-importe">$${importe.toFixed(2)}</div>
+            </div>
+            `;
+        }
+    });
 }
 
-let esp = parseInt(localStorage.getItem("espresso")) || 0;
-let cap = parseInt(localStorage.getItem("capuchino")) || 0;
-let cho = parseInt(localStorage.getItem("chocomilk")) || 0;
-let pas = parseInt(localStorage.getItem("pastel")) || 0;
-let bag = parseInt(localStorage.getItem("baguette")) || 0;
-
-agregar("Café Espresso", esp, 50);
-agregar("Capuchino", cap, 45);
-agregar("Chocomilk", cho, 35);
-agregar("Pastel de Chocolate", pas, 90);
-agregar("Baguette", bag, 75);
-
-let totalArticulos = esp + cap + cho + pas + bag;
 document.getElementById("articulos").innerHTML = "<b>Total de artículos:</b> " + totalArticulos;
 
-// Mostrar notas si el cliente escribió alguna
 let notasCliente = localStorage.getItem("notasPedido") || "";
 if (notasCliente.trim() !== "" && notasCliente !== "Sin observaciones") {
     document.getElementById("seccionNotas").innerHTML = `
@@ -284,17 +293,11 @@ if (notasCliente.trim() !== "" && notasCliente !== "Sin observaciones") {
     `;
 }
 
-let subtotalOriginal = parseFloat(localStorage.getItem("subtotalBase"));
-if (isNaN(subtotalOriginal)) {
-    let valorPrevio = parseFloat(localStorage.getItem("totalCompra")) || 0;
-    subtotalOriginal = valorPrevio > 0 ? valorPrevio / 1.16 : 0;
-}
-
-let iva = subtotalOriginal * 0.16;
-let totalConIva = subtotalOriginal + iva;
+let iva = subtotalCalculado * 0.16;
+let totalConIva = subtotalCalculado + iva;
 
 document.getElementById("contenedorTotales").innerHTML = `
-    Subtotal: $${subtotalOriginal.toFixed(2)} MXN<br>
+    Subtotal: $${subtotalCalculado.toFixed(2)} MXN<br>
     IVA (16%): $${iva.toFixed(2)} MXN<br>
     <span>TOTAL: $${totalConIva.toFixed(2)} MXN</span>
 `;

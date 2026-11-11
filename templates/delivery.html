@@ -358,7 +358,6 @@
             let bancoInput = document.getElementById("bancoCliente").value.trim();
             let refInput = document.getElementById("referenciaCliente").value.trim();
             
-            // Validación de banco solo letras y espacios
             let regexSoloLetras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
             if (!regexSoloLetras.test(bancoInput)) {
                 alert("⚠️ El nombre del banco solo debe contener letras.");
@@ -374,7 +373,7 @@
         }
 
         if (folioActual) {
-            fetch(`http://127.0.0.1:5000/api/pedidos/${folioActual}/pago`, {
+            fetch(`/api/pedidos/${folioActual}/pago`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ metodoPago: metodoPago })

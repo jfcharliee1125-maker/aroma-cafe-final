@@ -222,39 +222,73 @@ select, input {
 </div>
 
 <script>
-let espresso = parseInt(localStorage.getItem("espresso")) || 0;
-let capuchino = parseInt(localStorage.getItem("capuchino")) || 0;
-let chocomilk = parseInt(localStorage.getItem("chocomilk")) || 0;
-let pastel = parseInt(localStorage.getItem("pastel")) || 0;
-let baguette = parseInt(localStorage.getItem("baguette")) || 0;
+// Catálogo completo de precios unitarios para los 20 productos
+const catalogoPrecios = {
+    "Pastel de chocolate": 90,
+    "Baguette": 75,
+    "Croissant de Jamón y Queso": 105,
+    "Panini de Pollo al Pesto": 130,
+    "Bagel de Salmón": 145,
+    "Club Sandwich Clásico": 155,
+    "Toast de Aguacate": 120,
+    "Chilaquiles con Pollo": 135,
+    "Ensalada César con Pollo": 140,
+    "Waffles con Frutos Rojos": 110,
+    "Café Espresso": 50,
+    "Capuchino clásico": 45,
+    "Chocomilk": 35,
+    "Latte de Vainilla o Caramelo": 75,
+    "Chai Tea Latte": 75,
+    "Iced Caramel Macchiato": 80,
+    "Matcha Latte Helado": 80,
+    "Frappuccino Moka": 85,
+    "Smoothie de Frutos Rojos": 80,
+    "Tisana Frutal Fría": 60
+};
+
+// Cargar carrito dinámico desde localStorage
+let carrito = JSON.parse(localStorage.getItem("carritoAroma")) || {};
 let folioActual = localStorage.getItem("folio") || "";
+let tipoEntrega = localStorage.getItem("tipoEntrega") || "pickup";
 
-let pedido = document.getElementById("pedido");
-let subtotalCalculado = 0;
-
-function agregar(nombre, cantidad, precio) {
-    if (cantidad > 0) {
-        let importe = cantidad * precio;
-        pedido.innerHTML += `
-        <div class="producto">
-            <span>${nombre} x ${cantidad}</span>
-            <span>$${importe}</span>
-        </div>
-        `;
-        subtotalCalculado += importe;
-    }
+// Actualizar etiqueta visual de entrega
+let infoEntregaBadge = document.getElementById("infoEntrega");
+if (tipoEntrega === "delivery") {
+    infoEntregaBadge.innerText = "🛵 Envío a domicilio (Delivery)";
+} else {
+    infoEntregaBadge.innerText = "🏃‍♂️ Recoger en tienda (Pickup)";
 }
 
-agregar("Café Espresso", espresso, 50);
-agregar("Capuchino", capuchino, 45);
-agregar("Chocomilk", chocomilk, 35);
-agregar("Pastel de Chocolate", pastel, 90);
-agregar("Baguette", baguette, 75);
+let pedidoContainer = document.getElementById("pedido");
+let subtotalCalculado = 0;
+let productosArrayGlobal = [];
 
-localStorage.setItem("subtotalBase", subtotalCalculado);
+let productosKeys = Object.keys(carrito);
+if (productosKeys.length === 0) {
+    pedidoContainer.innerHTML = `<p style="text-align:center; padding: 20px; color: #806653;">No hay productos en el carrito.</p>`;
+} else {
+    productosKeys.forEach(nombreProd => {
+        let cantidad = carrito[nombreProd];
+        let precio = catalogoPrecios[nombreProd] || 50;
+        let importe = cantidad * precio;
+        subtotalCalculado += importe;
+        
+        productosArrayGlobal.push(`${nombreProd} x${cantidad}`);
+
+        pedidoContainer.innerHTML += `
+        <div class="producto">
+            <span>${nombreProd} x ${cantidad}</span>
+            <span>$${importe.toFixed(2)}</span>
+        </div>
+        `;
+    });
+}
 
 let iva = subtotalCalculado * 0.16;
 let totalConIva = subtotalCalculado + iva;
+
+localStorage.setItem("subtotalBase", subtotalCalculado.toFixed(2));
+localStorage.setItem("totalCompra", totalConIva.toFixed(2));
 
 document.getElementById("total").innerHTML = `
     Subtotal: $${subtotalCalculado.toFixed(2)} MXN<br>
@@ -318,7 +352,6 @@ function validarTarjeta() {
         return false;
     }
 
-    // Validar que el nombre del titular NO contenga números
     let regexSoloLetras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
     if (!regexSoloLetras.test(titular)) {
         divError.innerText = "⚠️ El nombre del titular solo debe contener letras.";
@@ -409,10 +442,21 @@ function finalizarCompra() {
     }
 
     if (folioActual) {
+        let notas = localStorage.getItem("notasPedido") || "Sin observaciones";
+        let datosPedidoAPI = {
+            folio: folioActual,
+            productos: productosArrayGlobal,
+            total: parseFloat(totalConIva.toFixed(2)),
+            metodoPago: metodoSelect,
+            entrega: tipoEntrega,
+            turno: "Matutino/Vespertino",
+            notas: notas
+        };
+
         fetch(`/api/pedidos/${folioActual}/pago`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ metodoPago: metodoSelect })
+            body: JSON.stringify(datosPedidoAPI)
         }).catch(err => console.log("Actualización de pago local activa"));
     }
 
@@ -432,15 +476,8 @@ function finalizarCompra() {
 }
 
 function completarGuardado(metodo) {
-    localStorage.setItem("espresso", espresso);
-    localStorage.setItem("capuchino", capuchino);
-    localStorage.setItem("chocomilk", chocomilk);
-    localStorage.setItem("pastel", pastel);
-    localStorage.setItem("baguette", baguette);
-
     localStorage.setItem("totalCompra", totalConIva.toFixed(2));
     localStorage.setItem("metodoPago", metodo);
-    localStorage.setItem("tipoEntrega", "pickup");
     localStorage.setItem("fechaCompra", new Date().toLocaleString());
 
     window.location.href = "/ticket";
