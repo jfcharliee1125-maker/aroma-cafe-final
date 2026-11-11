@@ -94,7 +94,7 @@
             <span class="etiqueta">☕ Café artesanal de especialidad</span>
             <h1>Cada taza,<br>un <span>momento especial.</span></h1>
             <p>Descubre el aroma envolvente del café recién molido, sabores irresistibles y un santuario de paz perfecto para disfrutar, crear y compartir.</p>
-            <a href="/ordenar" class="boton">¡Haz tu pedido aquí! →</a>
+            <a href="/menu" class="boton">¡Haz tu pedido aquí! →</a>
         </div>
         <img src="{{ url_for('static', filename='c.jpg') }}" alt="Una deliciosa taza de café">
     </section>
@@ -145,7 +145,7 @@
         </div>
     </section>
 
-    <!-- MODAL DE LOGIN ACTUALIZADO CON VALIDACIÓN DE CONTRASEÑA -->
+    <!-- MODAL DE LOGIN -->
     <div id="modalLogin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center;">
         <div style="background: white; padding: 35px; border-radius: 15px; width: 320px; text-align: center; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.3);">
             <span onclick="cerrarModalLogin()" style="position: absolute; top: 12px; right: 18px; cursor: pointer; font-size: 22px; color: #593724; font-weight: bold;">&times;</span>
@@ -215,13 +215,11 @@
                 return;
             }
 
-            // Validación estricta del dominio @gmail.com
             if (!user.endsWith("@gmail.com")) {
                 alert("Acceso denegado. El usuario debe ser obligatoriamente un correo de Gmail (@gmail.com).");
                 return;
             }
 
-            // Validación estricta de la contraseña (mínimo 6 caracteres)
             if (pass.length < 6) {
                 alert("⚠️ La contraseña debe tener un mínimo de 6 caracteres.");
                 return;
@@ -229,11 +227,11 @@
 
            if (user === "amorycafe@gmail.com" && pass === "lara2026") {
                sessionStorage.setItem("adminAuth", "true");
-                sessionStorage.removeItem("turnoEncargado");
-                sessionStorage.removeItem("clienteActivo");
-                alert("Bienvenido Administrador (Jefe)");
-                cerrarModalLogin();
-                setTimeout(() => { window.location.href = "/admin"; }, 100);
+               sessionStorage.removeItem("turnoEncargado");
+               sessionStorage.removeItem("clienteActivo");
+               alert("Bienvenido Administrador (Jefe)");
+               cerrarModalLogin();
+               setTimeout(() => { window.location.href = "/admin"; }, 100);
             } 
             else if (user === "matutino@gmail.com" && pass === "matutino2026") {
                 sessionStorage.setItem("turnoEncargado", "Matutino");
