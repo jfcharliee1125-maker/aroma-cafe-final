@@ -21,7 +21,7 @@
         .encabezado h2 { font-family: Georgia, serif; font-size: 38px; color: #4b3024; margin: 12px 0; }
         .encabezado p { color: #806653; font-size: 17px; line-height: 1.7; }
 
-        .form-orden { background: white; padding: 40px; border-radius: 18px; box-shadow: 0 6px 25px #59391b0d; }
+        .form-orden { background: white; padding: 40px; border-radius: 18px; box-shadow: 0 6px 25px #59391b0d; position: relative; }
         .item-orden { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f0e1cc; flex-wrap: wrap; gap: 10px; }
         .item-orden label { font-weight: 600; color: #593724; font-size: 17px; }
         .item-orden input { width: 70px; padding: 8px; text-align: center; border: 2px solid #e7d4ba; border-radius: 8px; font-size: 16px; }
@@ -29,6 +29,7 @@
         .boton { display: inline-block; background-color: #6f4530; color: white; padding: 15px 27px; border-radius: 30px; text-decoration: none; 
             font-weight: bold; transition: 0.3s; border: none; cursor: pointer; }
         .boton:hover { background-color: #a76b3f; transform: translateY(-3px); box-shadow: 0 8px 18px #6f453044; }
+        .boton:disabled { background-color: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .resumen-total { margin-top: 30px; padding: 20px; background-color: #f0e1cc; border-radius: 12px; }
         .resumen-total h3 { font-size: 24px; color: #38251e; text-align: right; }
@@ -99,9 +100,19 @@
             color: #4b3024;
             line-height: 1.6;
         }
-        .caja-horarios ul {
-            margin-left: 20px;
-            margin-top: 5px;
+
+        /* Banner de aviso cuando está cerrado */
+        #banner-cerrado {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.5;
         }
 
         footer { background-color: #38251e; text-align: center; padding: 25px 15px; color: #e8c99b; font-size: 14px; margin-top: 50px; }
@@ -125,10 +136,16 @@
         <div class="encabezado">
             <span class="etiqueta">Crea tu pedido</span>
             <h2>Realiza tu Orden</h2>
-            <p>Selecciona la cantidad que deseas de cada producto:</p>
+            <p>Selecciona la cantidad que deseas de cada producto (Máximo 20 productos por pedido):</p>
         </div>
 
         <div class="form-orden">
+            <!-- Banner de Aviso por Horario Cerrado -->
+            <div id="banner-cerrado">
+                🛑 <b>Cafetería Cerrada en este momento.</b><br>
+                <span id="texto-aviso-espera">Verificando horario...</span>
+            </div>
+
             <div class="item-orden">
                 <label>☕ Café Espresso ($50)</label>
                 <input type="number" id="cant-espresso" min="0" value="0" oninput="calcularTotal()">
@@ -160,13 +177,13 @@
                 <div class="horarios-container">
                     <label>🕒 Turnos y Horarios de Atención</label>
                     <div class="caja-horarios">
-                        <p><b>Lunes a Viernes:</b> Matutino (7:00 a.m. - 2:00 p.m.) | Vespertino (2:00 p.m. - 9:00 p.m.)</p>
-                        <p style="margin-top: 6px;"><b>Sábados:</b> Matutino (8:00 a.m. - 2:00 p.m.) | Vespertino (2:00 p.m. - 10:00 p.m.)</p>
-                        <p style="margin-top: 6px;"><b>Domingos:</b> Matutino (8:00 a.m. - 2:00 p.m.) | Vespertino (2:00 p.m. - 9:00 p.m.)</p>
+                        <p><b>Lunes a Viernes:</b> 7:00 a.m. - 9:00 p.m. (Matutino: 7am-2pm | Vespertino: 2pm-9pm)</p>
+                        <p style="margin-top: 6px;"><b>Sábados:</b> 8:00 a.m. - 10:00 p.m. (Matutino: 8am-2pm | Vespertino: 2pm-10pm)</p>
+                        <p style="margin-top: 6px;"><b>Domingos:</b> 8:00 a.m. - 9:00 p.m. (Matutino: 8am-2pm | Vespertino: 2pm-9pm)</p>
                     </div>
                 </div>
 
-                <!-- NUEVO APARTADO PARA NOTAS / ESPECIFICACIONES -->
+                <!-- APARTADO PARA NOTAS / ESPECIFICACIONES -->
                 <div class="notas-container">
                     <label for="notasPedido">📝 Notas o especificaciones especiales (opcional)</label>
                     <textarea id="notasPedido" rows="3" placeholder="Ej. Café con leche deslactosada, sin azúcar, bien caliente..."></textarea>
@@ -194,7 +211,7 @@
                 <h3 id="resultado-total" style="margin-top: 10px;">Total a pagar: $0.00 MXN</h3>
                 
                 <div style="text-align: right;">
-                    <button type="button" class="boton" style="margin-top: 15px; background-color: #38251e;" onclick="enviarPedido()">
+                    <button type="button" id="btnConfirmar" class="boton" style="margin-top: 15px; background-color: #38251e;" onclick="enviarPedido()">
                         Confirmar Pedido
                     </button>
                 </div>
@@ -203,12 +220,98 @@
     </section>
 
     <script>
+        // Validación de Horarios en Tiempo Real (Hora Local de México)
+        function verificarHorarioAtencion() {
+            // Obtenemos la hora local asegurando la zona horaria de México
+            let ahora = new Date();
+            let options = { timeZone: "America/Mexico_City", hour12: false, weekday: 'numeric', hour: 'numeric', minute: 'numeric' };
+            
+            // Si el entorno local no soporta la zona horaria, usamos la hora estándar del dispositivo como respaldo
+            let formatter = new Intl.DateTimeFormat([], { timeZone: 'America/Mexico_City', hour: 'numeric', minute: 'numeric', hour12: false, weekday: 'short' });
+            
+            let diaSemana = ahora.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+            let horaActual = ahora.getHours();
+            let minutoActual = ahora.getMinutes();
+            let horaDecimal = horaActual + (minutoActual / 60);
+
+            let abierto = false;
+            let aperturaHora = 7;
+            let cierreHora = 21;
+
+            if (diaSemana >= 1 && diaSemana <= 5) {
+                // Lunes a Viernes: 7:00 a.m. a 9:00 p.m. (21:00)
+                aperturaHora = 7;
+                cierreHora = 21;
+                abierto = (horaDecimal >= 7 && horaDecimal < 21);
+            } else if (diaSemana === 6) {
+                // Sábados: 8:00 a.m. a 10:00 p.m. (22:00)
+                aperturaHora = 8;
+                cierreHora = 22;
+                abierto = (horaDecimal >= 8 && horaDecimal < 22);
+            } else {
+                // Domingos: 8:00 a.m. a 9:00 p.m. (21:00)
+                aperturaHora = 8;
+                cierreHora = 21;
+                abierto = (horaDecimal >= 8 && horaDecimal < 21);
+            }
+
+            let banner = document.getElementById("banner-cerrado");
+            let textoAviso = document.getElementById("texto-aviso-espera");
+            let btnConfirmar = document.getElementById("btnConfirmar");
+
+            if (!abierto) {
+                banner.style.display = "block";
+                
+                // Calcular tiempo restante para la apertura
+                let horasFaltantes = 0;
+                if (horaDecimal >= cierreHora || horaDecimal < aperturaHora) {
+                    if (horaDecimal >= cierreHora) {
+                        horasFaltantes = (24 - horaDecimal) + aperturaHora;
+                    } else {
+                        horasFaltantes = aperturaHora - horaDecimal;
+                    }
+                }
+                
+                let horasInt = Math.floor(horasFaltantes);
+                let minutosInt = Math.round((horasFaltantes - horasInt) * 60);
+                
+                textoAviso.innerText = `Fuera de nuestro horario de atención. Podrás realizar tu pedido nuevamente en aproximadamente ${horasInt} hora(s) y ${minutosInt} minuto(s).`;
+                btnConfirmar.disabled = true;
+                btnConfirmar.style.backgroundColor = "#ccc";
+            } else {
+                banner.style.display = "none";
+                btnConfirmar.disabled = false;
+                btnConfirmar.style.backgroundColor = "#38251e";
+            }
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            seleccionarEntrega('pickup');
+            verificarHorarioAtencion();
+            // Verificar cada minuto por si el horario cambia mientras el usuario está en la página
+            setInterval(verificarHorarioAtencion, 60000);
+        });
+
         function calcularTotal() {
             let espresso = parseInt(document.getElementById('cant-espresso').value) || 0;
             let capuchino = parseInt(document.getElementById('cant-capuchino').value) || 0;
             let chocomilk = parseInt(document.getElementById('cant-chocomilk').value) || 0;
             let pastel = parseInt(document.getElementById('cant-pastel').value) || 0;
             let baguette = parseInt(document.getElementById('cant-baguette').value) || 0;
+
+            let totalUnidades = espresso + capuchino + chocomilk + pastel + baguette;
+
+            // Validación de límite global de 20 productos
+            if (totalUnidades > 20) {
+                alert("⚠️ El límite máximo por pedido es de 20 productos en total para servicio de mostrador. Para pedidos mayores, contáctanos en la sección de Servicios o Contacto.");
+                // Restablecer el último input modificado o congelar en 20
+                document.getElementById('cant-espresso').value = 0;
+                document.getElementById('cant-capuchino').value = 0;
+                document.getElementById('cant-chocomilk').value = 0;
+                document.getElementById('cant-pastel').value = 0;
+                document.getElementById('cant-baguette').value = 0;
+                return calcularTotal();
+            }
 
             let subtotal = (espresso * 50) + (capuchino * 45) + (chocomilk * 35) + (pastel * 90) + (baguette * 75);
             let iva = subtotal * 0.16;
@@ -217,14 +320,10 @@
             document.getElementById('detalle-precios').innerText = `Subtotal: $${subtotal.toFixed(2)} | IVA (16%): $${iva.toFixed(2)}`;
             document.getElementById('resultado-total').innerText = "Total a pagar: $" + totalConIva.toFixed(2) + " MXN";
             
-            return { subtotal, iva, totalConIva };
+            return { subtotal, iva, totalConIva, totalUnidades };
         }
 
         let tipoEntregaSeleccionada = "pickup";
-        
-        window.addEventListener("DOMContentLoaded", () => {
-            seleccionarEntrega('pickup');
-        });
 
         function seleccionarEntrega(tipo) {
             tipoEntregaSeleccionada = tipo;
@@ -245,16 +344,9 @@
 
         function determinarTurnoAutomatico() {
             let ahora = new Date();
-            let dia = ahora.getDay();
             let hora = ahora.getHours();
-
-            if (dia >= 1 && dia <= 5) {
-                return (hora >= 7 && hora < 14) ? "Matutino" : "Vespertino";
-            } else if (dia === 6) {
-                return (hora >= 8 && hora < 14) ? "Matutino" : "Vespertino";
-            } else {
-                return (hora >= 8 && hora < 14) ? "Matutino" : "Vespertino";
-            }
+            // Matutino: antes de las 2:00 p.m. (14:00), Vespertino: a partir de las 2:00 p.m.
+            return (hora >= 7 && hora < 14) ? "Matutino" : "Vespertino";
         }
 
         function enviarPedido() {
