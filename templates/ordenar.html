@@ -24,7 +24,7 @@
 
         .form-orden { background: white; padding: 40px; border-radius: 18px; box-shadow: 0 6px 25px rgba(89, 57, 27, 0.08); border: 1px solid #e7d4ba; }
         
-        /* Tabla del carrito más estética */
+        /* Tabla del carrito estética */
         .tabla-carrito { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
         .tabla-carrito th { background-color: #eddac2; color: #4b3024; padding: 14px 18px; font-size: 15px; text-align: left; border-bottom: 2px solid #d6b07f; }
         .tabla-carrito th:nth-child(2) { text-align: center; }
@@ -117,6 +117,18 @@
             line-height: 1.6;
         }
 
+        /* Aviso de estado de la cafetería */
+        .estado-cafeteria {
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 15px;
+        }
+        .abierto { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .cerrado { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
         footer { background-color: #38251e; text-align: center; padding: 25px 15px; color: #e8c99b; font-size: 14px; margin-top: 50px; }
     </style>
 </head>
@@ -142,6 +154,9 @@
         </div>
 
         <div class="form-orden">
+            <!-- Indicador dinámico de abierto / cerrado -->
+            <div id="avisoEstado" class="estado-cafeteria">Verificando horario de atención...</div>
+
             <!-- TABLA DE PRODUCTOS SELECCIONADOS -->
             <table class="tabla-carrito">
                 <thead>
@@ -152,7 +167,7 @@
                     </tr>
                 </thead>
                 <tbody id="cuerpo-tabla-carrito">
-                    <!-- Se llenará dinámicamente mediante JavaScript -->
+                    <!-- Dinámico -->
                 </tbody>
             </table>
 
@@ -161,7 +176,6 @@
             </div>
 
             <div class="resumen-total">
-                <!-- APARTADO DE HORARIOS ORIGINALES -->
                 <div class="horarios-container">
                     <label>🕒 Turnos y Horarios de Atención</label>
                     <div class="caja-horarios">
@@ -171,7 +185,6 @@
                     </div>
                 </div>
 
-                <!-- APARTADO PARA NOTAS / ESPECIFICACIONES -->
                 <div class="notas-container">
                     <label for="notasPedido">📝 Notas o especificaciones especiales (opcional)</label>
                     <textarea id="notasPedido" rows="3" placeholder="Ej. Café con leche deslactosada, sin azúcar, bien caliente..."></textarea>
@@ -250,6 +263,36 @@
             if (badge) badge.innerText = calcularTotalArticulos(carrito);
         }
 
+        function verificarHorarioTienda() {
+            let ahora = new Date();
+            let dia = ahora.getDay(); // 0: Dom, 1: Lun, ..., 6: Sáb
+            let hora = ahora.getHours();
+            let minutos = ahora.getMinutes();
+            let tiempoMinutos = hora * 60 + minutos;
+
+            let abierto = false;
+
+            if (dia >= 1 && dia <= 5) {
+                // Lunes a Viernes: 7:00 a.m. (420 min) a 9:00 p.m. (1320 min)
+                if (tiempoMinutos >= 420 && tiempoMinutos <= 1320) abierto = true;
+            } else if (dia === 6) {
+                // Sábado: 8:00 a.m. (480 min) a 10:00 p.m. (1320 min)
+                if (tiempoMinutos >= 480 && tiempoMinutos <= 1320) abierto = true;
+            } else {
+                // Domingo: 8:00 a.m. (480 min) a 9:00 p.m. (1260 min)
+                if (tiempoMinutos >= 480 && tiempoMinutos <= 1260) abierto = true;
+            }
+
+            let aviso = document.getElementById('avisoEstado');
+            if (abierto) {
+                aviso.className = "estado-cafeteria abierto";
+                aviso.innerHTML = "🟢 ¡Estamos Abiertos! Recibiendo pedidos con normalidad.";
+            } else {
+                aviso.className = "estado-cafeteria cerrado";
+                aviso.innerHTML = "🔴 La cafetería se encuentra CERRADA en este horario (Aprox. 10:02 p.m.). Puedes armar tu carrito para el siguiente turno.";
+            }
+        }
+
         function renderizarCarrito() {
             let carrito = obtenerCarrito();
             let tbody = document.getElementById('cuerpo-tabla-carrito');
@@ -303,6 +346,7 @@
         window.addEventListener("DOMContentLoaded", () => {
             seleccionarEntrega('pickup');
             renderizarCarrito();
+            verificarHorarioTienda();
             let notasGuardadas = localStorage.getItem("notasPedido");
             if (notasGuardadas) {
                 document.getElementById('notasPedido').value = notasGuardadas;
@@ -328,16 +372,8 @@
 
         function determinarTurnoAutomatico() {
             let ahora = new Date();
-            let dia = ahora.getDay();
             let hora = ahora.getHours();
-
-            if (dia >= 1 && dia <= 5) {
-                return (hora >= 7 && hora < 14) ? "Matutino" : "Vespertino";
-            } else if (dia === 6) {
-                return (hora >= 8 && hora < 14) ? "Matutino" : "Vespertino";
-            } else {
-                return (hora >= 8 && hora < 14) ? "Matutino" : "Vespertino";
-            }
+            return (hora >= 7 && hora < 14) ? "Matutino" : "Vespertino";
         }
 
         function enviarPedido() {

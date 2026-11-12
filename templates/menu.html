@@ -461,7 +461,7 @@
             let totalActual = calcularTotalArticulos(carrito);
             let cantidadPreviaProducto = carrito[nombreProducto] || 0;
 
-            // Validar límite global de 20 artículos en total por pedido
+            // Validación estricta de máximo 20 artículos en total en todo el carrito
             if (totalActual + cantidadSeleccionada > 20) {
                 alert("⚠️ Límite excedido: El máximo permitido es de 20 artículos en total por pedido. Actualmente tienes " + totalActual + " en tu carrito.");
                 return;
