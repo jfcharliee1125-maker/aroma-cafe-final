@@ -14,7 +14,7 @@
         .menu a { text-decoration: none; color: #fff8ed; padding: 10px 16px; border-radius: 25px; transition: 0.3s; font-weight: 500; }
         .menu a:hover, .menu a.activo { background-color: #c08a54; color: white; }
         .btn-ordenar-nav { background-color: #c08a54 !important; color: white !important; font-weight: bold !important; display: inline-flex; align-items: center; gap: 6px; }
-        .badge-carrito { background-color: #38251e; color: #e8c99b; padding: 2px 8px; border-radius: 12px; font-size: 13px; font-weight: bold; }
+        .badge-carrito { background-color: #38251e; color: #e8c99b; padding: 2px 8px; border-radius: 12px; font-size: 13px; font-weight: bold; display: none; }
 
         .banner-estado {
             background-color: #f8d7da;
@@ -214,7 +214,7 @@
         🔴 Cafetería Cerrada en este momento. Los pedidos se encuentran temporalmente deshabilitados.
     </div>
 
-    <!-- CONTENEDOR DE BANNERS DE PROMOCIONES DINÁMICAS (Se llena automático desde el Servidor/Marketing) -->
+    <!-- CONTENEDOR DE BANNERS DE PROMOCIONES DINÁMICAS -->
     <div id="contenedorBannersDinamicos" class="contenedor-banners-promo"></div>
 
     <section class="productos">
@@ -224,8 +224,8 @@
             <p>Explora nuestras categorías, elige tus especialidades y agrégalas al carrito (Máximo 20 artículos en total).</p>
         </div>
 
-        <!-- CATEGORÍA 1: PLATILLOS -->
-        <details class="categoria-desplegable" open>
+        <!-- CATEGORÍA 1: PLATILLOS (Cerrado por defecto) -->
+        <details class="categoria-desplegable">
             <summary>🍽️ Platillos (10)</summary>
             <div class="tarjetas">
                 <div class="tarjeta">
@@ -360,7 +360,7 @@
             </div>
         </details>
 
-        <!-- CATEGORÍA 2: BEBIDAS -->
+        <!-- CATEGORÍA 2: BEBIDAS (Cerrado por defecto) -->
         <details class="categoria-desplegable">
             <summary>☕ Bebidas (10)</summary>
             <div class="tarjetas">
@@ -541,8 +541,17 @@
 
         function actualizarBadgeCarrito() {
             let carrito = obtenerCarrito();
+            let total = calcularTotalArticulos(carrito);
             let badge = document.getElementById('contadorCarrito');
-            if (badge) badge.innerText = calcularTotalArticulos(carrito);
+            if (badge) {
+                if (total > 0) {
+                    badge.innerText = total;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.innerText = "0";
+                    badge.style.display = 'none';
+                }
+            }
         }
 
         function validarLimite(input) {
@@ -586,57 +595,69 @@
             }, 1200);
         }
 
-        // --- CARGAR PROMOCIONES DINÁMICAS DESDE EL SERVIDOR ---
+        // --- CARGAR PROMOCIONES DINÁMICAS (Servidor + Fallback Local) ---
         function cargarPromocionesPublicas() {
             fetch("/api/promociones")
-                .then(res => res.json())
-                .then(promos => {
-                    const contenedor = document.getElementById("contenedorBannersDinamicos");
-                    contenedor.innerHTML = "";
-
-                    if (!promos || promos.length === 0) return;
-
-                    const hoy = new Date().toISOString().split('T')[0];
-                    let promosActivas = promos.filter(p => hoy >= p.fechaInicio && hoy <= p.fechaFin);
-
-                    if (promosActivas.length === 0) return;
-
-                    promosActivas.forEach(p => {
-                        // Gradientes según tema elegido por marketing
-                        let gradiente = "linear-gradient(135deg, #38251e, #6f4530)";
-                        if (p.tema === "dorado") gradiente = "linear-gradient(135deg, #8e5a24, #c08a54)";
-                        if (p.tema === "rojo") gradiente = "linear-gradient(135deg, #7b1e1e, #c0392b)";
-                        if (p.tema === "verde") gradiente = "linear-gradient(135deg, #1e4d2b, #2e7d32)";
-
-                        let imagenesHTML = `<img src="/static/${p.item1}" class="promo-img-redonda" alt="Promo">`;
-                        if (p.item2) {
-                            imagenesHTML = `
-                                <img src="/static/${p.item1}" class="promo-img-redonda" alt="Promo 1">
-                                <img src="/static/${p.item2}" class="promo-img-redonda" alt="Promo 2">
-                            `;
-                        }
-
-                        let card = document.createElement("div");
-                        card.className = "tarjeta-promo-dinamica";
-                        card.style.background = gradiente;
-                        card.innerHTML = `
-                            <div>
-                                <span class="promo-badge-tag">${p.etiqueta}</span>
-                                <div class="promo-imagenes-flex">${imagenesHTML}</div>
-                                <div class="promo-titulo-card">${p.titulo}</div>
-                                <div class="promo-sub-card">${p.subtitulo}</div>
-                                <div class="promo-precio-pill">$${Number(p.precio).toFixed(2)} MXN</div>
-                            </div>
-                            <button type="button" class="btn-aprovechar-promo" onclick="agregarPromoAlCarrito('${p.titulo}', ${p.precio}, this)">🛒 Aprovechar Promo</button>
-                        `;
-                        contenedor.appendChild(card);
-                    });
+                .then(res => {
+                    if (!res.ok) throw new Error("Servidor no disponible");
+                    return res.json();
+                })
+                .then(promosServidor => {
+                    let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
+                    // Unimos ambas para asegurar que aparezcan
+                    let todas = [...promosServidor, ...promosLocales];
+                    renderizarPromos(todas);
                 })
                 .catch(() => {
-                    // Fallback local si el servidor tarda
+                    // Si falla el servidor, lee de localStorage
                     let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
-                    // (Se pueden renderizar igual si fuera necesario)
+                    renderizarPromos(promosLocales);
                 });
+        }
+
+        function renderizarPromos(promos) {
+            const contenedor = document.getElementById("contenedorBannersDinamicos");
+            contenedor.innerHTML = "";
+
+            if (!promos || promos.length === 0) return;
+
+            const hoy = new Date().toISOString().split('T')[0];
+            let promosActivas = promos.filter(p => hoy >= p.fechaInicio && hoy <= p.fechaFin);
+
+            if (promosActivas.length === 0) return;
+
+            promosActivas.forEach(p => {
+                let gradiente = "linear-gradient(135deg, #38251e, #6f4530)";
+                if (p.tema === "dorado") gradiente = "linear-gradient(135deg, #8e5a24, #c08a54)";
+                if (p.tema === "rojo") gradiente = "linear-gradient(135deg, #7b1e1e, #c0392b)";
+                if (p.tema === "verde") gradiente = "linear-gradient(135deg, #1e4d2b, #2e7d32)";
+
+                let img1 = p.item1 || p.bebida || p.imagen;
+                let img2 = p.item2 || p.alimento || p.imagen2;
+
+                let imagenesHTML = `<img src="/static/${img1}" class="promo-img-redonda" alt="Promo">`;
+                if (img2 && img2 !== "") {
+                    imagenesHTML = `
+                        <img src="/static/${img1}" class="promo-img-redonda" alt="Promo 1">
+                        <img src="/static/${img2}" class="promo-img-redonda" alt="Promo 2">
+                    `;
+                }
+
+                let card = document.createElement("div");
+                card.className = "tarjeta-promo-dinamica";
+                card.style.background = gradiente;
+                card.innerHTML = `
+                    <div>
+                        <span class="promo-badge-tag">${p.etiqueta}</span>
+                        <div class="promo-imagenes-flex">${imagenesHTML}</div>
+                        <div class="promo-titulo-card">${p.titulo}</div>
+                        <div class="promo-sub-card">${p.subtitulo}</div>
+                        <div class="promo-precio-pill">$${Number(p.precio).toFixed(2)} MXN</div>
+                    </div>
+                    <button type="button" class="btn-aprovechar-promo" onclick="agregarPromoAlCarrito('${p.titulo}', ${p.precio}, this)">🛒 Aprovechar Promo</button>
+                `;
+                contenedor.appendChild(card);
+            });
         }
 
         function agregarPromoAlCarrito(tituloPromo, precioPromo, botonElemento) {
