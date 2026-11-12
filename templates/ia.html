@@ -8,11 +8,14 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background-color: #faf3e7; color: #3e2723; }
 
-        .menu { background-color: #38251e; display: flex; justify-content: space-between; align-items: center; padding: 18px 8%; flex-wrap: wrap; gap: 15px; position: sticky; top: 0; z-index: 1000; }
-        .logo { color: #e8c99b; font-size: 27px; font-weight: bold; }
-        .menu-links { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-        .menu a { text-decoration: none; color: #fff8ed; padding: 10px 16px; border-radius: 25px; transition: 0.3s; font-weight: 500; }
-        .menu a:hover { background-color: #c08a54; color: white; }
+        .menu { background-color: #38251e; display: flex; justify-content: space-between; align-items: center; padding: 18px 8%; flex-wrap: wrap; gap: 15px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        .logo { color: #e8c99b; font-size: 27px; font-weight: bold; letter-spacing: 1px; }
+        .menu-links { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .menu a { text-decoration: none; color: #fff8ed; padding: 10px 18px; border-radius: 25px; transition: all 0.3s ease; font-weight: 500; font-size: 15px; }
+        .menu a:hover, .menu a.activo { background-color: #c08a54; color: white; transform: translateY(-2px); }
+        .btn-ordenar-nav { background-color: #c08a54 !important; color: white !important; font-weight: bold !important; box-shadow: 0 4px 12px rgba(192,138,84,0.4); }
+        .btn-login-nav { background-color: transparent !important; border: 2px solid #c08a54 !important; color: #e8c99b !important; font-weight: bold !important; }
+        .btn-login-nav:hover { background-color: #c08a54 !important; color: white !important; }
 
         .contenedor-ia { max-width: 750px; margin: 50px auto; padding: 0 20px; }
         .tarjeta-ia { background: #ffffff; border-radius: 20px; padding: 35px; border: 2px solid #e7d4ba; box-shadow: 0 10px 30px rgba(56, 37, 30, 0.1); }
@@ -30,6 +33,10 @@
         .grid-opciones { display: grid; grid-template-columns: 1fr; gap: 12px; }
         .btn-opcion { background: #fffaf2; border: 2px solid #e7d4ba; padding: 16px 20px; border-radius: 14px; text-align: left; font-size: 16px; color: #3e2723; cursor: pointer; transition: 0.2s; font-weight: 500; display: flex; align-items: center; gap: 12px; }
         .btn-opcion:hover { background: #faebd7; border-color: #c08a54; transform: translateX(5px); }
+
+        /* Alerta de Tienda Cerrada */
+        #alerta-cerrado { display: none; text-align: center; padding: 25px; background: #fdf2f2; border: 2px solid #f5c6cb; border-radius: 15px; color: #721c24; margin-top: 15px; }
+        #alerta-cerrado h3 { font-size: 22px; margin-bottom: 10px; font-family: Georgia, serif; }
 
         /* Resultado */
         #resultado-ia { display: none; text-align: center; animation: fadeIn 0.5s ease; }
@@ -51,8 +58,13 @@
         <div class="logo">☕ Aroma & Café</div>
         <div class="menu-links">
             <a href="/">Inicio</a>
+            <a href="/nosotros">Nosotros</a>
             <a href="/menu">Menú</a>
-            <a href="/ordenar">🛒 Carrito</a>
+            <a href="/galeria">Galería</a>
+            <a href="/servicios">Servicios</a>
+            <a href="/contacto">Contacto</a>
+            <a href="/ordenar" class="btn-ordenar-nav">🛒 Carrito</a>
+            <a href="#" onclick="alert('Usa el menú superior o el inicio de sesión principal')" class="btn-login-nav">👤 Sesión</a>
         </div>
     </nav>
 
@@ -62,49 +74,59 @@
                 <img src="{{ url_for('static', filename='fino.jpg') }}" alt="Don Barista" class="avatar-grande">
                 <div>
                     <h2>Asistente Don Barista</h2>
-                    <span class="badge-tiempo" id="badge-momento">Detectando horario automático...</span>
+                    <span class="badge-tiempo" id="badge-momento">Verificando horario...</span>
                 </div>
             </div>
 
-            <!-- PREGUNTA 1 -->
-            <div class="paso-pregunta activo" id="paso-1">
-                <p class="titulo-pregunta" id="texto-p1">¿Qué nivel de antojo traes en este momento?</p>
-                <div class="grid-opciones" id="opciones-p1"></div>
+            <!-- AVISO DE TIENDA CERRADA -->
+            <div id="alerta-cerrado">
+                <h3>🔒 Cafetería Cerrada en este momento</h3>
+                <p id="texto-horario-cerrado" style="font-size: 15px; line-height: 1.6; margin-bottom: 15px;"></p>
+                <a href="/" class="btn-accion btn-reintentar" style="text-decoration: none; display: inline-block;">Volver al Inicio</a>
             </div>
 
-            <!-- PREGUNTA 2 -->
-            <div class="paso-pregunta" id="paso-2">
-                <p class="titulo-pregunta">2. ¿Hacia qué perfil de sabor te inclinas hoy?</p>
-                <div class="grid-opciones">
-                    <button class="btn-opcion" onclick="responder(2, 'dulce')">🍫 Dulce, achocolatado o con frutas</button>
-                    <button class="btn-opcion" onclick="responder(2, 'salado')">🧀 Salado, con queso, carnes o aguacate</button>
-                    <button class="btn-opcion" onclick="responder(2, 'cafe_especias')">☕ Intenso, sabor a café puro o especias</button>
-                    <button class="btn-opcion" onclick="responder(2, 'fresco')">🌿 Fresco, ligero o herbal</button>
+            <!-- CONTENEDOR DE PREGUNTAS -->
+            <div id="contenedor-cuestionario">
+                <!-- PREGUNTA 1 -->
+                <div class="paso-pregunta activo" id="paso-1">
+                    <p class="titulo-pregunta" id="texto-p1">¿Qué nivel de antojo traes en este momento?</p>
+                    <div class="grid-opciones" id="opciones-p1"></div>
                 </div>
-            </div>
 
-            <!-- PREGUNTA 3 -->
-            <div class="paso-pregunta" id="paso-3">
-                <p class="titulo-pregunta">3. ¿Qué temperatura va mejor con tu mood?</p>
-                <div class="grid-opciones">
-                    <button class="btn-opcion" onclick="responder(3, 'caliente')">🔥 Caliente / Reconfortante</button>
-                    <button class="btn-opcion" onclick="responder(3, 'frio')">❄️ Frío / Con hielo / Granizado</button>
-                    <button class="btn-opcion" onclick="responder(3, 'cualquiera')">✨ Me da igual, sorpréndeme</button>
+                <!-- PREGUNTA 2 -->
+                <div class="paso-pregunta" id="paso-2">
+                    <p class="titulo-pregunta">2. ¿Hacia qué perfil de sabor te inclinas hoy?</p>
+                    <div class="grid-opciones">
+                        <button class="btn-opcion" onclick="responder(2, 'dulce')">🍫 Dulce, achocolatado o con frutas</button>
+                        <button class="btn-opcion" onclick="responder(2, 'salado')">🧀 Salado, con queso, carnes o aguacate</button>
+                        <button class="btn-opcion" onclick="responder(2, 'cafe_especias')">☕ Intenso, sabor a café puro o especias</button>
+                        <button class="btn-opcion" onclick="responder(2, 'fresco')">🌿 Fresco, ligero o herbal</button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- RESULTADO FINAL -->
-            <div id="resultado-ia">
-                <span class="porcentaje-match" id="texto-porcentaje">94% de coincidencia</span>
-                <p style="color: #593724; font-size: 16px; margin-bottom: 10px;" id="frase-choom"></p>
-                <img id="img-res" src="" alt="Producto" class="img-recomendada">
-                <h3 class="nombre-prod" id="nombre-res"></h3>
-                <p class="desc-prod" id="desc-res"></p>
-                <div class="precio-prod" id="precio-res"></div>
+                <!-- PREGUNTA 3 -->
+                <div class="paso-pregunta" id="paso-3">
+                    <p class="titulo-pregunta">3. ¿Qué temperatura va mejor con tu mood?</p>
+                    <div class="grid-opciones">
+                        <button class="btn-opcion" onclick="responder(3, 'caliente')">🔥 Caliente / Reconfortante</button>
+                        <button class="btn-opcion" onclick="responder(3, 'frio')">❄️ Frío / Con hielo / Granizado</button>
+                        <button class="btn-opcion" onclick="responder(3, 'cualquiera')">✨ Me da igual, sorpréndeme</button>
+                    </div>
+                </div>
 
-                <div class="acciones-finales">
-                    <button class="btn-accion btn-agregar-ia" id="btn-add-carrito" onclick="agregarRecomendacionCarrito()">🛒 Agregar al carrito</button>
-                    <button class="btn-accion btn-reintentar" onclick="reiniciarTest()">🔄 Probar otra combinación</button>
+                <!-- RESULTADO FINAL -->
+                <div id="resultado-ia">
+                    <span class="porcentaje-match" id="texto-porcentaje">94% de coincidencia</span>
+                    <p style="color: #593724; font-size: 16px; margin-bottom: 10px;" id="frase-choom"></p>
+                    <img id="img-res" src="" alt="Producto" class="img-recomendada">
+                    <h3 class="nombre-prod" id="nombre-res"></h3>
+                    <p class="desc-prod" id="desc-res"></p>
+                    <div class="precio-prod" id="precio-res"></div>
+
+                    <div class="acciones-finales">
+                        <button class="btn-accion btn-agregar-ia" id="btn-add-carrito" onclick="agregarRecomendacionCarrito()">🛒 Agregar al carrito</button>
+                        <button class="btn-accion btn-reintentar" onclick="reiniciarTest()">🔄 Probar otra combinación</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -139,32 +161,55 @@
         let respuestas = { tipo: "", sabor: "", temp: "" };
         let productoGanador = null;
 
-        function detectarMomentoAutomatico() {
+        function verificarHorarioOperativo() {
             const ahora = new Date();
-            const dia = ahora.getDay(); // 0 = Domingo, 1 = Lunes ... 6 = Sábado
+            const dia = ahora.getDay(); // 0: Dom, 1-5: L-V, 6: Sáb
             const hora = ahora.getHours();
+            const minutos = ahora.getMinutes();
+            const tiempoActualMinutos = hora * 60 + minutos;
 
+            let abierto = false;
+            let mensajeHorario = "";
+
+            // Lunes a Viernes (1 al 5): 7:00 a.m. (420 min) a 9:00 p.m. (1260 min)
+            if (dia >= 1 && dia <= 5) {
+                abierto = (tiempoActualMinutos >= 420 && tiempoActualMinutos < 1260);
+                mensajeHorario = "Lunes a Viernes de 7:00 a.m. a 9:00 p.m.";
+            } 
+            // Sábados (6): 8:00 a.m. (480 min) a 10:00 p.m. (1320 min)
+            else if (dia === 6) {
+                abierto = (tiempoActualMinutos >= 480 && tiempoActualMinutos < 1320);
+                mensajeHorario = "Sábados de 8:00 a.m. a 10:00 p.m.";
+            } 
+            // Domingos (0): 8:00 a.m. (480 min) a 9:00 p.m. (1260 min)
+            else {
+                abierto = (tiempoActualMinutos >= 480 && tiempoActualMinutos < 1260);
+                mensajeHorario = "Domingos de 8:00 a.m. a 9:00 p.m.";
+            }
+
+            if (!abierto) {
+                document.getElementById("contenedor-cuestionario").style.display = "none";
+                document.getElementById("alerta-cerrado").style.display = "block";
+                document.getElementById("texto-horario-cerrado").innerHTML = `Don Barista está descansando. Nuestro horario para hoy es:<br><b>${mensajeHorario}</b>. ¡Te esperamos en nuestro próximo horario!`;
+                document.getElementById("badge-momento").innerText = "🔒 Fuera de horario";
+                return false;
+            }
+
+            detectarMomentoAutomatico(dia, hora);
+            return true;
+        }
+
+        function detectarMomentoAutomatico(dia, hora) {
             let momentoDetectado = "desayuno";
 
-            // Lunes a Viernes (1 al 5)
             if (dia >= 1 && dia <= 5) {
-                if (hora >= 7 && hora < 12) {
-                    momentoDetectado = "desayuno";
-                } else if (hora >= 12 && hora < 17) {
-                    momentoDetectado = "comida";
-                } else {
-                    momentoDetectado = "cena";
-                }
-            } 
-            // Sábados y Domingos (6 o 0)
-            else {
-                if (hora >= 8 && hora < 12) {
-                    momentoDetectado = "desayuno";
-                } else if (hora >= 12 && hora < 17) {
-                    momentoDetectado = "comida";
-                } else {
-                    momentoDetectado = "cena";
-                }
+                if (hora >= 7 && hora < 12) momentoDetectado = "desayuno";
+                else if (hora >= 12 && hora < 17) momentoDetectado = "comida";
+                else momentoDetectado = "cena";
+            } else {
+                if (hora >= 8 && hora < 12) momentoDetectado = "desayuno";
+                else if (hora >= 12 && hora < 17) momentoDetectado = "comida";
+                else momentoDetectado = "cena";
             }
 
             fijarMomento(momentoDetectado);
@@ -268,7 +313,7 @@
             document.getElementById("paso-1").classList.add("activo");
         }
 
-        window.addEventListener("DOMContentLoaded", detectarMomentoAutomatico);
+        window.addEventListener("DOMContentLoaded", verificarHorarioOperativo);
     </script>
 </body>
 </html>
