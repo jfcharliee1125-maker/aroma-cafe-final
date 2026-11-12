@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aroma & Café | Ordenar</title>
+    <title>Aroma & Café | Carrito</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
         body { background-color: #faf3e7; color: #3e2723; font-family: 'Segoe UI', Arial, sans-serif; }
@@ -13,7 +13,8 @@
         .menu-links { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         .menu a { text-decoration: none; color: #fff8ed; padding: 10px 16px; border-radius: 25px; transition: 0.3s; font-weight: 500; }
         .menu a:hover, .menu a.activo { background-color: #c08a54; color: white; }
-        .btn-ordenar-nav { background-color: #c08a54 !important; color: white !important; font-weight: bold !important; }
+        .btn-ordenar-nav { background-color: #c08a54 !important; color: white !important; font-weight: bold !important; display: inline-flex; align-items: center; gap: 6px; }
+        .badge-carrito { background-color: #38251e; color: #e8c99b; padding: 2px 8px; border-radius: 12px; font-size: 13px; font-weight: bold; }
 
         .seccion-orden { background-color: #faf3e7; padding: 75px 8%; max-width: 900px; margin: auto; }
         .encabezado { text-align: center; margin-bottom: 40px; }
@@ -21,21 +22,22 @@
         .encabezado h2 { font-family: Georgia, serif; font-size: 38px; color: #4b3024; margin: 12px 0; }
         .encabezado p { color: #806653; font-size: 17px; line-height: 1.7; }
 
-        .form-orden { background: white; padding: 40px; border-radius: 18px; box-shadow: 0 6px 25px #59391b0d; }
+        .form-orden { background: white; padding: 40px; border-radius: 18px; box-shadow: 0 6px 25px rgba(89, 57, 27, 0.08); border: 1px solid #e7d4ba; }
         
+        /* Tabla del carrito más estética */
         .tabla-carrito { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
-        .tabla-carrito th { background-color: #eddac2; color: #4b3024; padding: 12px 15px; font-size: 15px; text-align: left; border-bottom: 2px solid #e7d4ba; }
+        .tabla-carrito th { background-color: #eddac2; color: #4b3024; padding: 14px 18px; font-size: 15px; text-align: left; border-bottom: 2px solid #d6b07f; }
         .tabla-carrito th:nth-child(2) { text-align: center; }
         .tabla-carrito th:nth-child(3) { text-align: center; }
 
-        .tabla-carrito td { padding: 12px 15px; border-bottom: 1px solid #f0e1cc; color: #593724; font-size: 15px; vertical-align: middle; }
+        .tabla-carrito td { padding: 14px 18px; border-bottom: 1px solid #f0e1cc; color: #593724; font-size: 15px; vertical-align: middle; }
         .tabla-carrito td:nth-child(2) { text-align: center; font-weight: 600; color: #a76b3f; }
         .tabla-carrito td:nth-child(3) { text-align: center; }
 
-        .btn-eliminar-cruz { background: none; border: none; color: #d9534f; cursor: pointer; font-size: 18px; font-weight: bold; padding: 5px 10px; border-radius: 5px; transition: 0.2s; }
-        .btn-eliminar-cruz:hover { background-color: #faebd7; color: #c9302c; }
+        .btn-eliminar-cruz { background: none; border: none; color: #d9534f; cursor: pointer; font-size: 18px; font-weight: bold; padding: 6px 12px; border-radius: 6px; transition: 0.2s; }
+        .btn-eliminar-cruz:hover { background-color: #fde8e8; color: #c9302c; }
         
-        .carrito-vacio { text-align: center; color: #806653; padding: 25px; font-style: italic; }
+        .carrito-vacio { text-align: center; color: #806653; padding: 30px; font-style: italic; }
 
         .mensaje-regreso { text-align: center; margin: 15px 0 25px 0; font-size: 14px; color: #98653b; font-weight: 500; }
         .mensaje-regreso a { color: #c08a54; text-decoration: underline; font-weight: bold; }
@@ -43,9 +45,9 @@
 
         .boton { display: inline-block; background-color: #6f4530; color: white; padding: 15px 27px; border-radius: 30px; text-decoration: none; 
             font-weight: bold; transition: 0.3s; border: none; cursor: pointer; }
-        .boton:hover { background-color: #a76b3f; transform: translateY(-3px); box-shadow: 0 8px 18px #6f453044; }
+        .boton:hover { background-color: #a76b3f; transform: translateY(-3px); box-shadow: 0 8px 18px rgba(111, 69, 48, 0.25); }
 
-        .resumen-total { margin-top: 30px; padding: 20px; background-color: #f0e1cc; border-radius: 12px; }
+        .resumen-total { margin-top: 30px; padding: 25px; background-color: #f0e1cc; border-radius: 14px; }
         .resumen-total h3 { font-size: 24px; color: #38251e; text-align: right; }
 
         .tipo-entrega-container, .horarios-container, .notas-container {
@@ -114,10 +116,6 @@
             color: #4b3024;
             line-height: 1.6;
         }
-        .caja-horarios ul {
-            margin-left: 20px;
-            margin-top: 5px;
-        }
 
         footer { background-color: #38251e; text-align: center; padding: 25px 15px; color: #e8c99b; font-size: 14px; margin-top: 50px; }
     </style>
@@ -132,7 +130,7 @@
             <a href="galeria.html">Galería</a>
             <a href="servicios.html">Servicios</a>
             <a href="contacto.html">Contacto</a>
-            <a href="ordenar.html" class="btn-ordenar-nav activo">🛒 Ordenar</a>
+            <a href="ordenar.html" class="btn-ordenar-nav activo">🛒 Carrito <span id="contadorCarrito" class="badge-carrito">0</span></a>
         </div>
     </nav>
 
@@ -242,10 +240,22 @@
             renderizarCarrito();
         }
 
+        function calcularTotalArticulos(carrito) {
+            return Object.values(carrito).reduce((acc, val) => acc + (parseInt(val) || 0), 0);
+        }
+
+        function actualizarBadgeCarrito() {
+            let carrito = obtenerCarrito();
+            let badge = document.getElementById('contadorCarrito');
+            if (badge) badge.innerText = calcularTotalArticulos(carrito);
+        }
+
         function renderizarCarrito() {
             let carrito = obtenerCarrito();
             let tbody = document.getElementById('cuerpo-tabla-carrito');
             tbody.innerHTML = '';
+
+            actualizarBadgeCarrito();
 
             let productosKeys = Object.keys(carrito);
             if (productosKeys.length === 0) {
@@ -340,6 +350,12 @@
                 return;
             }
 
+            let totalArticulos = calcularTotalArticulos(carrito);
+            if (totalArticulos > 20) {
+                alert("⚠️ El pedido excede el límite máximo permitido de 20 artículos en total.");
+                return;
+            }
+
             let subtotal = 0;
             let productosArray = [];
 
@@ -362,6 +378,12 @@
             localStorage.setItem("tipoEntrega", tipoEntregaSeleccionada);
             localStorage.setItem("turnoPedido", turnoAutomatico);
             localStorage.setItem("notasPedido", notas);
+
+            localStorage.setItem("espresso", carrito["Café Espresso"] || 0);
+            localStorage.setItem("capuchino", carrito["Capuchino clásico"] || 0);
+            localStorage.setItem("chocomilk", carrito["Chocomilk"] || 0);
+            localStorage.setItem("pastel", carrito["Pastel de chocolate"] || 0);
+            localStorage.setItem("baguette", carrito["Baguette"] || 0);
 
             let datosPedido = {
                 folio: folioGenerado,

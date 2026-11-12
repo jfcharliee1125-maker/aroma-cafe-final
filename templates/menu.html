@@ -12,7 +12,8 @@
         .menu-links { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         .menu a { text-decoration: none; color: #fff8ed; padding: 10px 16px; border-radius: 25px; transition: 0.3s; font-weight: 500; }
         .menu a:hover, .menu a.activo { background-color: #c08a54; color: white; }
-        .btn-ordenar-nav { background-color: #c08a54 !important; color: white !important; font-weight: bold !important; }
+        .btn-ordenar-nav { background-color: #c08a54 !important; color: white !important; font-weight: bold !important; display: inline-flex; align-items: center; gap: 6px; }
+        .badge-carrito { background-color: #38251e; color: #e8c99b; padding: 2px 8px; border-radius: 12px; font-size: 13px; font-weight: bold; }
 
         .productos { background-color: #f0e1cc; padding: 70px 8%; min-height: 80vh; }
         .encabezado { text-align: center; margin-bottom: 40px; }
@@ -79,7 +80,6 @@
         .tarjeta p { color: #806653; font-size: 15px; line-height: 1.7; }
         .precio { font-size: 20px; font-weight: bold; color: #a76b3f; margin-top: 10px; }
 
-        /* Controles de cantidad y botones en tarjeta */
         .controles-compra {
             display: flex;
             align-items: center;
@@ -144,7 +144,7 @@
             <a href="galeria.html">Galería</a>
             <a href="servicios.html">Servicios</a>
             <a href="contacto.html">Contacto</a>
-            <a href="ordenar.html" class="btn-ordenar-nav">🛒 Ordenar</a>
+            <a href="ordenar.html" class="btn-ordenar-nav">🛒 Carrito <span id="contadorCarrito" class="badge-carrito">0</span></a>
         </div>
     </nav>
 
@@ -152,7 +152,7 @@
         <div class="encabezado">
             <span class="etiqueta">Preparados para ti</span>
             <h2>Nuestro Menú</h2>
-            <p>Haz clic en las categorías para desplegar o replegar los productos, elige la cantidad (hasta 20) y agrégalos a tu orden.</p>
+            <p>Haz clic en las categorías para desplegar o replegar los productos, elige la cantidad y agrégalos a tu carrito (Máximo 20 artículos en total por pedido).</p>
         </div>
 
         <!-- CATEGORÍA 1: ALIMENTOS -->
@@ -429,6 +429,20 @@
     </section>
 
     <script>
+        function obtenerCarrito() {
+            return JSON.parse(localStorage.getItem('carritoAroma')) || {};
+        }
+
+        function calcularTotalArticulos(carrito) {
+            return Object.values(carrito).reduce((acc, val) => acc + (parseInt(val) || 0), 0);
+        }
+
+        function actualizarBadgeCarrito() {
+            let carrito = obtenerCarrito();
+            let badge = document.getElementById('contadorCarrito');
+            if (badge) badge.innerText = calcularTotalArticulos(carrito);
+        }
+
         function validarLimite(input) {
             let valor = parseInt(input.value);
             if (isNaN(valor) || valor < 1) {
@@ -443,15 +457,24 @@
             let inputCantidad = document.getElementById('cant-' + nombreProducto);
             let cantidadSeleccionada = parseInt(inputCantidad ? inputCantidad.value : 1) || 1;
 
-            let carrito = JSON.parse(localStorage.getItem('carritoAroma')) || {};
+            let carrito = obtenerCarrito();
+            let totalActual = calcularTotalArticulos(carrito);
+            let cantidadPreviaProducto = carrito[nombreProducto] || 0;
+
+            // Validar límite global de 20 artículos en total por pedido
+            if (totalActual + cantidadSeleccionada > 20) {
+                alert("⚠️ Límite excedido: El máximo permitido es de 20 artículos en total por pedido. Actualmente tienes " + totalActual + " en tu carrito.");
+                return;
+            }
             
-            carrito[nombreProducto] = (carrito[nombreProducto] || 0) + cantidadSeleccionada;
+            carrito[nombreProducto] = cantidadPreviaProducto + cantidadSeleccionada;
             
             if (carrito[nombreProducto] > 20) {
                 carrito[nombreProducto] = 20;
             }
 
             localStorage.setItem('carritoAroma', JSON.stringify(carrito));
+            actualizarBadgeCarrito();
             
             let textoOriginal = botonElemento.innerHTML;
             botonElemento.innerHTML = "✓ Agregado";
@@ -464,6 +487,8 @@
                 botonElemento.disabled = false;
             }, 1200);
         }
+
+        window.addEventListener('DOMContentLoaded', actualizarBadgeCarrito);
     </script>
 
     <footer>
