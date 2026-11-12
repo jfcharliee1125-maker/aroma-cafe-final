@@ -19,7 +19,7 @@
         .productos { background-color: #f0e1cc; padding: 70px 8%; min-height: 80vh; }
         .encabezado { text-align: center; margin-bottom: 40px; }
         .etiqueta { color: #98653b; font-weight: bold; text-transform: uppercase; letter-spacing: 3px; font-size: 13px; }
-        .encabezado h2 { font-family: Georgia, serif; font-size: 38px; color: #4b3024; margin: 12px 0; }
+        .encabezado h2 { font-size: 38px; color: #4b3024; margin: 12px 0; }
         .encabezado p { color: #806653; font-size: 17px; line-height: 1.7; }
 
         /* Categorías Desplegables Estéticas */
@@ -35,8 +35,7 @@
         }
 
         .categoria-desplegable summary {
-            font-family: Georgia, serif;
-            font-size: 24px;
+            font-size: 22px;
             color: #4b3024;
             padding: 22px 30px;
             background-color: #eddac2;
@@ -105,7 +104,6 @@
         .tarjeta p { color: #806653; font-size: 15px; line-height: 1.7; }
         .precio { font-size: 20px; font-weight: bold; color: #a76b3f; margin: 12px 0; }
 
-        /* Controles de cantidad y botón */
         .controles-compra {
             display: flex;
             align-items: center;
@@ -178,12 +176,12 @@
         <div class="encabezado">
             <span class="etiqueta">Preparados para ti</span>
             <h2>Nuestro Menú</h2>
-            <p>Explora nuestras categorías, elige tus especialidades favoritas y agrégalas a tu carrito (Máximo 20 artículos en total por pedido).</p>
+            <p>Explora nuestras categorías, elige tus especialidades y agrégalas al carrito (Máximo 20 artículos en total).</p>
         </div>
 
-        <!-- CATEGORÍA 1: ALIMENTOS Y PLATILLOS -->
-        <details class="categoria-desplegable" open>
-            <summary>🍽️ Alimentos y Platillos (10)</summary>
+        <!-- CATEGORÍA 1: PLATILLOS -->
+        <details class="categoria-desplegable">
+            <summary>🍽️ Platillos (10)</summary>
             <div class="tarjetas">
                 <div class="tarjeta">
                     <div>
@@ -317,9 +315,9 @@
             </div>
         </details>
 
-        <!-- CATEGORÍA 2: BEBIDAS Y BEBIBLES -->
-        <details class="categoria-desplegable" open>
-            <summary>☕ Bebidas y Bebibles (10)</summary>
+        <!-- CATEGORÍA 2: BEBIDAS -->
+        <details class="categoria-desplegable">
+            <summary>☕ Bebidas (10)</summary>
             <div class="tarjetas">
                 <div class="tarjeta">
                     <div>
@@ -487,7 +485,6 @@
             let totalActual = calcularTotalArticulos(carrito);
             let cantidadPreviaProducto = carrito[nombreProducto] || 0;
 
-            // Validación de límite global de 20 artículos en total
             if (totalActual + cantidadSeleccionada > 20) {
                 alert("⚠️ Límite excedido: El máximo permitido es de 20 artículos en total por pedido. Actualmente tienes " + totalActual + " en tu carrito.");
                 return;
