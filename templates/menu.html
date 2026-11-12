@@ -519,7 +519,7 @@
                 if (banner) banner.style.display = 'block';
 
                 let botones = document.querySelectorAll('.btn-agregar, .btn-aprovechar-promo');
-                let inputs = document.querySelectorAll('.input-cantidad-menu');
+                let inputs = document.querySelectorAll('.input-cantidad-menu, .input-cantidad-promo');
 
                 botones.forEach(btn => {
                     btn.disabled = true;
@@ -652,26 +652,45 @@
                         <div class="promo-sub-card">${p.subtitulo}</div>
                         <div class="promo-precio-pill">$${Number(p.precio).toFixed(2)} MXN</div>
                     </div>
-                    <button type="button" class="btn-aprovechar-promo" onclick="agregarPromoAlCarrito('${p.titulo}', ${p.precio}, this)">🛒 Aprovechar Promo</button>
+                    <div style="width: 100%;">
+                        <div class="controles-compra" style="margin-bottom: 10px;">
+                            <input type="number" id="cant-promo-${p.titulo}" class="input-cantidad-menu input-cantidad-promo" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        </div>
+                        <button type="button" class="btn-aprovechar-promo" onclick="agregarPromoAlCarrito('${p.titulo}', ${p.precio}, this)">🛒 Aprovechar Promo</button>
+                    </div>
                 `;
                 contenedor.appendChild(card);
             });
 
-            // Vuelve a verificar si la cafetería está cerrada para bloquear también los nuevos botones de promo recién creados
             verificarHorarioApertura();
         }
 
         function agregarPromoAlCarrito(tituloPromo, precioPromo, botonElemento) {
             let nombreItem = `⭐ PROMO: ${tituloPromo} ($${precioPromo.toFixed(2)})`;
+            let inputCantidad = document.getElementById('cant-promo-' + tituloPromo);
+            let cantidadSeleccionada = parseInt(inputCantidad ? inputCantidad.value : 1) || 1;
+
             let carrito = obtenerCarrito();
             let totalActual = calcularTotalArticulos(carrito);
 
-            if (totalActual + 1 > 20) {
+            if (totalActual + cantidadSeleccionada > 20) {
                 alert("⚠️ Límite excedido: El máximo permitido es de 20 artículos en total por pedido.");
                 return;
             }
 
-            carrito[nombreItem] = (carrito[nombreItem] || 0) + 1;
+            // Contar cuántas promociones DIFERENTES ya existen en el carrito (filtrando por las que empiezan con "⭐ PROMO:")
+            let promosDiferentesEnCarrito = Object.keys(carrito).filter(k => k.startsWith("⭐ PROMO:")).length;
+            let laPromoYaExiste = carrito.hasOwnProperty(nombreItem);
+
+            // Si intenta agregar una tercera promo diferente y esta no está en el carrito, se le bloquea
+            if (!laPromoYaExiste && promosDiferentesEnCarrito >= 2) {
+                alert("⚠️ Has alcanzado el límite: Solo puedes seleccionar máximo 2 promociones diferentes por pedido.");
+                return;
+            }
+
+            carrito[nombreItem] = (carrito[nombreItem] || 0) + cantidadSeleccionada;
+            if (carrito[nombreItem] > 20) carrito[nombreItem] = 20;
+
             localStorage.setItem('carritoAroma', JSON.stringify(carrito));
             actualizarBadgeCarrito();
 
