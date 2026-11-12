@@ -3,90 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aroma & Café | Carrito de Compras</title>
+    <title>Aroma & Café | Ordenar</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
         body { background-color: #faf3e7; color: #3e2723; font-family: 'Segoe UI', Arial, sans-serif; }
-        
-        /* Navegación */
-        .menu { background-color: #38251e; display: flex; justify-content: space-between; align-items: center; padding: 18px 8%; flex-wrap: wrap; gap: 15px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .menu { background-color: #38251e; display: flex; justify-content: space-between; align-items: center; padding: 18px 8%; flex-wrap: wrap; 
+            gap: 15px; position: sticky; top: 0; z-index: 1000; }
         .logo { color: #e8c99b; font-size: 27px; font-weight: bold; letter-spacing: 1px; }
         .menu-links { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         .menu a { text-decoration: none; color: #fff8ed; padding: 10px 16px; border-radius: 25px; transition: 0.3s; font-weight: 500; }
         .menu a:hover, .menu a.activo { background-color: #c08a54; color: white; }
-        .btn-ordenar-nav { background-color: #c08a54 !important; color: white !important; font-weight: bold !important; display: inline-flex; align-items: center; gap: 8px; }
-        .badge-carrito { background-color: #38251e; color: #e8c99b; padding: 2px 8px; border-radius: 12px; font-size: 13px; font-weight: bold; }
+        .btn-ordenar-nav { background-color: #c08a54 !important; color: white !important; font-weight: bold !important; }
 
-        .seccion-orden { background-color: #faf3e7; padding: 60px 8%; max-width: 900px; margin: auto; }
-        .encabezado { text-align: center; margin-bottom: 35px; }
+        .seccion-orden { background-color: #faf3e7; padding: 75px 8%; max-width: 900px; margin: auto; }
+        .encabezado { text-align: center; margin-bottom: 40px; }
         .etiqueta { color: #98653b; font-weight: bold; text-transform: uppercase; letter-spacing: 3px; font-size: 13px; }
-        .encabezado h2 { font-family: Georgia, serif; font-size: 38px; color: #4b3024; margin: 10px 0; }
-        .encabezado p { color: #806653; font-size: 16px; line-height: 1.6; }
+        .encabezado h2 { font-family: Georgia, serif; font-size: 38px; color: #4b3024; margin: 12px 0; }
+        .encabezado p { color: #806653; font-size: 17px; line-height: 1.7; }
 
-        .form-orden { background: white; padding: 35px; border-radius: 18px; box-shadow: 0 6px 25px rgba(89, 57, 27, 0.08); border: 1px solid #e7d4ba; }
+        .form-orden { background: white; padding: 40px; border-radius: 18px; box-shadow: 0 6px 25px #59391b0d; }
         
-        /* Tabla del carrito mejorada */
-        .tabla-carrito { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .tabla-carrito th { background-color: #eddac2; color: #4b3024; padding: 14px 15px; font-size: 15px; text-align: left; border-bottom: 2px solid #d6b07f; }
-        .tabla-carrito th:nth-child(2), .tabla-carrito th:nth-child(3) { text-align: center; }
+        .tabla-carrito { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        .tabla-carrito th { background-color: #eddac2; color: #4b3024; padding: 12px 15px; font-size: 15px; text-align: left; border-bottom: 2px solid #e7d4ba; }
+        .tabla-carrito th:nth-child(2) { text-align: center; }
+        .tabla-carrito th:nth-child(3) { text-align: center; }
 
-        .tabla-carrito td { padding: 14px 15px; border-bottom: 1px solid #f0e1cc; color: #593724; font-size: 15px; vertical-align: middle; }
-        .tabla-carrito td:nth-child(2) { text-align: center; font-weight: bold; color: #a76b3f; }
+        .tabla-carrito td { padding: 12px 15px; border-bottom: 1px solid #f0e1cc; color: #593724; font-size: 15px; vertical-align: middle; }
+        .tabla-carrito td:nth-child(2) { text-align: center; font-weight: 600; color: #a76b3f; }
         .tabla-carrito td:nth-child(3) { text-align: center; }
 
-        /* Stepper dentro de la tabla */
-        .selector-stepper-tabla {
-            display: inline-flex;
-            align-items: center;
-            border: 2px solid #e7d4ba;
-            border-radius: 8px;
-            overflow: hidden;
-            background: #fffdf9;
-        }
-        .btn-step-t {
-            background: #f0e1cc;
-            border: none;
-            color: #4b3024;
-            font-weight: bold;
-            font-size: 15px;
-            width: 28px;
-            height: 32px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-step-t:hover { background: #d6b07f; color: white; }
-        .input-tabla {
-            width: 38px;
-            height: 32px;
-            border: none;
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: #3e2723;
-            background: transparent;
-            outline: none;
-        }
-
-        .btn-eliminar-cruz { background: none; border: none; color: #d9534f; cursor: pointer; font-size: 18px; font-weight: bold; padding: 6px 10px; border-radius: 6px; transition: 0.2s; }
-        .btn-eliminar-cruz:hover { background-color: #fde8e8; color: #c9302c; }
+        .btn-eliminar-cruz { background: none; border: none; color: #d9534f; cursor: pointer; font-size: 18px; font-weight: bold; padding: 5px 10px; border-radius: 5px; transition: 0.2s; }
+        .btn-eliminar-cruz:hover { background-color: #faebd7; color: #c9302c; }
         
-        .carrito-vacio { text-align: center; color: #806653; padding: 30px; font-style: italic; }
+        .carrito-vacio { text-align: center; color: #806653; padding: 25px; font-style: italic; }
 
         .mensaje-regreso { text-align: center; margin: 15px 0 25px 0; font-size: 14px; color: #98653b; font-weight: 500; }
         .mensaje-regreso a { color: #c08a54; text-decoration: underline; font-weight: bold; }
         .mensaje-regreso a:hover { color: #6f4530; }
 
-        .resumen-total { margin-top: 25px; padding: 25px; background-color: #fdf6ec; border-radius: 14px; border: 1px solid #e7d4ba; }
-        
-        .limite-aviso {
-            background-color: #faebd7;
-            border-left: 4px solid #c08a54;
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #593724;
-            border-radius: 4px;
-        }
+        .boton { display: inline-block; background-color: #6f4530; color: white; padding: 15px 27px; border-radius: 30px; text-decoration: none; 
+            font-weight: bold; transition: 0.3s; border: none; cursor: pointer; }
+        .boton:hover { background-color: #a76b3f; transform: translateY(-3px); box-shadow: 0 8px 18px #6f453044; }
+
+        .resumen-total { margin-top: 30px; padding: 20px; background-color: #f0e1cc; border-radius: 12px; }
+        .resumen-total h3 { font-size: 24px; color: #38251e; text-align: right; }
 
         .tipo-entrega-container, .horarios-container, .notas-container {
             margin: 20px 0;
@@ -95,7 +55,7 @@
             display: block;
             font-weight: 600;
             color: #593724;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         .notas-container textarea {
             width: 100%;
@@ -108,9 +68,15 @@
             color: #3e2723;
             resize: vertical;
         }
-        .notas-container textarea:focus { border-color: #c08a54; box-shadow: 0 0 8px rgba(192, 138, 84, 0.3); }
+        .notas-container textarea:focus {
+            border-color: #c08a54;
+            box-shadow: 0 0 8px rgba(192, 138, 84, 0.3);
+        }
 
-        .opciones-entrega { display: flex; gap: 15px; }
+        .opciones-entrega {
+            display: flex;
+            gap: 15px;
+        }
         .opcion-card {
             flex: 1;
             border: 2px solid #e7d4ba;
@@ -121,23 +87,37 @@
             transition: 0.3s;
             background: #fffdf9;
         }
-        .opcion-card input[type="radio"] { display: none; }
-        .opcion-card h4 { color: #593724; margin-bottom: 4px; font-size: 16px; }
-        .opcion-card p { font-size: 13px; color: #806653; }
-        .opcion-card.seleccionado { border-color: #6f4530; background-color: #faebd7; box-shadow: 0 4px 12px rgba(111, 69, 48, 0.15); }
-
-        .caja-horarios {
-            background: #fffaf2;
-            border: 1px solid #d6b07f;
-            padding: 12px 15px;
-            border-radius: 10px;
+        .opcion-card input[type="radio"] {
+            display: none;
+        }
+        .opcion-card h4 {
+            color: #593724;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        .opcion-card p {
             font-size: 13px;
-            color: #4b3024;
-            line-height: 1.5;
+            color: #806653;
+        }
+        .opcion-card.seleccionado {
+            border-color: #6f4530;
+            background-color: #faebd7;
+            box-shadow: 0 4px 12px rgba(111, 69, 48, 0.15);
         }
 
-        .boton { display: inline-block; background-color: #6f4530; color: white; padding: 14px 28px; border-radius: 30px; text-decoration: none; font-weight: bold; transition: 0.3s; border: none; cursor: pointer; font-size: 16px; }
-        .boton:hover { background-color: #a76b3f; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(111, 69, 48, 0.3); }
+        .caja-horarios {
+            background: #fdf6ec;
+            border: 1px solid #d6b07f;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #4b3024;
+            line-height: 1.6;
+        }
+        .caja-horarios ul {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
 
         footer { background-color: #38251e; text-align: center; padding: 25px 15px; color: #e8c99b; font-size: 14px; margin-top: 50px; }
     </style>
@@ -146,55 +126,54 @@
     <nav class="menu">
         <div class="logo">☕ Aroma & Café</div>
         <div class="menu-links">
-            <a href="/">Inicio</a>
-            <a href="/nosotros">Nosotros</a>
-            <a href="/menu">Menú</a>
-            <a href="/galeria">Galería</a>
-            <a href="/servicios">Servicios</a>
-            <a href="/contacto">Contacto</a>
-            <a href="/ordenar" class="btn-ordenar-nav activo">🛒 Carrito <span id="contadorCarrito" class="badge-carrito">0</span></a>
+            <a href="index.html">Inicio</a>
+            <a href="nosotros.html">Nosotros</a>
+            <a href="menu.html">Menú</a>
+            <a href="galeria.html">Galería</a>
+            <a href="servicios.html">Servicios</a>
+            <a href="contacto.html">Contacto</a>
+            <a href="ordenar.html" class="btn-ordenar-nav activo">🛒 Ordenar</a>
         </div>
     </nav>
 
     <section class="seccion-orden">
         <div class="encabezado">
-            <span class="etiqueta">Tu selección</span>
-            <h2>Carrito de Compras</h2>
-            <p>Verifica tus productos, ajusta cantidades o añade notas antes de continuar con tu pedido.</p>
+            <span class="etiqueta">Crea tu pedido</span>
+            <h2>Tu Carrito de Compras</h2>
+            <p>Revisa los productos seleccionados y completa tu orden:</p>
         </div>
 
         <div class="form-orden">
-            <div class="limite-aviso">
-                ⚠️ <b>Nota de servicio:</b> El límite máximo permitido por persona es de <b>20 artículos</b> en total por pedido.
-            </div>
-
+            <!-- TABLA DE PRODUCTOS SELECCIONADOS -->
             <table class="tabla-carrito">
                 <thead>
                     <tr>
-                        <th>Producto</th>
-                        <th>Cantidad / P/U</th>
-                        <th>Subtotal</th>
+                        <th>Productos</th>
+                        <th>P/U</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody id="cuerpo-tabla-carrito">
-                    <!-- Dinámico -->
+                    <!-- Se llenará dinámicamente mediante JavaScript -->
                 </tbody>
             </table>
 
             <div class="mensaje-regreso">
-                ¿Deseas agregar más productos? <a href="/menu">Regresar al Menú</a>
+                Para seleccionar nuevos productos vuelva a la sección anterior (<a href="menu.html">Ir al Menú</a>)
             </div>
 
             <div class="resumen-total">
+                <!-- APARTADO DE HORARIOS ORIGINALES -->
                 <div class="horarios-container">
                     <label>🕒 Turnos y Horarios de Atención</label>
                     <div class="caja-horarios">
-                        <p><b>Lunes a Viernes:</b> Matutino (7:00 - 14:00) | Vespertino (14:00 - 21:00)</p>
-                        <p style="margin-top: 4px;"><b>Sábados y Domingos:</b> Matutino (8:00 - 14:00) | Vespertino (14:00 - 22:00)</p>
+                        <p><b>Lunes a Viernes:</b> Matutino (7:00 a.m. - 2:00 p.m.) | Vespertino (2:00 p.m. - 9:00 p.m.)</p>
+                        <p style="margin-top: 6px;"><b>Sábados:</b> Matutino (8:00 a.m. - 2:00 p.m.) | Vespertino (2:00 p.m. - 10:00 p.m.)</p>
+                        <p style="margin-top: 6px;"><b>Domingos:</b> Matutino (8:00 a.m. - 2:00 p.m.) | Vespertino (2:00 p.m. - 9:00 p.m.)</p>
                     </div>
                 </div>
 
+                <!-- APARTADO PARA NOTAS / ESPECIFICACIONES -->
                 <div class="notas-container">
                     <label for="notasPedido">📝 Notas o especificaciones especiales (opcional)</label>
                     <textarea id="notasPedido" rows="3" placeholder="Ej. Café con leche deslactosada, sin azúcar, bien caliente..."></textarea>
@@ -216,14 +195,14 @@
                     </div>
                 </div>
 
-                <div id="detalle-precios" style="text-align: right; font-size: 15px; color: #593724; margin-bottom: 5px; font-weight: 500;">
+                <div id="detalle-precios" style="text-align: right; font-size: 15px; color: #593724; margin-bottom: 5px;">
                     Subtotal: $0.00 | IVA (16%): $0.00
                 </div>
-                <h3 id="resultado-total" style="text-align: right; font-size: 22px; color: #38251e; margin-top: 8px;">Total a pagar: $0.00 MXN</h3>
+                <h3 id="resultado-total" style="margin-top: 10px;">Total a pagar: $0.00 MXN</h3>
                 
-                <div style="text-align: right; margin-top: 20px;">
-                    <button type="button" class="boton" onclick="enviarPedido()">
-                        Confirmar Pedido 📄
+                <div style="text-align: right;">
+                    <button type="button" class="boton" style="margin-top: 15px; background-color: #38251e;" onclick="enviarPedido()">
+                        Confirmar Pedido
                     </button>
                 </div>
             </div>
@@ -263,47 +242,14 @@
             renderizarCarrito();
         }
 
-        function calcularTotalArticulos(carrito) {
-            return Object.values(carrito).reduce((acc, val) => acc + (parseInt(val) || 0), 0);
-        }
-
-        function actualizarBadgeCarrito() {
-            let carrito = obtenerCarrito();
-            document.getElementById('contadorCarrito').innerText = calcularTotalArticulos(carrito);
-        }
-
-        function cambiarCantidadItem(producto, delta) {
-            let carrito = obtenerCarrito();
-            let actual = carrito[producto] || 1;
-            let nuevo = actual + delta;
-
-            if (nuevo < 1) {
-                eliminarProducto(producto);
-                return;
-            }
-
-            // Verificar límite global de 20 artículos
-            let totalActual = calcularTotalArticulos(carrito);
-            let diferencia = nuevo - actual;
-            if (totalActual + diferencia > 20) {
-                alert("⚠️ Lo sentimos, el límite máximo permitido por persona es de 20 artículos en total por pedido.");
-                return;
-            }
-
-            carrito[producto] = nuevo;
-            guardarCarrito(carrito);
-        }
-
         function renderizarCarrito() {
             let carrito = obtenerCarrito();
             let tbody = document.getElementById('cuerpo-tabla-carrito');
             tbody.innerHTML = '';
 
-            actualizarBadgeCarrito();
-
             let productosKeys = Object.keys(carrito);
             if (productosKeys.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="carrito-vacio">Tu carrito está vacío. ¡Explora el menú y añade tus antojos!</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3" class="carrito-vacio">No has seleccionado ningún producto todavía.</td></tr>`;
                 actualizarTotales(0);
                 return;
             }
@@ -318,15 +264,8 @@
 
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><b>${prod}</b><br><small style="color:#806653;">$${precioUnitario.toFixed(2)} c/u</small></td>
-                    <td>
-                        <div class="selector-stepper-tabla">
-                            <button type="button" class="btn-step-t" onclick="cambiarCantidadItem('${prod}', -1)">-</button>
-                            <input type="text" class="input-tabla" value="${cantidad}" readonly>
-                            <button type="button" class="btn-step-t" onclick="cambiarCantidadItem('${prod}', 1)">+</button>
-                        </div>
-                    </td>
-                    <td><b>$${subtotalItem.toFixed(2)}</b></td>
+                    <td>${prod} (x${cantidad})</td>
+                    <td>$${precioUnitario.toFixed(2)}</td>
                     <td><button type="button" class="btn-eliminar-cruz" onclick="eliminarProducto('${prod}')" title="Eliminar">❌</button></td>
                 `;
                 tbody.appendChild(tr);
@@ -384,6 +323,8 @@
 
             if (dia >= 1 && dia <= 5) {
                 return (hora >= 7 && hora < 14) ? "Matutino" : "Vespertino";
+            } else if (dia === 6) {
+                return (hora >= 8 && hora < 14) ? "Matutino" : "Vespertino";
             } else {
                 return (hora >= 8 && hora < 14) ? "Matutino" : "Vespertino";
             }
@@ -396,12 +337,6 @@
 
             if (productosKeys.length === 0) {
                 alert("Por favor selecciona al menos un producto para ordenar.");
-                return;
-            }
-
-            let totalArticulos = calcularTotalArticulos(carrito);
-            if (totalArticulos > 20) {
-                alert("⚠️ El pedido excede el límite máximo permitido de 20 artículos.");
                 return;
             }
 
@@ -428,13 +363,6 @@
             localStorage.setItem("turnoPedido", turnoAutomatico);
             localStorage.setItem("notasPedido", notas);
 
-            // Guardar cantidades individuales en localStorage para los tickets y comprobantes
-            localStorage.setItem("espresso", carrito["Café Espresso"] || 0);
-            localStorage.setItem("capuchino", carrito["Capuchino clásico"] || 0);
-            localStorage.setItem("chocomilk", carrito["Chocomilk"] || 0);
-            localStorage.setItem("pastel", carrito["Pastel de chocolate"] || 0);
-            localStorage.setItem("baguette", carrito["Baguette"] || 0);
-
             let datosPedido = {
                 folio: folioGenerado,
                 productos: productosArray,
@@ -452,9 +380,9 @@
             }).catch(err => console.log("Modo local activo"));
 
             if (tipoEntregaSeleccionada === "pickup") {
-                window.location.href = "/mp";
+                window.location.href = "mp.html";
             } else {
-                window.location.href = "/delivery";
+                window.location.href = "delivery.html";
             }
         }
     </script>
