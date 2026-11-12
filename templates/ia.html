@@ -23,20 +23,20 @@
         .cabecera-choom h2 { color: #4b3024; font-size: 24px; }
         .badge-tiempo { display: inline-block; background: #eddac2; color: #593724; padding: 4px 12px; border-radius: 15px; font-size: 13px; font-weight: bold; margin-top: 5px; }
 
-        /* Banner de Aviso de Promoción de la IA */
+        /* Burbuja múltiple de promociones de la IA */
         .burbuja-promo-ia {
             background: linear-gradient(135deg, #8e5a24, #c08a54);
             color: #fff8ed;
-            padding: 15px 20px;
+            padding: 18px 22px;
             border-radius: 14px;
             margin-bottom: 25px;
             font-size: 15px;
-            font-weight: 500;
             display: none;
             box-shadow: 0 4px 15px rgba(142, 90, 36, 0.2);
             animation: fadeIn 0.4s ease;
         }
-        .burbuja-promo-ia b { color: #ffe6bc; }
+        .burbuja-promo-ia b { color: #ffe6bc; font-size: 16px; display: block; margin-bottom: 8px; }
+        .burbuja-promo-ia ul { margin-left: 20px; line-height: 1.6; }
 
         .paso-pregunta { display: none; animation: fadeIn 0.4s ease; }
         .paso-pregunta.activo { display: block; }
@@ -111,9 +111,11 @@
                 </div>
             </div>
 
-            <!-- BURBUJA DE AVISO DE PROMOCIONES ACTIVAS -->
+            <!-- BURBUJA DE AVISO DE TODAS LAS PROMOCIONES ACTIVAS -->
             <div id="burbujaPromoIA" class="burbuja-promo-ia">
-                🔥 <b>¡Hola, choom!</b> Te cuento que hoy tenemos activa la promoción: <span id="textoPromoIA"></span>. ¡Puedes aprovecharla desde el menú!
+                🔥 <b>¡Hola, choom! Te cuento que hoy tenemos estas promociones activas:</b>
+                <ul id="listaPromosIA"></ul>
+                <p style="margin-top: 8px; font-size: 13px; color: #ffe6bc;">¡Puedes aprovechar la que más te guste desde el menú!</p>
             </div>
 
             <!-- AVISO DE TIENDA CERRADA -->
@@ -200,7 +202,6 @@
         let top3Ganadores = [];
         let cantidadesTop3 = [1, 1, 1];
 
-        // --- VERIFICAR HORARIO Y REVISAR PROMOCIONES ACTIVAS PARA LA IA ---
         function verificarHorarioOperativo() {
             const ahora = new Date();
             const dia = ahora.getDay();
@@ -231,12 +232,12 @@
             }
 
             detectarMomentoAutomatico(dia, hora);
-            buscarPromocionesActivasParaIA();
+            buscarTodasLasPromocionesParaIA();
             return true;
         }
 
-        // --- CONSULTAR PROMOCIONES Y MOSTRARAVISO EN IA ---
-        function buscarPromocionesActivasParaIA() {
+        // --- LISTAR TODAS LAS PROMOCIONES ACTIVAS EN LA IA ---
+        function buscarTodasLasPromocionesParaIA() {
             fetch("/api/promociones")
                 .then(res => res.json())
                 .then(promosServidor => {
@@ -247,8 +248,11 @@
                     let activas = todas.filter(p => hoy >= p.fechaInicio && hoy <= p.fechaFin);
 
                     if (activas.length > 0) {
-                        let promoDestacada = activas[0];
-                        document.getElementById("textoPromoIA").innerText = `"${promoDestacada.titulo}" a solo $${Number(promoDestacada.precio).toFixed(2)} MXN`;
+                        let listaHTML = "";
+                        activas.forEach(p => {
+                            listaHTML += `<li><b>${p.titulo}</b> (${p.etiqueta}) a solo $${Number(p.precio).toFixed(2)} MXN</li>`;
+                        });
+                        document.getElementById("listaPromosIA").innerHTML = listaHTML;
                         document.getElementById("burbujaPromoIA").style.display = "block";
                     }
                 })
@@ -257,8 +261,11 @@
                     const hoy = new Date().toISOString().split('T')[0];
                     let activas = promosLocales.filter(p => hoy >= p.fechaInicio && hoy <= p.fechaFin);
                     if (activas.length > 0) {
-                        let promoDestacada = activas[0];
-                        document.getElementById("textoPromoIA").innerText = `"${promoDestacada.titulo}" a solo $${Number(promoDestacada.precio).toFixed(2)} MXN`;
+                        let listaHTML = "";
+                        activas.forEach(p => {
+                            listaHTML += `<li><b>${p.titulo}</b> (${p.etiqueta}) a solo $${Number(p.precio).toFixed(2)} MXN</li>`;
+                        });
+                        document.getElementById("listaPromosIA").innerHTML = listaHTML;
                         document.getElementById("burbujaPromoIA").style.display = "block";
                     }
                 });
