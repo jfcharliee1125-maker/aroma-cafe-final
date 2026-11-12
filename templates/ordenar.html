@@ -459,9 +459,6 @@
                 body: JSON.stringify(datosPedido)
             }).catch(err => console.log("Error al conectar con la API"));
 
-            // Nota: El carrito NO se borra aquí para que la página de pago (/mp o /delivery) pueda leer los montos correctamente. 
-            // (El carrito se debe limpiar al finalizar por completo el pago o al darle clic en volver a inicio tras completar la compra).
-
             if (tipoEntregaSeleccionada === "pickup") {
                 window.location.href = "/mp";
             } else {

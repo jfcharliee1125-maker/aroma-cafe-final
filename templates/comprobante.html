@@ -333,7 +333,7 @@ if (tipoEntrega === "delivery") {
     cajaTiempo.innerHTML = `⏱️ Tiempo estimado de entrega: <b>30 - 45 minutos</b> (Aprox. a las ${formatoHoraDelivery})`;
 
     if (metodo.includes("efectivo")) {
-        document.getElementById("metodo").innerHTML = "<b>Método de pago:</b> 💵 Efectivo (Pago al recibir)";
+        document.getElementById("metodo").innerHTML = "<b>Método de pago:</b> 💵 Efectivo";
         
         let montoIngresadoStr = deliveryData.detallesPago || "0";
         let montoIngresado = parseFloat(montoIngresadoStr.replace(/[^0-9.]/g, '')) || totalConIva;
