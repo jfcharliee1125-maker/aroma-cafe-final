@@ -23,6 +23,21 @@
         .cabecera-choom h2 { color: #4b3024; font-size: 24px; }
         .badge-tiempo { display: inline-block; background: #eddac2; color: #593724; padding: 4px 12px; border-radius: 15px; font-size: 13px; font-weight: bold; margin-top: 5px; }
 
+        /* Banner de Aviso de Promoción de la IA */
+        .burbuja-promo-ia {
+            background: linear-gradient(135deg, #8e5a24, #c08a54);
+            color: #fff8ed;
+            padding: 15px 20px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            font-size: 15px;
+            font-weight: 500;
+            display: none;
+            box-shadow: 0 4px 15px rgba(142, 90, 36, 0.2);
+            animation: fadeIn 0.4s ease;
+        }
+        .burbuja-promo-ia b { color: #ffe6bc; }
+
         .paso-pregunta { display: none; animation: fadeIn 0.4s ease; }
         .paso-pregunta.activo { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -94,6 +109,11 @@
                     <h2>Don Barista</h2>
                     <span class="badge-tiempo" id="badge-momento">Verificando horario...</span>
                 </div>
+            </div>
+
+            <!-- BURBUJA DE AVISO DE PROMOCIONES ACTIVAS -->
+            <div id="burbujaPromoIA" class="burbuja-promo-ia">
+                🔥 <b>¡Hola, choom!</b> Te cuento que hoy tenemos activa la promoción: <span id="textoPromoIA"></span>. ¡Puedes aprovecharla desde el menú!
             </div>
 
             <!-- AVISO DE TIENDA CERRADA -->
@@ -180,6 +200,7 @@
         let top3Ganadores = [];
         let cantidadesTop3 = [1, 1, 1];
 
+        // --- VERIFICAR HORARIO Y REVISAR PROMOCIONES ACTIVAS PARA LA IA ---
         function verificarHorarioOperativo() {
             const ahora = new Date();
             const dia = ahora.getDay();
@@ -210,7 +231,37 @@
             }
 
             detectarMomentoAutomatico(dia, hora);
+            buscarPromocionesActivasParaIA();
             return true;
+        }
+
+        // --- CONSULTAR PROMOCIONES Y MOSTRARAVISO EN IA ---
+        function buscarPromocionesActivasParaIA() {
+            fetch("/api/promociones")
+                .then(res => res.json())
+                .then(promosServidor => {
+                    let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
+                    let todas = [...promosServidor, ...promosLocales];
+                    
+                    const hoy = new Date().toISOString().split('T')[0];
+                    let activas = todas.filter(p => hoy >= p.fechaInicio && hoy <= p.fechaFin);
+
+                    if (activas.length > 0) {
+                        let promoDestacada = activas[0];
+                        document.getElementById("textoPromoIA").innerText = `"${promoDestacada.titulo}" a solo $${Number(promoDestacada.precio).toFixed(2)} MXN`;
+                        document.getElementById("burbujaPromoIA").style.display = "block";
+                    }
+                })
+                .catch(() => {
+                    let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
+                    const hoy = new Date().toISOString().split('T')[0];
+                    let activas = promosLocales.filter(p => hoy >= p.fechaInicio && hoy <= p.fechaFin);
+                    if (activas.length > 0) {
+                        let promoDestacada = activas[0];
+                        document.getElementById("textoPromoIA").innerText = `"${promoDestacada.titulo}" a solo $${Number(promoDestacada.precio).toFixed(2)} MXN`;
+                        document.getElementById("burbujaPromoIA").style.display = "block";
+                    }
+                });
         }
 
         function detectarMomentoAutomatico(dia, hora) {
