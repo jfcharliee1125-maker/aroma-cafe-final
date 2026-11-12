@@ -459,6 +459,9 @@
                 body: JSON.stringify(datosPedido)
             }).catch(err => console.log("Error al conectar con la API"));
 
+            // 🛒 LIMPIAR EL CARRITO AL CONFIRMAR EL PEDIDO
+            localStorage.removeItem('carritoAroma');
+
             if (tipoEntregaSeleccionada === "pickup") {
                 window.location.href = "/mp";
             } else {
