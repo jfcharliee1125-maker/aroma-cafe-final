@@ -16,6 +16,17 @@
         .btn-ordenar-nav { background-color: #c08a54 !important; color: white !important; font-weight: bold !important; display: inline-flex; align-items: center; gap: 6px; }
         .badge-carrito { background-color: #38251e; color: #e8c99b; padding: 2px 8px; border-radius: 12px; font-size: 13px; font-weight: bold; }
 
+        .banner-estado {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px 20px;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 2px solid #f5c6cb;
+            display: none;
+            font-size: 15px;
+        }
+
         .productos { background-color: #f0e1cc; padding: 70px 8%; min-height: 80vh; }
         .encabezado { text-align: center; margin-bottom: 40px; }
         .etiqueta { color: #98653b; font-weight: bold; text-transform: uppercase; letter-spacing: 3px; font-size: 13px; }
@@ -154,6 +165,13 @@
             color: white !important;
         }
 
+        .btn-deshabilitado {
+            background-color: #cccccc !important;
+            color: #666666 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+        }
+
         footer { background-color: #38251e; text-align: center; padding: 25px 15px; color: #e8c99b; font-size: 14px; }
     </style>
 </head>
@@ -171,6 +189,11 @@
         </div>
     </nav>
 
+    <!-- BANNER DE ESTADO DE APERTURA -->
+    <div id="bannerEstado" class="banner-estado">
+        🔴 Cafetería Cerrada en este momento. Los pedidos se encuentran temporalmente deshabilitados.
+    </div>
+
     <section class="productos">
         <div class="encabezado">
             <span class="etiqueta">Preparados para ti</span>
@@ -179,7 +202,7 @@
         </div>
 
         <!-- CATEGORÍA 1: PLATILLOS -->
-        <details class="categoria-desplegable">
+        <details class="categoria-desplegable" open>
             <summary>🍽️ Platillos (10)</summary>
             <div class="tarjetas">
                 <div class="tarjeta">
@@ -315,7 +338,7 @@
         </details>
 
         <!-- CATEGORÍA 2: BEBIDAS -->
-        <details class="categoria-desplegable">
+        <details class="categoria-desplegable" open>
             <summary>☕ Bebidas (10)</summary>
             <div class="tarjetas">
                 <div class="tarjeta">
@@ -452,6 +475,53 @@
     </section>
 
     <script>
+        function verificarHorarioApertura() {
+            let ahora = new Date();
+            let dia = ahora.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+            let hora = ahora.getHours();
+            let minutos = ahora.getMinutes();
+            let horaDecimal = hora + minutos / 60;
+
+            let abierto = false;
+
+            // Lunes a Viernes (1 a 5): 7:00 a.m. a 9:00 p.m. (7 a 21)[cite: 8]
+            if (dia >= 1 && dia <= 5) {
+                if (horaDecimal >= 7 && horaDecimal < 21) {
+                    abierto = true;
+                }
+            } 
+            // Sábados (6): 8:00 a.m. a 10:00 p.m. (8 a 22)[cite: 8]
+            else if (dia === 6) {
+                if (horaDecimal >= 8 && horaDecimal < 22) {
+                    abierto = true;
+                }
+            }
+            // Domingos (0): 8:00 a.m. a 9:00 p.m. (8 a 21)[cite: 8]
+            else if (dia === 0) {
+                if (horaDecimal >= 8 && horaDecimal < 21) {
+                    abierto = true;
+                }
+            }
+
+            if (!abierto) {
+                let banner = document.getElementById('bannerEstado');
+                if (banner) banner.style.display = 'block';
+
+                let botones = document.querySelectorAll('.btn-agregar');
+                let inputs = document.querySelectorAll('.input-cantidad-menu');
+
+                botones.forEach(btn => {
+                    btn.disabled = true;
+                    btn.classList.add('btn-deshabilitado');
+                    btn.innerText = "🔒 Cerrado";
+                });
+
+                inputs.forEach(input => {
+                    input.disabled = true;
+                });
+            }
+        }
+
         function obtenerCarrito() {
             return JSON.parse(localStorage.getItem('carritoAroma')) || {};
         }
@@ -510,7 +580,10 @@
             }, 1200);
         }
 
-        window.addEventListener('DOMContentLoaded', actualizarBadgeCarrito);
+        window.addEventListener('DOMContentLoaded', () => {
+            actualizarBadgeCarrito();
+            verificarHorarioApertura();
+        });
     </script>
 
     <footer>

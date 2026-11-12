@@ -46,7 +46,7 @@
         .boton { display: inline-block; background-color: #6f4530; color: white; padding: 15px 27px; border-radius: 30px; text-decoration: none; 
             font-weight: bold; transition: 0.3s; border: none; cursor: pointer; }
         .boton:hover { background-color: #a76b3f; transform: translateY(-3px); box-shadow: 0 8px 18px #6f453044; }
-        .boton:disabled { background-color: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+        .boton:disabled { background-color: #ccc !important; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .resumen-total { margin-top: 30px; padding: 25px; background-color: #f0e1cc; border-radius: 12px; }
         .resumen-total h3 { font-size: 24px; color: #38251e; text-align: right; }
@@ -187,9 +187,9 @@
                 <div class="horarios-container">
                     <label>🕒 Turnos y Horarios de Atención</label>
                     <div class="caja-horarios">
-                        <p><b>Lunes a Viernes:</b> 7:00 a.m. - 9:00 p.m. (Matutino: 7am-2pm | Vespertino: 2pm-9pm)</p>
-                        <p style="margin-top: 6px;"><b>Sábados:</b> 8:00 a.m. - 10:00 p.m. (Matutino: 8am-2pm | Vespertino: 2pm-10pm)</p>
-                        <p style="margin-top: 6px;"><b>Domingos:</b> 8:00 a.m. - 9:00 p.m. (Matutino: 8am-2pm | Vespertino: 2pm-9pm)</p>
+                        <p><b>Lunes a Viernes:</b> 7:00 a.m. - 9:00 p.m. (Matutino: 7am-2pm | Vespertino: 2pm-9pm)[cite: 8]</p>
+                        <p style="margin-top: 6px;"><b>Sábados:</b> 8:00 a.m. - 10:00 p.m. (Matutino: 8am-2pm | Vespertino: 2pm-10pm)[cite: 8]</p>
+                        <p style="margin-top: 6px;"><b>Domingos:</b> 8:00 a.m. - 9:00 p.m. (Matutino: 8am-2pm | Vespertino: 2pm-9pm)[cite: 8]</p>
                     </div>
                 </div>
 
@@ -221,7 +221,7 @@
                 <h3 id="resultado-total" style="margin-top: 10px;">Total a pagar: $0.00 MXN</h3>
                 
                 <div style="text-align: right;">
-                    <button type="button" id="btnConfirmar" class="boton" style="margin-top: 15px; background-color: #38251e;" onclick="enviarPedido()">
+                    <button type="button" id="btnConfirmar" class="boton" style="margin-top: 15px;" onclick="enviarPedido()">
                         Confirmar Pedido
                     </button>
                 </div>
@@ -320,13 +320,13 @@
             document.getElementById('resultado-total').innerText = "Total a pagar: $" + totalConIva.toFixed(2) + " MXN";
         }
 
-        // Validación de Horarios en Tiempo Real (Hora Local de México)
+        // Validación de Horarios en Tiempo Real (L-V: 7am-9pm, Sáb: 8am-10pm, Dom: 8am-9pm)
         function verificarHorarioAtencion() {
             let ahora = new Date();
             let horaActual = ahora.getHours();
             let minutoActual = ahora.getMinutes();
             let horaDecimal = horaActual + (minutoActual / 60);
-            let diaSemana = ahora.getDay();
+            let diaSemana = ahora.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
 
             let abierto = false;
             let aperturaHora = 7;
@@ -338,7 +338,7 @@
             } else if (diaSemana === 6) {
                 aperturaHora = 8; cierreHora = 22;
                 abierto = (horaDecimal >= 8 && horaDecimal < 22);
-            } else {
+            } else { // Domingo
                 aperturaHora = 8; cierreHora = 21;
                 abierto = (horaDecimal >= 8 && horaDecimal < 21);
             }
@@ -362,11 +362,9 @@
                 
                 textoAviso.innerText = `Fuera de nuestro horario de atención. Podrás realizar tu pedido nuevamente en aproximadamente ${horasInt} hora(s) y ${minutosInt} minuto(s).`;
                 btnConfirmar.disabled = true;
-                btnConfirmar.style.backgroundColor = "#ccc";
             } else {
                 banner.style.display = "none";
                 btnConfirmar.disabled = false;
-                btnConfirmar.style.backgroundColor = "#38251e";
             }
         }
 
