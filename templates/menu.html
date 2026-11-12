@@ -3,105 +3,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aroma & Café | Menú</title>
+    <title>Aroma & Café | Carrito de Compras</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
-        body { background-color: #faf3e7; color: #3e2723; font-family: 'Segoe UI', Arial, sans-serif; }
-        .menu { background-color: #38251e; display: flex; justify-content: space-between; align-items: center; padding: 18px 8%; flex-wrap: wrap; gap: 15px; position: sticky; top: 0; z-index: 1000; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background-color: #faf3e7; color: #3e2723; padding-bottom: 50px; }
+
+        /* Barra de Navegación */
+        .menu { background-color: #38251e; display: flex; justify-content: space-between; align-items: center; padding: 18px 8%; flex-wrap: wrap; gap: 15px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .logo { color: #e8c99b; font-size: 27px; font-weight: bold; letter-spacing: 1px; }
         .menu-links { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         .menu a { text-decoration: none; color: #fff8ed; padding: 10px 16px; border-radius: 25px; transition: 0.3s; font-weight: 500; }
         .menu a:hover, .menu a.activo { background-color: #c08a54; color: white; }
-        .btn-ordenar-nav { background-color: #c08a54 !important; color: white !important; font-weight: bold !important; }
+        .btn-ordenar-nav { background-color: #c08a54 !important; color: white !important; font-weight: bold !important; display: inline-flex; align-items: center; gap: 8px; }
+        .badge-carrito { background-color: #38251e; color: #e8c99b; padding: 2px 8px; border-radius: 12px; font-size: 13px; font-weight: bold; }
 
-        .productos { background-color: #f0e1cc; padding: 70px 8%; min-height: 80vh; }
-        .encabezado { text-align: center; margin-bottom: 40px; }
-        .etiqueta { color: #98653b; font-weight: bold; text-transform: uppercase; letter-spacing: 3px; font-size: 13px; }
-        .encabezado h2 { font-family: Georgia, serif; font-size: 38px; color: #4b3024; margin: 12px 0; }
-        .encabezado p { color: #806653; font-size: 17px; line-height: 1.7; }
+        .contenedor {
+            max-width: 850px;
+            margin: 40px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 6px 25px rgba(89, 57, 27, 0.08);
+        }
 
-        .tarjetas { max-width: 1150px; margin: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-        .tarjeta { background: #fffaf2; border-radius: 18px; padding: 25px; text-align: center; border: 1px solid #e7d4ba; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
-        .tarjeta:hover { transform: translateY(-8px); box-shadow: 0 12px 25px #67452b20; }
-        .tarjeta img { width: 100%; height: 200px; object-fit: cover; border-radius: 12px; margin: 15px 0; }
-        .tarjeta h3 { color: #593724; font-size: 21px; margin-bottom: 8px; }
-        .tarjeta p { color: #806653; font-size: 15px; line-height: 1.7; }
-        .precio { font-size: 20px; font-weight: bold; color: #a76b3f; margin-top: 10px; }
+        h1 { text-align: center; color: #4b3024; font-family: Georgia, serif; margin-bottom: 25px; font-size: 32px; }
 
-        footer { background-color: #38251e; text-align: center; padding: 25px 15px; color: #e8c99b; font-size: 14px; }
+        .item-carrito {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e7d4ba;
+            gap: 15px;
+        }
+
+        .info-item h4 { color: #593724; font-size: 18px; margin-bottom: 4px; }
+        .info-item span { color: #a76b3f; font-weight: bold; font-size: 15px; }
+
+        .controles-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .selector-stepper {
+            display: flex;
+            align-items: center;
+            border: 2px solid #e7d4ba;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fffdf9;
+        }
+
+        .btn-step {
+            background: #f0e1cc;
+            border: none;
+            color: #4b3024;
+            font-weight: bold;
+            font-size: 16px;
+            width: 32px;
+            height: 36px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-step:hover { background: #d6b07f; color: white; }
+
+        .input-cantidad {
+            width: 45px;
+            height: 36px;
+            border: none;
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            color: #3e2723;
+            background: transparent;
+            outline: none;
+        }
+
+        .btn-eliminar {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+        .btn-eliminar:hover { background-color: #c9302c; }
+
+        .seccion-opciones {
+            margin-top: 30px;
+            background: #fdf6ec;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e7d4ba;
+        }
+
+        .grupo-campo {
+            margin-bottom: 15px;
+        }
+        .grupo-campo label { display: block; font-weight: 600; color: #593724; margin-bottom: 6px; font-size: 14px; }
+        .grupo-campo select, .grupo-campo textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e7d4ba;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            background-color: #fffdf9;
+            color: #3e2723;
+        }
+
+        .resumen-total {
+            background: #e8c99b;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: right;
+            margin-top: 25px;
+            font-size: 16px;
+            color: #38251e;
+            line-height: 1.6;
+        }
+        .resumen-total span {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+            color: #3e2723;
+            margin-top: 5px;
+        }
+
+        .aviso-limite {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #ffeeba;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .botones-accion {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .boton {
+            flex: 1;
+            background: #6f4530;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .boton:hover { background: #a76b3f; }
+        .boton-secundario { background: #806653; text-decoration: none; display: inline-flex; justify-content: center; align-items: center; }
+        .boton-secundario:hover { background: #593724; }
+
+        .carrito-vacio {
+            text-align: center;
+            padding: 40px 0;
+            color: #806653;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
+
     <nav class="menu">
         <div class="logo">☕ Aroma & Café</div>
         <div class="menu-links">
             <a href="/">Inicio</a>
             <a href="/nosotros">Nosotros</a>
-            <a href="/menu" class="activo">Menú</a>
+            <a href="/menu">Menú</a>
             <a href="/galeria">Galería</a>
             <a href="/servicios">Servicios</a>
             <a href="/contacto">Contacto</a>
-            <a href="/ordenar" class="btn-ordenar-nav">🛒 Ordenar</a>
+            <a href="/ordenar" class="btn-ordenar-nav activo">🛒 Carrito <span id="contadorCarrito" class="badge-carrito">0</span></a>
         </div>
     </nav>
 
-    <section class="productos">
-        <div class="encabezado">
-            <span class="etiqueta">Preparados para ti</span>
-            <h2>Nuestro Menú</h2>
-            <p>Conoce cada una de nuestras especialidades y sus precios.</p>
+    <div class="contenedor">
+        <h1>🛒 Tu Carrito de Compras</h1>
+
+        <div id="avisoGlobal" class="aviso-limite" style="display: none;">
+            ⚠️ Has alcanzado el límite máximo permitido de 20 artículos por pedido.
         </div>
 
-        <div class="tarjetas">
-            <div class="tarjeta">
-                <div>
-                    <h3>Café Espresso</h3>
-                    <img src="{{ url_for('static', filename='exp.jpg') }}" alt="Café Espresso">
-                    <p><b>Descripción:</b> Café intenso y aromático preparado con granos seleccionados.</p>
-                    <div class="precio">$50 MXN</div>
-                </div>
+        <div id="listaCarrito">
+            <!-- Los productos se cargan dinámicamente aquí -->
+        </div>
+
+        <div class="seccion-opciones">
+            <div class="grupo-campo">
+                <label for="tipoEntregaSelect">🚚 Método de Entrega:</label>
+                <select id="tipoEntregaSelect">
+                    <option value="pickup">🏃‍♂️ Recoger en Tienda (Pickup)</option>
+                    <option value="delivery">🛵 Envío a Domicilio (Delivery)</option>
+                </select>
             </div>
 
-            <div class="tarjeta">
-                <div>
-                    <h3>Capuchino clásico</h3>
-                    <img src="{{ url_for('static', filename='capu.jpg') }}" alt="Capuchino clásico">
-                    <p><b>Descripción:</b> Deliciosa combinación de espresso, leche vaporizada y espuma cremosa.</p>
-                    <div class="precio">$45 MXN</div>
-                </div>
+            <div class="grupo-campo">
+                <label for="turnoSelect">☀️ Turno del Pedido:</label>
+                <select id="turnoSelect">
+                    <option value="Matutino">Matutino</option>
+                    <option value="Vespertino">Vespertino</option>
+                </select>
             </div>
 
-            <div class="tarjeta">
-                <div>
-                    <h3>Chocomilk</h3>
-                    <img src="{{ url_for('static', filename='choco.jpg') }}" alt="Chocomilk">
-                    <p><b>Descripción:</b> Bebida dulce y refrescante elaborada con leche y chocolate.</p>
-                    <div class="precio">$35 MXN</div>
-                </div>
-            </div>
-
-            <div class="tarjeta">
-                <div>
-                    <h3>Pastel de chocolate</h3>
-                    <img src="{{ url_for('static', filename='pa.jpg') }}" alt="Pastel de chocolate">
-                    <p><b>Descripción:</b> Suave y esponjoso pastel elaborado con chocolate de alta calidad.</p>
-                    <div class="precio">$90 MXN</div>
-                </div>
-            </div>
-
-            <div class="tarjeta">
-                <div>
-                    <h3>Baguette</h3>
-                    <img src="{{ url_for('static', filename='ba.jpg') }}" alt="Baguette">
-                    <p><b>Descripción:</b> Pan crujiente relleno de ingredientes frescos.</p>
-                    <div class="precio">$75 MXN</div>
-                </div>
+            <div class="grupo-campo" style="margin-bottom: 0;">
+                <label for="notasInput">📝 Notas o especificaciones especiales (Opcional):</label>
+                <textarea id="notasInput" rows="2" placeholder="Ej. Sin azúcar, extra caliente, etc."></textarea>
             </div>
         </div>
-    </section>
 
-    <footer>
-        <p>© 2026 Aroma & Café · Hecho con ☕ y mucho amor.</p>
-    </footer>
+        <div class="resumen-total" id="resumenTotalContainer">
+            Calculando totales...
+        </div>
+
+        <div class="botones-accion">
+            <a href="/menu" class="boton boton-secundario">← Agregar más productos</a>
+            <button type="button" class="boton" onclick="procederAlPago()">Continuar al Pago 💳</button>
+        </div>
+    </div>
+
+    <script>
+        // Diccionario oficial de precios del menú completo (20 productos)
+        const preciosMenu = {
+            "Pastel de chocolate": 90,
+            "Baguette": 75,
+            "Croissant de Jamón y Queso": 105,
+            "Panini de Pollo al Pesto": 130,
+            "Bagel de Salmón": 145,
+            "Club Sandwich Clásico": 155,
+            "Toast de Aguacate": 120,
+            "Chilaquiles con Pollo": 135,
+            "Ensalada César con Pollo": 140,
+            "Waffles con Frutos Rojos": 110,
+            "Café Espresso": 50,
+            "Capuchino clásico": 45,
+            "Chocomilk": 35,
+            "Latte de Vainilla o Caramelo": 75,
+            "Chai Tea Latte": 75,
+            "Iced Caramel Macchiato": 80,
+            "Matcha Latte Helado": 80,
+            "Frappuccino Moka": 85,
+            "Smoothie de Frutos Rojos": 80,
+            "Tisana Frutal Fría": 60
+        };
+
+        function obtenerCarrito() {
+            return JSON.parse(localStorage.getItem('carritoAroma')) || {};
+        }
+
+        function guardarCarrito(carrito) {
+            localStorage.setItem('carritoAroma', JSON.stringify(carrito));
+            renderizarCarrito();
+        }
+
+        function calcularTotalArticulos(carrito) {
+            return Object.values(carrito).reduce((acc, val) => acc + (parseInt(val) || 0), 0);
+        }
+
+        function renderizarCarrito() {
+            let carrito = obtenerCarrito();
+            let contenedor = document.getElementById('listaCarrito');
+            let avisoGlobal = document.getElementById('avisoGlobal');
+            contenedor.innerHTML = "";
+
+            let totalArticulos = calcularTotalArticulos(carrito);
+            document.getElementById('contadorCarrito').innerText = totalArticulos;
+
+            if (totalArticulos >= 20) {
+                avisoGlobal.style.display = "block";
+            } else {
+                avisoGlobal.style.display = "none";
+            }
+
+            let llaves = Object.keys(carrito);
+            if (llaves.length === 0 || totalArticulos === 0) {
+                contenedor.innerHTML = `<div class="carrito-vacio">Tu carrito está vacío. ¡Explora nuestro menú y agrega tus antojos! ☕</div>`;
+                document.getElementById('resumenTotalContainer').innerHTML = `Subtotal: $0.00 MXN<br>IVA (16%): $0.00 MXN<br><span>TOTAL: $0.00 MXN</span>`;
+                return;
+            }
+
+            let subtotalGlobal = 0;
+
+            llaves.forEach(nombre => {
+                let cantidad = parseInt(carrito[nombre]) || 0;
+                if (cantidad > 0) {
+                    let precioUnitario = preciosMenu[nombre] || 0;
+                    let importe = cantidad * precioUnitario;
+                    subtotalGlobal += importe;
+
+                    contenedor.innerHTML += `
+                        <div class="item-carrito">
+                            <div class="info-item">
+                                <h4>${nombre}</h4>
+                                <span>$${precioUnitario} MXN c/u</span>
+                            </div>
+                            <div class="controles-item">
+                                <div class="selector-stepper">
+                                    <button type="button" class="btn-step" onclick="cambiarCantidad('${nombre}', -1)">-</button>
+                                    <input type="number" class="input-cantidad" value="${cantidad}" readonly>
+                                    <button type="button" class="btn-step" onclick="cambiarCantidad('${nombre}', 1)">+</button>
+                                </div>
+                                <span style="font-weight: bold; width: 75px; text-align: right;">$${importe}</span>
+                                <button type="button" class="btn-eliminar" onclick="eliminarProducto('${nombre}')">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            let iva = subtotalGlobal * 0.16;
+            let totalConIva = subtotalGlobal + iva;
+
+            localStorage.setItem('subtotalBase', subtotalGlobal.toFixed(2));
+            localStorage.setItem('totalCompra', totalConIva.toFixed(2));
+
+            document.getElementById('resumenTotalContainer').innerHTML = `
+                Subtotal: $${subtotalGlobal.toFixed(2)} MXN<br>
+                IVA (16%): $${iva.toFixed(2)} MXN<br>
+                <span>TOTAL: $${totalConIva.toFixed(2)} MXN</span>
+            `;
+        }
+
+        function cambiarCantidad(nombre, delta) {
+            let carrito = obtenerCarrito();
+            let actual = parseInt(carrito[nombre]) || 0;
+            let totalActualGlobal = calcularTotalArticulos(carrito);
+
+            let nuevoValor = actual + delta;
+
+            if (delta > 0 && totalActualGlobal >= 20) {
+                alert("⚠️ Has alcanzado el límite máximo global de 20 artículos por pedido.");
+                return;
+            }
+
+            if (nuevoValor > 20) {
+                nuevoValor = 20;
+            }
+
+            if (nuevoValor <= 0) {
+                delete carrito[nombre];
+            } else {
+                // Verificar si al sumar excede el global de 20
+                let diferencia = nuevoValor - actual;
+                if (totalActualGlobal + diferencia > 20) {
+                    alert("⚠️ No puedes rebasar el límite máximo de 20 artículos en total.");
+                    return;
+                }
+                carrito[nombre] = nuevoValor;
+            }
+
+            guardarCarrito(carrito);
+        }
+
+        function eliminarProducto(nombre) {
+            let carrito = obtenerCarrito();
+            delete carrito[nombre];
+            guardarCarrito(carrito);
+        }
+
+        function procederAlPago() {
+            let carrito = obtenerCarrito();
+            let totalArticulos = calcularTotalArticulos(carrito);
+
+            if (totalArticulos === 0) {
+                alert("⚠️ Tu carrito está vacío. Agrega al menos un producto antes de continuar.");
+                return;
+            }
+
+            // Guardar variables globales en localStorage para mantener compatibilidad con mp.html y delivery.html
+            let esp = 0, cap = 0, cho = 0, pas = 0, bag = 0;
+            
+            // Mapeo retrocompatible con las variables tradicionales que leen los tickets
+            for (let [key, val] of Object.entries(carrito)) {
+                if (key.toLowerCase().includes("espresso")) esp += val;
+                if (key.toLowerCase().includes("capuchino")) cap += val;
+                if (key.toLowerCase().includes("chocomilk")) cho += val;
+                if (key.toLowerCase().includes("pastel")) pas += val;
+                if (key.toLowerCase().includes("baguette")) bag += val;
+            }
+
+            localStorage.setItem("espresso", esp);
+            localStorage.setItem("capuchino", cap);
+            localStorage.setItem("chocomilk", cho);
+            localStorage.setItem("pastel", pas);
+            localStorage.setItem("baguette", bag);
+
+            // Guardar preferencias del pedido
+            let tipoEntrega = document.getElementById('tipoEntregaSelect').value;
+            let turno = document.getElementById('turnoSelect').value;
+            let notas = document.getElementById('notasInput').value.trim() || "Sin observaciones";
+
+            localStorage.setItem("tipoEntrega", tipoEntrega);
+            localStorage.setItem("turnoPedido", turno);
+            localStorage.setItem("notasPedido", notas);
+
+            // Generar folio único si no existe
+            if (!localStorage.getItem("folio")) {
+                let folioGenerado = "CAF-" + Math.floor(100000 + Math.random() * 900000);
+                localStorage.setItem("folio", folioGenerado);
+            }
+
+            // Redirigir según el método de entrega elegido
+            if (tipoEntrega === "delivery") {
+                window.location.href = "/delivery";
+            } else {
+                window.location.href = "/mp";
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', renderizarCarrito);
+    </script>
 </body>
 </html>
