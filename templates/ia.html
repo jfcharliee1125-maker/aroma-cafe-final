@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aroma & Café | Asistente IA Choom</title>
+    <title>Aroma & Café | Asistente Don Barista</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background-color: #faf3e7; color: #3e2723; }
@@ -21,7 +21,6 @@
         .avatar-grande { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #c08a54; object-fit: cover; background: #38251e; }
         .cabecera-choom h2 { color: #4b3024; font-size: 24px; }
         .badge-tiempo { display: inline-block; background: #eddac2; color: #593724; padding: 4px 12px; border-radius: 15px; font-size: 13px; font-weight: bold; margin-top: 5px; }
-        .btn-cambiar-tiempo { background: none; border: none; color: #c08a54; text-decoration: underline; cursor: pointer; font-size: 13px; margin-left: 8px; font-weight: bold; }
 
         .paso-pregunta { display: none; animation: fadeIn 0.4s ease; }
         .paso-pregunta.activo { display: block; }
@@ -31,10 +30,6 @@
         .grid-opciones { display: grid; grid-template-columns: 1fr; gap: 12px; }
         .btn-opcion { background: #fffaf2; border: 2px solid #e7d4ba; padding: 16px 20px; border-radius: 14px; text-align: left; font-size: 16px; color: #3e2723; cursor: pointer; transition: 0.2s; font-weight: 500; display: flex; align-items: center; gap: 12px; }
         .btn-opcion:hover { background: #faebd7; border-color: #c08a54; transform: translateX(5px); }
-
-        /* Selector manual de horario */
-        #selector-manual-tiempo { display: none; background: #fdf6ec; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #d6b07f; text-align: center; }
-        .btn-mini-tiempo { background: #6f4530; color: white; border: none; padding: 6px 12px; border-radius: 8px; margin: 4px; cursor: pointer; font-size: 13px; }
 
         /* Resultado */
         #resultado-ia { display: none; text-align: center; animation: fadeIn 0.5s ease; }
@@ -64,24 +59,16 @@
     <div class="contenedor-ia">
         <div class="tarjeta-ia">
             <div class="cabecera-choom">
-                <img src="{{ url_for('static', filename='c.jpg') }}" alt="Choom" class="avatar-grande">
+                <img src="{{ url_for('static', filename='fino.jpg') }}" alt="Don Barista" class="avatar-grande">
                 <div>
-                    <h2>Asistente Choom IA</h2>
-                    <span class="badge-tiempo" id="badge-momento">Detectando horario...</span>
-                    <button class="btn-cambiar-tiempo" onclick="toggleCambioTiempo()">Cambiar modo</button>
+                    <h2>Asistente Don Barista</h2>
+                    <span class="badge-tiempo" id="badge-momento">Detectando horario automático...</span>
                 </div>
-            </div>
-
-            <div id="selector-manual-tiempo">
-                <p style="font-size: 13px; margin-bottom: 8px; color: #593724;">¿Para qué momento del día buscas recomendación?</p>
-                <button class="btn-mini-tiempo" onclick="fijarMomento('desayuno')">🌅 Desayuno</button>
-                <button class="btn-mini-tiempo" onclick="fijarMomento('comida')">☀️ Comida / Tarde</button>
-                <button class="btn-mini-tiempo" onclick="fijarMomento('cena')">🌙 Cena / Antojo</button>
             </div>
 
             <!-- PREGUNTA 1 -->
             <div class="paso-pregunta activo" id="paso-1">
-                <p class="titulo-pregunta" id="texto-p1">1. ¿Qué nivel de antojo traes en este momento?</p>
+                <p class="titulo-pregunta" id="texto-p1">¿Qué nivel de antojo traes en este momento?</p>
                 <div class="grid-opciones" id="opciones-p1"></div>
             </div>
 
@@ -124,7 +111,6 @@
     </div>
 
     <script>
-        // Base de datos de los 20 productos con etiquetas para variedad real
         const menuCompleto = [
             { nombre: "Pastel de chocolate", precio: 90, img: "/static/pa.jpg", desc: "Suave y esponjoso pastel elaborado con chocolate de alta calidad.", tipo: "platillo", sabor: "dulce", temp: "cualquiera", momentos: ["comida", "cena"] },
             { nombre: "Baguette", precio: 75, img: "/static/ba.jpg", desc: "Pan crujiente relleno de ingredientes frescos.", tipo: "platillo", sabor: "salado", temp: "cualquiera", momentos: ["desayuno", "comida", "cena"] },
@@ -154,14 +140,34 @@
         let productoGanador = null;
 
         function detectarMomentoAutomatico() {
-            const hora = new Date().getHours();
-            if (hora >= 6 && hora < 12) {
-                fijarMomento("desayuno");
-            } else if (hora >= 12 && hora < 18) {
-                fijarMomento("comida");
-            } else {
-                fijarMomento("cena");
+            const ahora = new Date();
+            const dia = ahora.getDay(); // 0 = Domingo, 1 = Lunes ... 6 = Sábado
+            const hora = ahora.getHours();
+
+            let momentoDetectado = "desayuno";
+
+            // Lunes a Viernes (1 al 5)
+            if (dia >= 1 && dia <= 5) {
+                if (hora >= 7 && hora < 12) {
+                    momentoDetectado = "desayuno";
+                } else if (hora >= 12 && hora < 17) {
+                    momentoDetectado = "comida";
+                } else {
+                    momentoDetectado = "cena";
+                }
+            } 
+            // Sábados y Domingos (6 o 0)
+            else {
+                if (hora >= 8 && hora < 12) {
+                    momentoDetectado = "desayuno";
+                } else if (hora >= 12 && hora < 17) {
+                    momentoDetectado = "comida";
+                } else {
+                    momentoDetectado = "cena";
+                }
             }
+
+            fijarMomento(momentoDetectado);
         }
 
         function fijarMomento(momento) {
@@ -171,33 +177,27 @@
             const contOpciones = document.getElementById("opciones-p1");
 
             if (momento === "desayuno") {
-                badge.innerText = "🌅 Modo Desayuno (Automático)";
+                badge.innerText = "🌅 Desayuno (7:00 a.m. - 12:00 p.m.)";
                 p1.innerText = "1. Buenos días, choom. ¿Cómo quieres arrancar hoy?";
                 contOpciones.innerHTML = `
                     <button class="btn-opcion" onclick="responder(1, 'platillo')">🍳 Con un desayuno completo para agarrar energía</button>
                     <button class="btn-opcion" onclick="responder(1, 'bebida')">☕ Solo necesito mi dosis de cafeína o bebida matutina</button>
                 `;
             } else if (momento === "comida") {
-                badge.innerText = "☀️ Modo Comida / Tarde (Automático)";
+                badge.innerText = "☀️ Comida / Tarde (12:00 p.m. - 5:00 p.m.)";
                 p1.innerText = "1. ¡Hora de recargar baterías! ¿Qué buscas esta tarde?";
                 contOpciones.innerHTML = `
                     <button class="btn-opcion" onclick="responder(1, 'platillo')">🥪 Un platillo sustancioso o snack salado</button>
                     <button class="btn-opcion" onclick="responder(1, 'bebida')">🧋 Algo líquido y refrescante para seguir el día</button>
                 `;
             } else {
-                badge.innerText = "🌙 Modo Cena / Antojo Nocturno (Automático)";
+                badge.innerText = "🌙 Cena / Antojo (5:00 p.m. en adelante)";
                 p1.innerText = "1. Ya cayó la noche, choom. ¿Qué se te antoja para cerrar el día?";
                 contOpciones.innerHTML = `
                     <button class="btn-opcion" onclick="responder(1, 'platillo')">🍰 Un postre o cena ligera antes de dormir</button>
                     <button class="btn-opcion" onclick="responder(1, 'bebida')">🍵 Una bebida reconfortante o ligera</button>
                 `;
             }
-            document.getElementById("selector-manual-tiempo").style.display = "none";
-        }
-
-        function toggleCambioTiempo() {
-            const el = document.getElementById("selector-manual-tiempo");
-            el.style.display = (el.style.display === "block") ? "none" : "block";
         }
 
         function responder(paso, valor) {
@@ -217,24 +217,19 @@
         }
 
         function calcularRecomendacion() {
-            // Evaluamos cada producto con un sistema de puntuación
             let candidatos = menuCompleto.map(prod => {
                 let puntos = 0;
                 if (prod.tipo === respuestas.tipo) puntos += 40;
                 if (prod.momentos.includes(momentoActual)) puntos += 25;
                 if (prod.sabor === respuestas.sabor) puntos += 25;
                 if (respuestas.temp === "cualquiera" || prod.temp === respuestas.temp || prod.temp === "cualquiera") puntos += 10;
-                
-                // Pequeño factor aleatorio para variar entre productos empatados
                 puntos += Math.floor(Math.random() * 12);
                 return { ...prod, puntaje: puntos };
             });
 
-            // Ordenamos de mayor a menor puntaje
             candidatos.sort((a, b) => b.puntaje - a.puntaje);
             productoGanador = candidatos[0];
 
-            // Calculamos porcentaje realista entre 86% y 98%
             let porcentaje = Math.min(98, Math.max(86, productoGanador.puntaje));
 
             document.getElementById("texto-porcentaje").innerText = `✨ ${porcentaje}% de seguridad`;

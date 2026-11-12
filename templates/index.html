@@ -145,18 +145,18 @@
         </div>
     </section>
 
-    <!-- AVATAR IA FLOTANTE (CHOOM) -->
+    <!-- AVATAR IA FLOTANTE (DON BARISTA) -->
     <div id="ia-avatar-container" style="position: fixed; bottom: 25px; right: 25px; z-index: 9999; display: flex; align-items: flex-end; gap: 12px; font-family: 'Segoe UI', Arial, sans-serif;">
-        <div id="ia-burbuja" style="background: #fffaf2; padding: 15px 18px; border-radius: 18px; box-shadow: 0 6px 20px rgba(56, 37, 30, 0.2); max-width: 250px; border: 2px solid #c08a54; position: relative;">
-            <span onclick="cerrarAvatar()" style="position: absolute; top: 5px; right: 10px; cursor: pointer; font-size: 16px; color: #806653; font-weight: bold;">&times;</span>
-            <p style="margin: 0 0 12px 0; font-size: 14px; color: #3e2723; line-height: 1.4;"><b>Choom:</b> ¿No sabes qué pedir, choom? ¿Te ayudo a elegir?</p>
-            <div style="display: flex; gap: 8px;">
+        <div id="ia-burbuja" style="background: #fffaf2; padding: 15px 18px; border-radius: 18px; box-shadow: 0 6px 20px rgba(56, 37, 30, 0.2); max-width: 255px; border: 2px solid #c08a54; position: relative; transition: all 0.3s ease;">
+            <span onclick="minimizarBurbuja()" style="position: absolute; top: 5px; right: 10px; cursor: pointer; font-size: 16px; color: #806653; font-weight: bold;" title="Minimizar">&times;</span>
+            <p id="ia-mensaje-texto" style="margin: 0 0 12px 0; font-size: 14px; color: #3e2723; line-height: 1.4;"><b>Don Barista:</b> ¿No sabes qué pedir, choom? ¿Te ayudo a elegir?</p>
+            <div id="ia-botones-accion" style="display: flex; gap: 8px;">
                 <button onclick="irAI()" style="background: #c08a54; color: white; border: none; padding: 7px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 13px; flex: 1;">Sí</button>
-                <button onclick="cerrarAvatar()" style="background: #eddac2; color: #593724; border: none; padding: 7px 12px; border-radius: 10px; cursor: pointer; font-size: 13px;">No</button>
+                <button onclick="rechazarAyuda()" style="background: #eddac2; color: #593724; border: none; padding: 7px 12px; border-radius: 10px; cursor: pointer; font-size: 13px;">No</button>
             </div>
         </div>
-        <div onclick="irAI()" style="width: 65px; height: 65px; border-radius: 50%; overflow: hidden; border: 3px solid #c08a54; box-shadow: 0 4px 12px rgba(0,0,0,0.25); background: #38251e; cursor: pointer;" title="Abrir Asistente Choom">
-            <img src="{{ url_for('static', filename='fino.jpg') }}" alt="Choom IA" style="width: 100%; height: 100%; object-fit: cover;">
+        <div onclick="reactivarAvatar()" style="width: 65px; height: 65px; border-radius: 50%; overflow: hidden; border: 3px solid #c08a54; box-shadow: 0 4px 12px rgba(0,0,0,0.25); background: #38251e; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'" title="Hablar con Don Barista">
+            <img src="{{ url_for('static', filename='fino.jpg') }}" alt="Don Barista IA" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
     </div>
 
@@ -179,9 +179,29 @@
     </footer>
 
     <script>
-        function cerrarAvatar() {
-            document.getElementById('ia-avatar-container').style.display = 'none';
+        function rechazarAyuda() {
+            const texto = document.getElementById('ia-mensaje-texto');
+            const botones = document.getElementById('ia-botones-accion');
+            texto.innerHTML = "<b>Don Barista:</b> Ok choom, avísame cuando quieras ayuda.";
+            texto.style.marginBottom = "0";
+            botones.style.display = "none";
         }
+
+        function minimizarBurbuja() {
+            document.getElementById('ia-burbuja').style.display = 'none';
+        }
+
+        function reactivarAvatar() {
+            const burbuja = document.getElementById('ia-burbuja');
+            const texto = document.getElementById('ia-mensaje-texto');
+            const botones = document.getElementById('ia-botones-accion');
+
+            burbuja.style.display = 'block';
+            texto.innerHTML = "<b>Don Barista:</b> ¿No sabes qué pedir, choom? ¿Te ayudo a elegir?";
+            texto.style.marginBottom = "12px";
+            botones.style.display = "flex";
+        }
+
         function irAI() {
             window.location.href = "/ia";
         }
