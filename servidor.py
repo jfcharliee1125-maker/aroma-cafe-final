@@ -206,6 +206,9 @@ def cargar_pagina_generica(pagina):
     except Exception:
         return render_template('index.html')
 
+@app.route('/ia')
+def ia():
+    return render_template('ia.html')
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
