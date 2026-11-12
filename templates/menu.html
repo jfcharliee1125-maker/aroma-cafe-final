@@ -670,17 +670,22 @@
                 return;
             }
 
-            // Verificar si ya existe CUALQUIER otra promoción en el carrito
+            // Verificar estrictamente si ya existe CUALQUIER otra promoción en el carrito
             let yaTienePromo = Object.keys(carrito).some(k => k.startsWith("⭐ PROMO:"));
 
             if (yaTienePromo && !carrito.hasOwnProperty(nombreItem)) {
-                alert("⚠️ Solo se permite 1 promoción por cliente. Ya tienes una promoción agregada en tu carrito.");
+                alert("⚠️ Solo se permite 1 promoción por pedido. Ya tienes una promoción agregada en tu carrito.");
                 return;
             }
 
-            // Si ya la tiene agregada pero por alguna razón hace clic de nuevo, o si está limpia, se añade exactamente 1 unidad
-            carrito[nombreItem] = (carrito[nombreItem] || 0) + 1;
-            if (carrito[nombreItem] > 20) carrito[nombreItem] = 20;
+            // Si ya la tiene agregada, no permitimos acumular más de 1 unidad de promo
+            if (carrito.hasOwnProperty(nombreItem)) {
+                alert("⚠️ Ya has agregado esta promoción al carrito.");
+                return;
+            }
+
+            // Agregar exactamente 1 unidad de la promoción
+            carrito[nombreItem] = 1;
 
             localStorage.setItem('carritoAroma', JSON.stringify(carrito));
             actualizarBadgeCarrito();
