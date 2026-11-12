@@ -17,7 +17,7 @@
         .btn-login-nav { background-color: transparent !important; border: 2px solid #c08a54 !important; color: #e8c99b !important; font-weight: bold !important; }
         .btn-login-nav:hover { background-color: #c08a54 !important; color: white !important; }
 
-        .contenedor-ia { max-width: 750px; margin: 50px auto; padding: 0 20px; }
+        .contenedor-ia { max-width: 950px; margin: 50px auto; padding: 0 20px; }
         .tarjeta-ia { background: #ffffff; border-radius: 20px; padding: 35px; border: 2px solid #e7d4ba; box-shadow: 0 10px 30px rgba(56, 37, 30, 0.1); }
 
         .cabecera-choom { display: flex; align-items: center; gap: 18px; border-bottom: 2px solid #f0e1cc; padding-bottom: 20px; margin-bottom: 25px; }
@@ -38,18 +38,39 @@
         #alerta-cerrado { display: none; text-align: center; padding: 25px; background: #fdf2f2; border: 2px solid #f5c6cb; border-radius: 15px; color: #721c24; margin-top: 15px; }
         #alerta-cerrado h3 { font-size: 22px; margin-bottom: 10px; font-family: Georgia, serif; }
 
-        /* Resultado */
-        #resultado-ia { display: none; text-align: center; animation: fadeIn 0.5s ease; }
-        .porcentaje-match { background: #4CAF50; color: white; padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 15px; display: inline-block; margin-bottom: 15px; }
-        .img-recomendada { width: 240px; height: 180px; object-fit: cover; border-radius: 14px; margin: 15px auto; display: block; border: 2px solid #e7d4ba; }
-        .nombre-prod { font-size: 26px; color: #4b3024; margin-bottom: 8px; }
-        .desc-prod { color: #806653; font-size: 15px; max-width: 500px; margin: 0 auto 15px auto; line-height: 1.5; }
-        .precio-prod { font-size: 22px; font-weight: bold; color: #a76b3f; margin-bottom: 20px; }
+        /* Resultado Top 3 */
+        #resultado-ia { display: none; animation: fadeIn 0.5s ease; }
+        .encabezado-resultados { text-align: center; margin-bottom: 25px; }
+        .encabezado-resultados h3 { font-size: 22px; color: #4b3024; margin-bottom: 6px; }
+        .encabezado-resultados p { color: #806653; font-size: 15px; }
 
-        .acciones-finales { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-        .btn-accion { padding: 12px 24px; border-radius: 25px; border: none; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.3s; }
-        .btn-agregar-ia { background: #c08a54; color: white; }
-        .btn-agregar-ia:hover { background: #98653b; }
+        .grid-top3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .card-recomendacion { background: #fffaf2; border: 2px solid #e7d4ba; border-radius: 16px; padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: 0.3s; }
+        .card-recomendacion:hover { border-color: #c08a54; transform: translateY(-4px); box-shadow: 0 8px 20px rgba(56, 37, 30, 0.1); }
+        .card-recomendacion.top-1 { border: 2px solid #c08a54; background: #fff6e8; }
+
+        .badge-porcentaje { color: white; padding: 5px 14px; border-radius: 20px; font-weight: bold; font-size: 13px; display: inline-block; margin-bottom: 12px; }
+        .bg-alto { background: #4CAF50; }
+        .bg-medio { background: #d9822b; }
+        .bg-alternativa { background: #6f4530; }
+
+        .img-recomendada { width: 100%; height: 155px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; border: 1px solid #e7d4ba; }
+        .nombre-prod { font-size: 19px; color: #4b3024; margin-bottom: 6px; font-weight: bold; }
+        .desc-prod { color: #806653; font-size: 13px; margin-bottom: 12px; line-height: 1.4; flex-grow: 1; }
+        .precio-prod { font-size: 18px; font-weight: bold; color: #a76b3f; margin-bottom: 12px; }
+
+        /* Selector de Cantidad por tarjeta */
+        .control-cantidad { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 14px; }
+        .btn-cant { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #c08a54; background: #ffffff; color: #593724; font-size: 17px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-cant:hover { background: #c08a54; color: white; }
+        .num-cant { font-size: 17px; font-weight: bold; color: #38251e; min-width: 24px; text-align: center; }
+
+        .btn-agregar-card { width: 100%; padding: 10px 16px; border-radius: 22px; border: none; background: #c08a54; color: white; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.3s; }
+        .btn-agregar-card:hover { background: #98653b; }
+
+        .acciones-finales { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; border-top: 1px solid #f0e1cc; padding-top: 20px; }
+        .btn-accion { padding: 12px 24px; border-radius: 25px; border: none; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.3s; text-decoration: none; }
+        .btn-ir-carrito { background: #38251e; color: white; }
         .btn-reintentar { background: #eddac2; color: #593724; }
     </style>
 </head>
@@ -82,7 +103,7 @@
             <div id="alerta-cerrado">
                 <h3>🔒 Cafetería Cerrada en este momento</h3>
                 <p id="texto-horario-cerrado" style="font-size: 15px; line-height: 1.6; margin-bottom: 15px;"></p>
-                <a href="/" class="btn-accion btn-reintentar" style="text-decoration: none; display: inline-block;">Volver al Inicio</a>
+                <a href="/" class="btn-accion btn-reintentar" style="display: inline-block;">Volver al Inicio</a>
             </div>
 
             <!-- CONTENEDOR DE PREGUNTAS -->
@@ -114,17 +135,17 @@
                     </div>
                 </div>
 
-                <!-- RESULTADO FINAL -->
+                <!-- RESULTADO TOP 3 -->
                 <div id="resultado-ia">
-                    <span class="porcentaje-match" id="texto-porcentaje">94% de coincidencia</span>
-                    <p style="color: #593724; font-size: 16px; margin-bottom: 10px;" id="frase-choom"></p>
-                    <img id="img-res" src="" alt="Producto" class="img-recomendada">
-                    <h3 class="nombre-prod" id="nombre-res"></h3>
-                    <p class="desc-prod" id="desc-res"></p>
-                    <div class="precio-prod" id="precio-res"></div>
+                    <div class="encabezado-resultados">
+                        <h3>✨ Mis 3 mejores recomendaciones para ti, choom</h3>
+                        <p>Calculé tu compatibilidad con todo el menú. Elige los que quieras para tu orden:</p>
+                    </div>
+
+                    <div class="grid-top3" id="contenedor-top3"></div>
 
                     <div class="acciones-finales">
-                        <button class="btn-accion btn-agregar-ia" id="btn-add-carrito" onclick="agregarRecomendacionCarrito()">🛒 Agregar al carrito</button>
+                        <a href="/ordenar" class="btn-accion btn-ir-carrito">🛒 Ir a finalizar pedido</a>
                         <button class="btn-accion btn-reintentar" onclick="reiniciarTest()">🔄 Probar otra combinación</button>
                     </div>
                 </div>
@@ -159,11 +180,12 @@
 
         let momentoActual = "desayuno";
         let respuestas = { tipo: "", sabor: "", temp: "" };
-        let productoGanador = null;
+        let top3Ganadores = [];
+        let cantidadesTop3 = [1, 1, 1];
 
         function verificarHorarioOperativo() {
             const ahora = new Date();
-            const dia = ahora.getDay(); // 0: Dom, 1-5: L-V, 6: Sáb
+            const dia = ahora.getDay();
             const hora = ahora.getHours();
             const minutos = ahora.getMinutes();
             const tiempoActualMinutos = hora * 60 + minutos;
@@ -171,18 +193,13 @@
             let abierto = false;
             let mensajeHorario = "";
 
-            // Lunes a Viernes (1 al 5): 7:00 a.m. (420 min) a 9:00 p.m. (1260 min)
             if (dia >= 1 && dia <= 5) {
                 abierto = (tiempoActualMinutos >= 420 && tiempoActualMinutos < 1260);
                 mensajeHorario = "Lunes a Viernes de 7:00 a.m. a 9:00 p.m.";
-            } 
-            // Sábados (6): 8:00 a.m. (480 min) a 10:00 p.m. (1320 min)
-            else if (dia === 6) {
+            } else if (dia === 6) {
                 abierto = (tiempoActualMinutos >= 480 && tiempoActualMinutos < 1320);
                 mensajeHorario = "Sábados de 8:00 a.m. a 10:00 p.m.";
-            } 
-            // Domingos (0): 8:00 a.m. (480 min) a 9:00 p.m. (1260 min)
-            else {
+            } else {
                 abierto = (tiempoActualMinutos >= 480 && tiempoActualMinutos < 1260);
                 mensajeHorario = "Domingos de 8:00 a.m. a 9:00 p.m.";
             }
@@ -257,55 +274,108 @@
             } else if (paso === 3) {
                 respuestas.temp = valor;
                 document.getElementById("paso-3").classList.remove("activo");
-                calcularRecomendacion();
+                calcularRecomendaciones();
             }
         }
 
-        function calcularRecomendacion() {
-            let candidatos = menuCompleto.map(prod => {
+        function calcularRecomendaciones() {
+            // Evaluamos los 20 productos con variación aleatoria amplia para garantizar rotación real
+            let evaluados = menuCompleto.map(prod => {
                 let puntos = 0;
-                if (prod.tipo === respuestas.tipo) puntos += 40;
-                if (prod.momentos.includes(momentoActual)) puntos += 25;
+                if (prod.tipo === respuestas.tipo) puntos += 35;
+                if (prod.momentos.includes(momentoActual)) puntos += 20;
                 if (prod.sabor === respuestas.sabor) puntos += 25;
                 if (respuestas.temp === "cualquiera" || prod.temp === respuestas.temp || prod.temp === "cualquiera") puntos += 10;
-                puntos += Math.floor(Math.random() * 12);
+                
+                // Factor aleatorio controlado para que incluso con mismas respuestas rote entre candidatos afines
+                puntos += Math.floor(Math.random() * 22);
                 return { ...prod, puntaje: puntos };
             });
 
-            candidatos.sort((a, b) => b.puntaje - a.puntaje);
-            productoGanador = candidatos[0];
+            evaluados.sort((a, b) => b.puntaje - a.puntaje);
 
-            let porcentaje = Math.min(98, Math.max(86, productoGanador.puntaje));
+            // Tomamos el Top 3 y asignamos porcentajes escalonados realistas
+            top3Ganadores = evaluados.slice(0, 3);
+            cantidadesTop3 = [1, 1, 1];
 
-            document.getElementById("texto-porcentaje").innerText = `✨ ${porcentaje}% de seguridad`;
-            document.getElementById("frase-choom").innerHTML = `Analicé tus gustos para este horario y estoy <b>${porcentaje}% seguro</b> de que te va a encantar:`;
-            document.getElementById("img-res").src = productoGanador.img;
-            document.getElementById("nombre-res").innerText = productoGanador.nombre;
-            document.getElementById("desc-res").innerText = productoGanador.desc;
-            document.getElementById("precio-res").innerText = `$${productoGanador.precio} MXN`;
+            const porcentajes = [
+                Math.floor(Math.random() * (98 - 89 + 1)) + 89, // Top 1: 89% - 98%
+                Math.floor(Math.random() * (84 - 72 + 1)) + 72, // Top 2: 72% - 84%
+                Math.floor(Math.random() * (68 - 55 + 1)) + 55  // Top 3: 55% - 68%
+            ];
+
+            const etiquetasBadge = [
+                { texto: `🥇 ${porcentajes[0]}% Ideal para ti`, clase: "bg-alto" },
+                { texto: `🥈 ${porcentajes[1]}% Gran opción`, clase: "bg-medio" },
+                { texto: `🥉 ${porcentajes[2]}% Alternativa rica`, clase: "bg-alternativa" }
+            ];
+
+            const contenedor = document.getElementById("contenedor-top3");
+            contenedor.innerHTML = "";
+
+            top3Ganadores.forEach((prod, idx) => {
+                const esTop1 = idx === 0 ? "top-1" : "";
+                contenedor.innerHTML += `
+                    <div class="card-recomendacion ${esTop1}">
+                        <div>
+                            <span class="badge-porcentaje ${etiquetasBadge[idx].clase}">${etiquetasBadge[idx].texto}</span>
+                            <img src="${prod.img}" alt="${prod.nombre}" class="img-recomendada">
+                            <h4 class="nombre-prod">${prod.nombre}</h4>
+                        </div>
+                        <p class="desc-prod">${prod.desc}</p>
+                        <div>
+                            <div class="precio-prod" id="precio-card-${idx}">$${prod.precio} MXN</div>
+                            <div class="control-cantidad">
+                                <button class="btn-cant" onclick="cambiarCantidadCard(${idx}, -1)">-</button>
+                                <span class="num-cant" id="cant-card-${idx}">1</span>
+                                <button class="btn-cant" onclick="cambiarCantidadCard(${idx}, 1)">+</button>
+                            </div>
+                            <button class="btn-agregar-card" id="btn-card-${idx}" onclick="agregarCardCarrito(${idx})">🛒 Agregar</button>
+                        </div>
+                    </div>
+                `;
+            });
 
             document.getElementById("resultado-ia").style.display = "block";
         }
 
-        function agregarRecomendacionCarrito() {
-            if (!productoGanador) return;
+        function cambiarCantidadCard(idx, delta) {
+            let nuevaCant = cantidadesTop3[idx] + delta;
+            if (nuevaCant < 1) nuevaCant = 1;
+            if (nuevaCant > 20) nuevaCant = 20;
+            cantidadesTop3[idx] = nuevaCant;
+
+            document.getElementById(`cant-card-${idx}`).innerText = nuevaCant;
+            const prod = top3Ganadores[idx];
+            const total = prod.precio * nuevaCant;
+            document.getElementById(`precio-card-${idx}`).innerText = nuevaCant > 1 
+                ? `$${total} MXN ($${prod.precio} c/u)` 
+                : `$${prod.precio} MXN`;
+        }
+
+        function agregarCardCarrito(idx) {
+            const prod = top3Ganadores[idx];
+            const cant = cantidadesTop3[idx];
+            if (!prod) return;
+
             let carrito = JSON.parse(localStorage.getItem('carritoAroma')) || {};
             let totalActual = Object.values(carrito).reduce((acc, val) => acc + (parseInt(val) || 0), 0);
 
-            if (totalActual + 1 > 20) {
-                alert("⚠️ Ya alcanzaste el límite máximo de 20 artículos en tu carrito.");
+            if (totalActual + cant > 20) {
+                alert(`⚠️ El límite máximo es de 20 artículos en tu carrito (ya tienes ${totalActual}).`);
                 return;
             }
 
-            carrito[productoGanador.nombre] = (carrito[productoGanador.nombre] || 0) + 1;
+            carrito[prod.nombre] = (carrito[prod.nombre] || 0) + cant;
             localStorage.setItem('carritoAroma', JSON.stringify(carrito));
 
-            const btn = document.getElementById("btn-add-carrito");
-            btn.innerText = "✓ ¡Agregado al carrito!";
+            const btn = document.getElementById(`btn-card-${idx}`);
+            btn.innerText = `✓ ¡${cant} agregado(s)!`;
             btn.style.background = "#4CAF50";
             setTimeout(() => {
-                window.location.href = "/ordenar";
-            }, 900);
+                btn.innerText = "🛒 Agregar más";
+                btn.style.background = "#c08a54";
+            }, 1400);
         }
 
         function reiniciarTest() {
