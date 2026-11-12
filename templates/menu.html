@@ -7,6 +7,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
         body { background-color: #faf3e7; color: #3e2723; font-family: 'Segoe UI', Arial, sans-serif; }
+        
         .menu { background-color: #38251e; display: flex; justify-content: space-between; align-items: center; padding: 18px 8%; flex-wrap: wrap; gap: 15px; position: sticky; top: 0; z-index: 1000; }
         .logo { color: #e8c99b; font-size: 27px; font-weight: bold; letter-spacing: 1px; }
         .menu-links { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
@@ -21,7 +22,7 @@
         .encabezado h2 { font-family: Georgia, serif; font-size: 38px; color: #4b3024; margin: 12px 0; }
         .encabezado p { color: #806653; font-size: 17px; line-height: 1.7; }
 
-        /* Estilos para el desplegable (details/summary) */
+        /* Categorías Desplegables Estéticas */
         .categoria-desplegable {
             max-width: 1150px;
             margin: 0 auto 30px auto;
@@ -29,14 +30,15 @@
             border: 1px solid #e7d4ba;
             border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 4px 15px #67452b10;
+            box-shadow: 0 4px 15px rgba(103, 69, 43, 0.08);
+            transition: all 0.3s ease;
         }
 
         .categoria-desplegable summary {
             font-family: Georgia, serif;
             font-size: 24px;
             color: #4b3024;
-            padding: 20px 30px;
+            padding: 22px 30px;
             background-color: #eddac2;
             cursor: pointer;
             font-weight: bold;
@@ -73,19 +75,43 @@
             gap: 25px; 
         }
 
-        .tarjeta { background: #ffffff; border-radius: 18px; padding: 25px; text-align: center; border: 1px solid #e7d4ba; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
-        .tarjeta:hover { transform: translateY(-8px); box-shadow: 0 12px 25px #67452b20; }
-        .tarjeta img { width: 100%; height: 200px; object-fit: cover; border-radius: 12px; margin: 15px 0; }
+        .tarjeta { 
+            background: #ffffff; 
+            border-radius: 18px; 
+            padding: 25px; 
+            text-align: center; 
+            border: 1px solid #e7d4ba; 
+            transition: 0.3s; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        
+        .tarjeta:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 12px 25px rgba(103, 69, 43, 0.12); 
+        }
+
+        .tarjeta img { 
+            width: 100%; 
+            height: 200px; 
+            object-fit: cover; 
+            border-radius: 12px; 
+            margin: 15px 0; 
+        }
+
         .tarjeta h3 { color: #593724; font-size: 21px; margin-bottom: 8px; }
         .tarjeta p { color: #806653; font-size: 15px; line-height: 1.7; }
-        .precio { font-size: 20px; font-weight: bold; color: #a76b3f; margin-top: 10px; }
+        .precio { font-size: 20px; font-weight: bold; color: #a76b3f; margin: 12px 0; }
 
+        /* Controles de cantidad y botón */
         .controles-compra {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 10px;
         }
 
         .input-cantidad-menu {
@@ -138,13 +164,13 @@
     <nav class="menu">
         <div class="logo">☕ Aroma & Café</div>
         <div class="menu-links">
-            <a href="index.html">Inicio</a>
-            <a href="nosotros.html">Nosotros</a>
-            <a href="menu.html" class="activo">Menú</a>
-            <a href="galeria.html">Galería</a>
-            <a href="servicios.html">Servicios</a>
-            <a href="contacto.html">Contacto</a>
-            <a href="ordenar.html" class="btn-ordenar-nav">🛒 Carrito <span id="contadorCarrito" class="badge-carrito">0</span></a>
+            <a href="/">Inicio</a>
+            <a href="/nosotros">Nosotros</a>
+            <a href="/menu" class="activo">Menú</a>
+            <a href="/galeria">Galería</a>
+            <a href="/servicios">Servicios</a>
+            <a href="/contacto">Contacto</a>
+            <a href="/ordenar" class="btn-ordenar-nav">🛒 Carrito <span id="contadorCarrito" class="badge-carrito">0</span></a>
         </div>
     </nav>
 
@@ -152,276 +178,276 @@
         <div class="encabezado">
             <span class="etiqueta">Preparados para ti</span>
             <h2>Nuestro Menú</h2>
-            <p>Haz clic en las categorías para desplegar o replegar los productos, elige la cantidad y agrégalos a tu carrito (Máximo 20 artículos en total por pedido).</p>
+            <p>Explora nuestras categorías, elige tus especialidades favoritas y agrégalas a tu carrito (Máximo 20 artículos en total por pedido).</p>
         </div>
 
-        <!-- CATEGORÍA 1: ALIMENTOS -->
-        <details class="categoria-desplegable">
+        <!-- CATEGORÍA 1: ALIMENTOS Y PLATILLOS -->
+        <details class="categoria-desplegable" open>
             <summary>🍽️ Alimentos y Platillos (10)</summary>
             <div class="tarjetas">
                 <div class="tarjeta">
                     <div>
                         <h3>Pastel de chocolate</h3>
-                        <img src="pa.webp" alt="Pastel de chocolate">
+                        <img src="{{ url_for('static', filename='pa.webp') }}" alt="Pastel de chocolate">
                         <p><b>Descripción:</b> Suave y esponjoso pastel elaborado con chocolate de alta calidad.</p>
                         <div class="precio">$90 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Pastel de chocolate" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Pastel de chocolate', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Pastel de chocolate" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Pastel de chocolate', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Baguette</h3>
-                        <img src="ba.webp" alt="Baguette">
+                        <img src="{{ url_for('static', filename='ba.webp') }}" alt="Baguette">
                         <p><b>Descripción:</b> Pan crujiente relleno de ingredientes frescos.</p>
                         <div class="precio">$75 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Baguette" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Baguette', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Baguette" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Baguette', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Croissant de Jamón y Queso</h3>
-                        <img src="croissant.webp" alt="Croissant de Jamón y Queso">
+                        <img src="{{ url_for('static', filename='croissant.webp') }}" alt="Croissant de Jamón y Queso">
                         <p><b>Descripción:</b> Pan hojaldrado con mantequilla, relleno de jamón de pavo y queso gouda derretido.</p>
                         <div class="precio">$105 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Croissant de Jamón y Queso" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Croissant de Jamón y Queso', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Croissant de Jamón y Queso" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Croissant de Jamón y Queso', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Panini de Pollo al Pesto</h3>
-                        <img src="panini.webp" alt="Panini de Pollo al Pesto">
+                        <img src="{{ url_for('static', filename='panini.webp') }}" alt="Panini de Pollo al Pesto">
                         <p><b>Descripción:</b> Pechuga de pollo a la plancha, queso mozzarella, jitomate deshidratado y pesto en ciabatta.</p>
                         <div class="precio">$130 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Panini de Pollo al Pesto" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Panini de Pollo al Pesto', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Panini de Pollo al Pesto" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Panini de Pollo al Pesto', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Bagel de Salmón</h3>
-                        <img src="bagel.webp" alt="Bagel de Salmón">
+                        <img src="{{ url_for('static', filename='bagel.webp') }}" alt="Bagel de Salmón">
                         <p><b>Descripción:</b> Bagel de ajonjolí con queso crema a las finas hierbas, salmón ahumado y pepino.</p>
                         <div class="precio">$145 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Bagel de Salmón" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Bagel de Salmón', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Bagel de Salmón" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Bagel de Salmón', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Club Sandwich Clásico</h3>
-                        <img src="club.webp" alt="Club Sandwich Clásico">
+                        <img src="{{ url_for('static', filename='club.webp') }}" alt="Club Sandwich Clásico">
                         <p><b>Descripción:</b> Tres capas con pavo, tocino crujiente, queso americano, lechuga, jitomate y papas.</p>
                         <div class="precio">$155 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Club Sandwich Clásico" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Club Sandwich Clásico', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Club Sandwich Clásico" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Club Sandwich Clásico', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Toast de Aguacate</h3>
-                        <img src="toast.webp" alt="Toast de Aguacate">
+                        <img src="{{ url_for('static', filename='toast.webp') }}" alt="Toast de Aguacate">
                         <p><b>Descripción:</b> Pan de masa madre, puré de aguacate, pepitas, chile en hojuelas y dos huevos pochados.</p>
                         <div class="precio">$120 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Toast de Aguacate" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Toast de Aguacate', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Toast de Aguacate" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Toast de Aguacate', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Chilaquiles con Pollo</h3>
-                        <img src="chilaquiles.webp" alt="Chilaquiles con Pollo">
+                        <img src="{{ url_for('static', filename='chilaquiles.webp') }}" alt="Chilaquiles con Pollo">
                         <p><b>Descripción:</b> Totopos bañados en salsa verde o roja, pollo deshebrado, crema y queso fresco.</p>
                         <div class="precio">$135 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Chilaquiles con Pollo" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Chilaquiles con Pollo', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Chilaquiles con Pollo" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Chilaquiles con Pollo', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Ensalada César con Pollo</h3>
-                        <img src="ensalada.webp" alt="Ensalada César con Pollo">
+                        <img src="{{ url_for('static', filename='ensalada.webp') }}" alt="Ensalada César con Pollo">
                         <p><b>Descripción:</b> Lechuga romana, tiras de pollo a la parrilla, crotones de ajo y aderezo César cremoso.</p>
                         <div class="precio">$140 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Ensalada César con Pollo" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Ensalada César con Pollo', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Ensalada César con Pollo" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Ensalada César con Pollo', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Waffles con Frutos Rojos</h3>
-                        <img src="waffle.webp" alt="Waffles con Frutos Rojos">
+                        <img src="{{ url_for('static', filename='waffle.webp') }}" alt="Waffles con Frutos Rojos">
                         <p><b>Descripción:</b> Waffle dorado por fuera y suave por dentro, servido con fresas, zarzamoras y miel.</p>
                         <div class="precio">$110 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Waffles con Frutos Rojos" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Waffles con Frutos Rojos', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Waffles con Frutos Rojos" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Waffles con Frutos Rojos', this)">🛒 Agregar</button>
                     </div>
                 </div>
             </div>
         </details>
 
-        <!-- CATEGORÍA 2: BEBIDAS -->
-        <details class="categoria-desplegable">
+        <!-- CATEGORÍA 2: BEBIDAS Y BEBIBLES -->
+        <details class="categoria-desplegable" open>
             <summary>☕ Bebidas y Bebibles (10)</summary>
             <div class="tarjetas">
                 <div class="tarjeta">
                     <div>
                         <h3>Café Espresso</h3>
-                        <img src="exp.webp" alt="Café Espresso">
+                        <img src="{{ url_for('static', filename='exp.webp') }}" alt="Café Espresso">
                         <p><b>Descripción:</b> Café intenso y aromático preparado con granos seleccionados.</p>
                         <div class="precio">$50 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Café Espresso" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Café Espresso', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Café Espresso" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Café Espresso', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Capuchino clásico</h3>
-                        <img src="capu.webp" alt="Capuchino clásico">
+                        <img src="{{ url_for('static', filename='capu.webp') }}" alt="Capuchino clásico">
                         <p><b>Descripción:</b> Deliciosa combinación de espresso, leche vaporizada y espuma cremosa.</p>
                         <div class="precio">$45 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Capuchino clásico" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Capuchino clásico', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Capuchino clásico" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Capuchino clásico', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Chocomilk</h3>
-                        <img src="choco.webp" alt="Chocomilk">
+                        <img src="{{ url_for('static', filename='choco.webp') }}" alt="Chocomilk">
                         <p><b>Descripción:</b> Bebida dulce y refrescante elaborada con leche y chocolate.</p>
                         <div class="precio">$35 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Chocomilk" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Chocomilk', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Chocomilk" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Chocomilk', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Latte de Vainilla o Caramelo</h3>
-                        <img src="latte.webp" alt="Latte de Vainilla">
+                        <img src="{{ url_for('static', filename='latte.webp') }}" alt="Latte de Vainilla o Caramelo">
                         <p><b>Descripción:</b> Espresso combinado con leche caliente vaporizada y jarabe suave de vainilla o caramelo.</p>
                         <div class="precio">$75 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Latte de Vainilla o Caramelo" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Latte de Vainilla o Caramelo', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Latte de Vainilla o Caramelo" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Latte de Vainilla o Caramelo', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Chai Tea Latte</h3>
-                        <img src="chai.webp" alt="Chai Tea Latte">
+                        <img src="{{ url_for('static', filename='chai.webp') }}" alt="Chai Tea Latte">
                         <p><b>Descripción:</b> Té negro concentrado con especias aromáticas (canela, cardamomo, jengibre) y leche.</p>
                         <div class="precio">$75 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Chai Tea Latte" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Chai Tea Latte', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Chai Tea Latte" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Chai Tea Latte', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Iced Caramel Macchiato</h3>
-                        <img src="iced_macchiato.webp" alt="Iced Caramel Macchiato">
+                        <img src="{{ url_for('static', filename='iced_macchiato.webp') }}" alt="Iced Caramel Macchiato">
                         <p><b>Descripción:</b> Leche fría con hielo, vainilla, coronada con shot de espresso y espiral de caramelo.</p>
                         <div class="precio">$80 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Iced Caramel Macchiato" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Iced Caramel Macchiato', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Iced Caramel Macchiato" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Iced Caramel Macchiato', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Matcha Latte Helado</h3>
-                        <img src="matcha.webp" alt="Matcha Latte Helado">
+                        <img src="{{ url_for('static', filename='matcha.webp') }}" alt="Matcha Latte Helado">
                         <p><b>Descripción:</b> Té matcha ceremonial batido con leche de tu elección, hielo y endulzante natural.</p>
                         <div class="precio">$80 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Matcha Latte Helado" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Matcha Latte Helado', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Matcha Latte Helado" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Matcha Latte Helado', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Frappuccino Moka</h3>
-                        <img src="frappe.webp" alt="Frappuccino Moka">
+                        <img src="{{ url_for('static', filename='frappe.webp') }}" alt="Frappuccino Moka">
                         <p><b>Descripción:</b> Bebida helada a punto de granizado con espresso, leche, chocolate, hielo y crema batida.</p>
                         <div class="precio">$85 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Frappuccino Moka" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Frappuccino Moka', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Frappuccino Moka" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Frappuccino Moka', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Smoothie de Frutos Rojos</h3>
-                        <img src="smoothie.webp" alt="Smoothie de Frutos Rojos">
+                        <img src="{{ url_for('static', filename='smoothie.webp') }}" alt="Smoothie de Frutos Rojos">
                         <p><b>Descripción:</b> Licuado denso de fresas, moras y arándanos congelados mezclados con yogur griego.</p>
                         <div class="precio">$80 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Smoothie de Frutos Rojos" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Smoothie de Frutos Rojos', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Smoothie de Frutos Rojos" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Smoothie de Frutos Rojos', this)">🛒 Agregar</button>
                     </div>
                 </div>
 
                 <div class="tarjeta">
                     <div>
                         <h3>Tisana Frutal Fría</h3>
-                        <img src="tisana.webp" alt="Tisana Frutal Fría">
+                        <img src="{{ url_for('static', filename='tisana.webp') }}" alt="Tisana Frutal Fría">
                         <p><b>Descripción:</b> Infusión refrescante de frutas deshidratadas (frutos del bosque y jamaica) con hielo.</p>
                         <div class="precio">$60 MXN</div>
-                        <div class="controles-compra">
-                            <input type="number" id="cant-Tisana Frutal Fría" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
-                            <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Tisana Frutal Fría', this)">🛒 Agregar</button>
-                        </div>
+                    </div>
+                    <div class="controles-compra">
+                        <input type="number" id="cant-Tisana Frutal Fría" class="input-cantidad-menu" min="1" max="20" value="1" onchange="validarLimite(this)">
+                        <button type="button" class="btn-agregar" onclick="agregarAlCarrito('Tisana Frutal Fría', this)">🛒 Agregar</button>
                     </div>
                 </div>
             </div>
@@ -461,7 +487,7 @@
             let totalActual = calcularTotalArticulos(carrito);
             let cantidadPreviaProducto = carrito[nombreProducto] || 0;
 
-            // Validación estricta de máximo 20 artículos en total en todo el carrito
+            // Validación de límite global de 20 artículos en total
             if (totalActual + cantidadSeleccionada > 20) {
                 alert("⚠️ Límite excedido: El máximo permitido es de 20 artículos en total por pedido. Actualmente tienes " + totalActual + " en tu carrito.");
                 return;
