@@ -199,8 +199,12 @@
     </footer>
 
     <script>
-        // --- VERIFICAR Y MOSTRAR PROMOCIONES NUEVAS AL ENTRAR (INDEX) ---
+        // --- VERIFICAR Y MOSTRAR PROMOCIONES NUEVAS AL ENTRAR (SOLO UNA VEZ POR SESIÓN) ---
         async function verificarPromosInicio() {
+            if (sessionStorage.getItem("avisoPromosVisto") === "true") {
+                return;
+            }
+
             try {
                 let res = await fetch("/api/promociones");
                 let promosServidor = await res.json();
@@ -217,6 +221,8 @@
                     });
                     document.getElementById("ulPromosInicio").innerHTML = listaHTML;
                     document.getElementById("modalPromosInicio").style.display = "flex";
+                    
+                    sessionStorage.setItem("avisoPromosVisto", "true");
                 }
             } catch (e) {
                 let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
@@ -230,6 +236,8 @@
                     });
                     document.getElementById("ulPromosInicio").innerHTML = listaHTML;
                     document.getElementById("modalPromosInicio").style.display = "flex";
+                    
+                    sessionStorage.setItem("avisoPromosVisto", "true");
                 }
             }
         }
