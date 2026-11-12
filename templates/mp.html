@@ -222,7 +222,6 @@ select, input {
 </div>
 
 <script>
-// Catálogo completo de precios unitarios para los 20 productos
 const catalogoPrecios = {
     "Pastel de chocolate": 90,
     "Baguette": 75,
@@ -246,12 +245,11 @@ const catalogoPrecios = {
     "Tisana Frutal Fría": 60
 };
 
-// Cargar carrito dinámico desde localStorage
-let carrito = JSON.parse(localStorage.getItem("carritoAroma")) || {};
+// Cargar carrito desde el respaldo temporal para el ticket
+let carrito = JSON.parse(localStorage.getItem("productosTicket")) || JSON.parse(localStorage.getItem("carritoAroma")) || {};
 let folioActual = localStorage.getItem("folio") || "";
 let tipoEntrega = localStorage.getItem("tipoEntrega") || "pickup";
 
-// Actualizar etiqueta visual de entrega
 let infoEntregaBadge = document.getElementById("infoEntrega");
 if (tipoEntrega === "delivery") {
     infoEntregaBadge.innerText = "🛵 Envío a domicilio (Delivery)";

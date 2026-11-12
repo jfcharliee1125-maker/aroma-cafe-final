@@ -436,6 +436,9 @@
             let turnoAutomatico = determinarTurnoAutomatico();
             let folioGenerado = "CAF-" + Math.floor(100000 + Math.random() * 900000);
 
+            // Guardamos los productos en una llave dedicada para el ticket/pago antes de limpiar el carrito principal
+            localStorage.setItem("productosTicket", JSON.stringify(carrito));
+
             localStorage.setItem("folio", folioGenerado);
             localStorage.setItem("subtotalBase", subtotal.toFixed(2));
             localStorage.setItem("totalCompra", totalConIva.toFixed(2));
@@ -459,7 +462,7 @@
                 body: JSON.stringify(datosPedido)
             }).catch(err => console.log("Error al conectar con la API"));
 
-            // 🛒 LIMPIAR EL CARRITO INMEDIATAMENTE AL ENVIAR EL PEDIDO
+            // 🛒 Limpiamos el carrito principal para que aparezca vacío si el usuario vuelve a entrar
             localStorage.removeItem('carritoAroma');
 
             if (tipoEntregaSeleccionada === "pickup") {

@@ -245,7 +245,7 @@ h1, h2 {
         <button class="boton" id="btnDescargar">
             Descargar Ticket
         </button>
-        <a href="/" class="boton boton-secundario">
+        <a href="/" class="boton boton-secundario" onclick="limpiarCarritoAlSalir()">
             🏠 Volver al Inicio
         </a>
     </div>
@@ -254,7 +254,6 @@ h1, h2 {
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
 <script>
-// Catálogo completo de precios unitarios para los 20 productos
 const catalogoPrecios = {
     "Pastel de chocolate": 90, "Baguette": 75, "Croissant de Jamón y Queso": 105,
     "Panini de Pollo al Pesto": 130, "Bagel de Salmón": 145, "Club Sandwich Clásico": 155,
@@ -278,12 +277,13 @@ let turnoActual = localStorage.getItem("turnoPedido") || "Matutino/Vespertino";
 document.getElementById("turnoTicket").innerHTML = `☀️ Turno: ${turnoActual}`;
 
 let ahora = new Date();
-let horaPickup = new Date(ahora.getTime() + 15 * 60000);
+let horaPickup = new Date(ahora.getTime() + 20 * 60000);
 let formatoHoraPickup = horaPickup.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 document.getElementById("cajaTiempoPickup").innerHTML = `⏱️ Tu pedido estará listo para recoger en tienda en aprox. <b>15 - 20 minutos</b> (Aprox. a las ${formatoHoraPickup})`;
 
 let productosContainer = document.getElementById("productos");
-let carrito = JSON.parse(localStorage.getItem("carritoAroma")) || {};
+// Leemos del respaldo temporal para que no llegue vacío
+let carrito = JSON.parse(localStorage.getItem("productosTicket")) || JSON.parse(localStorage.getItem("carritoAroma")) || {};
 let subtotalCalculado = 0;
 let totalArticulos = 0;
 
@@ -395,6 +395,13 @@ function abrirImagenComprobante() {
     } else {
         alert("No se adjuntó ninguna imagen del comprobante.");
     }
+}
+
+// Limpiar almacenamiento del carrito al salir definitivamente
+function limpiarCarritoAlSalir() {
+    localStorage.removeItem("carritoAroma");
+    localStorage.removeItem("productosTicket");
+    localStorage.removeItem("notasPedido");
 }
 
 document.getElementById("btnDescargar").addEventListener("click", function() {
