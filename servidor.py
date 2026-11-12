@@ -60,6 +60,10 @@ def galeria():
 def nosotros():
     return render_template("nosotros.html")
 
+@app.route("/ia")
+def ia():
+    return render_template("ia.html")
+
 
 # --- RUTAS DE PEDIDOS ---
 
@@ -206,9 +210,6 @@ def cargar_pagina_generica(pagina):
     except Exception:
         return render_template('index.html')
 
-@app.route('/ia')
-def ia():
-    return render_template('ia.html')
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
