@@ -16,7 +16,7 @@ client = MongoClient("mongodb://jfcharliee1125_db_user:bqt3ve2VARr-PjN@ac-fswlmx
 db = client["aroma_cafe"]
 coleccion_pedidos = db["pedidos"]
 coleccion_comentarios = db["comentarios"]
-coleccion_promociones = db["promociones"]  # <-- Nueva colección para las promos dinámicas
+coleccion_promociones = db["promociones"]  # Colección para las promos dinámicas
 
 
 # --- RUTAS PARA LAS VISTAS HTML PRINCIPALES ---
@@ -186,7 +186,7 @@ def eliminar_comentario(id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@app.route("/api/comentarios/multiples", methods=["DELETE"])
+@app.route("/api/comentarios/eliminar-multiples", methods=["POST"])
 def eliminar_multiples_comentarios():
     datos = request.json
     ids = datos.get("ids", [])
@@ -201,7 +201,7 @@ def eliminar_multiples_comentarios():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@app.route("/api/comentarios/<id>/responder", methods=["PUT"])
+@app.route("/api/comentarios/<id>/responder", methods=["POST"])
 def responder_comentario(id):
     datos = request.json
     respuesta_texto = datos.get("respuesta")
