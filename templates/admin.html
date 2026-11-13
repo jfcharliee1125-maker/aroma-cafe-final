@@ -290,7 +290,7 @@
                 </tr>
             </thead>
             <tbody id="tabla-promociones-admin">
-                <tr><td colspan="5" style="text-align: center; color: #806653;">Aún no hay promociones activas.</td></tr>
+                <tr><td colspan="5" style="text-align: center; color: #806653;">Cargando promociones...</td></tr>
             </tbody>
         </table>
     </div>
@@ -369,6 +369,8 @@
             document.getElementById("promoFin").value = enUnaSemana;
             verificarTipoPromo();
             cargarPromocionesAdmin();
+            if (!esMarketing) cargarPedidos();
+            cargarComentariosAdmin();
         });
 
         function verificarTipoPromo() {
@@ -417,7 +419,8 @@
             else if (tema === "verde") tarjeta.style.background = "linear-gradient(135deg, #1e4d2b, #2e7d32)";
         }
 
-        function guardarPromocion(event) {
+        // --- GUARDAR PROMOCIÓN EN MONGODB ATLAS (SERVIDOR) ---
+        async function guardarPromocion(event) {
             event.preventDefault();
             const etiqueta = document.getElementById("promoEtiqueta").value;
             const nuevaPromo = {
@@ -429,58 +432,87 @@
                 precio: Number(document.getElementById("promoPrecio").value),
                 tema: document.getElementById("promoTema").value,
                 fechaInicio: document.getElementById("promoInicio").value,
-                fechaFin: document.getElementById("promoFin").value,
-                _id: Date.now().toString()
+                fechaFin: document.getElementById("promoFin").value
             };
 
-            let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
-            promosLocales.push(nuevaPromo);
-            localStorage.setItem("promosAroma", JSON.stringify(promosLocales));
-            
-            alert("🎉 ¡Promoción publicada con éxito con caducidad automática!");
-            cargarPromocionesAdmin();
+            try {
+                let respuesta = await fetch("/api/promociones", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(nuevaPromo)
+                });
+                let resultado = await respuesta.json();
+
+                if (respuesta.ok) {
+                    alert("🎉 ¡Promoción publicada y sincronizada con éxito en la base de datos!");
+                    document.getElementById("form-crear-promo").reset();
+                    // Restaurar fechas por defecto
+                    const hoy = new Date().toISOString().split('T')[0];
+                    const enUnaSemana = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                    document.getElementById("promoInicio").value = hoy;
+                    document.getElementById("promoFin").value = enUnaSemana;
+                    verificarTipoPromo();
+                    cargarPromocionesAdmin();
+                } else {
+                    alert("Error al guardar: " + (resultado.error || "Desconocido"));
+                }
+            } catch (err) {
+                console.error("Error de conexión:", err);
+                alert("No se pudo conectar con el servidor para guardar la promoción.");
+            }
         }
 
-        function cargarPromocionesAdmin() {
-            let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
-            const hoy = new Date().toISOString().split('T')[0];
-            
-            let promosVigentes = promosLocales.filter(p => hoy <= p.fechaFin);
-            if (promosVigentes.length !== promosLocales.length) {
-                localStorage.setItem("promosAroma", JSON.stringify(promosVigentes));
+        // --- CARGAR PROMOCIONES DESDE MONGODB ATLAS (SERVIDOR) ---
+        async function cargarPromocionesAdmin() {
+            try {
+                let res = await fetch("/api/promociones");
+                let promos = await res.json();
+                const hoy = new Date().toISOString().split('T')[0];
+
+                const tbody = document.getElementById("tabla-promociones-admin");
+                if (promos.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #806653;">No hay promociones activas.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = "";
+                promos.forEach(p => {
+                    let activa = (hoy >= p.fechaInicio && hoy <= p.fechaFin);
+                    let badgeEstado = activa 
+                        ? `<span class="badge" style="background:#d4edda; color:#155724;">🟢 Activa en Menú</span>`
+                        : `<span class="badge" style="background:#fff3cd; color:#856404;">⏳ Programada</span>`;
+
+                    let promoId = p._id || p.id;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${p.titulo}</strong><br><small style="color:#806653;">${p.etiqueta}</small></td>
+                            <td><strong>$${Number(p.precio).toFixed(2)} MXN</strong></td>
+                            <td>Del ${p.fechaInicio} al ${p.fechaFin}</td>
+                            <td>${badgeEstado}</td>
+                            <td><button onclick="eliminarPromocion('${promoId}')" style="background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:10px; cursor:pointer; font-weight:bold;">🗑️ Quitar</button></td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error("Error al cargar promociones:", err);
             }
-
-            const tbody = document.getElementById("tabla-promociones-admin");
-            if (promosVigentes.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #806653;">No hay promociones activas.</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = "";
-            promosVigentes.forEach(p => {
-                let activa = (hoy >= p.fechaInicio && hoy <= p.fechaFin);
-                let badgeEstado = activa 
-                    ? `<span class="badge" style="background:#d4edda; color:#155724;">🟢 Activa en Menú</span>`
-                    : `<span class="badge" style="background:#fff3cd; color:#856404;">⏳ Programada</span>`;
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${p.titulo}</strong><br><small style="color:#806653;">${p.etiqueta}</small></td>
-                        <td><strong>$${Number(p.precio).toFixed(2)} MXN</strong></td>
-                        <td>Del ${p.fechaInicio} al ${p.fechaFin}</td>
-                        <td>${badgeEstado}</td>
-                        <td><button onclick="eliminarPromocion('${p._id}')" style="background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:10px; cursor:pointer; font-weight:bold;">🗑️ Quitar</button></td>
-                    </tr>
-                `;
-            });
         }
 
-        function eliminarPromocion(id) {
-            if (!confirm("¿Eliminar esta promoción?")) return;
-            let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
-            promosLocales = promosLocales.filter(p => p._id !== id);
-            localStorage.setItem("promosAroma", JSON.stringify(promosLocales));
-            cargarPromocionesAdmin();
+        // --- ELIMINAR PROMOCIÓN DE MONGODB ATLAS (SERVIDOR) ---
+        async function eliminarPromocion(id) {
+            if (!confirm("¿Estás seguro de eliminar esta promoción?")) return;
+            try {
+                let res = await fetch(`/api/promociones/${id}`, { method: "DELETE" });
+                if (res.ok) {
+                    alert("Promoción eliminada correctamente.");
+                    cargarPromocionesAdmin();
+                } else {
+                    alert("No se pudo eliminar la promoción.");
+                }
+            } catch (err) {
+                console.error("Error:", err);
+            }
         }
 
         function cargarPedidos() {
@@ -551,47 +583,52 @@
                         return;
                     }
                     comentarios.forEach(c => {
+                        let idComentario = c._id || c.id;
+                        let respuestaHtml = c.respuesta ? `<div class="caja-respuesta"><b>Respuesta:</b> ${c.respuesta}</div>` : `<span style="color: #999; font-style: italic;">Sin responder</span>`;
                         tbody.innerHTML += `
                             <tr>
-                                <td style="text-align: center;"><input type="checkbox" class="check-comentario" value="${c._id}"></td>
-                                <td><strong>${c.correo || 'usuario desconocido'}</strong></td>
-                                <td style="color: #e67e22;">${"⭐".repeat(c.calificacion || 5)}</td>
-                                <td><p>${c.comentario}</p><small>${c.fecha}</small></td>
-                                <td>${c.respuesta ? `<b>Aroma & Café:</b> ${c.respuesta}` : 'Sin responder'}</td>
-                                <td><button onclick="responderComentario('${c._id}')" class="btn-responder">💬 Responder</button></td>
+                                <td style="text-align: center;"><input type="checkbox" class="check-comentario" value="${idComentario}"></td>
+                                <td><strong>${c.correo || 'Anónimo'}</strong></td>
+                                <td style="color: #e67e22;">${"⭐".repeat(Number(c.calificacion || 5))}</td>
+                                <td>${c.comentario}<br><small style="color:#888;">${c.fecha}</small></td>
+                                <td>${respuestaHtml}</td>
+                                <td><button onclick="responderComentario('${idComentario}')" class="btn-responder">Responder</button></td>
                             </tr>
                         `;
                     });
                 });
         }
 
-        function toggleSeleccionarTodo(masterCheckbox) {
-            document.querySelectorAll('.check-comentario').forEach(cb => cb.checked = masterCheckbox.checked);
+        function responderComentario(id) {
+            let respuesta = prompt("Escribe una respuesta oficial para este cliente:");
+            if (respuesta === null) return;
+            fetch(`/api/comentarios/${id}/responder`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ respuesta: respuesta })
+            }).then(() => cargarComentariosAdmin());
+        }
+
+        function toggleSeleccionarTodo(master) {
+            let checks = document.querySelectorAll('.check-comentario');
+            checks.forEach(chk => chk.checked = master.checked);
         }
 
         function eliminarSeleccionados() {
-            let ids = Array.from(document.querySelectorAll('.check-comentario:checked')).map(cb => cb.value);
-            if (ids.length === 0) { alert("Selecciona al menos un comentario."); return; }
-            if (!confirm(`¿Eliminar ${ids.length} comentarios?`)) return;
-            fetch("/api/comentarios/multiples", {
-                method: 'DELETE',
+            let checks = document.querySelectorAll('.check-comentario:checked');
+            if (checks.length === 0) {
+                alert("Selecciona al menos un comentario para eliminar.");
+                return;
+            }
+            if (!confirm(`¿Eliminar ${checks.length} comentarios seleccionados?`)) return;
+
+            let ids = Array.from(checks).map(chk => chk.value);
+            fetch('/api/comentarios/eliminar-multiples', {
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ids: ids })
             }).then(() => cargarComentariosAdmin());
         }
-
-        function responderComentario(id) {
-            let r = prompt("Escribe tu respuesta:");
-            if (!r || r.trim() === "") return;
-            fetch(`/api/comentarios/${id}/responder`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ respuesta: r.trim() })
-            }).then(() => cargarComentariosAdmin());
-        }
-
-        cargarPedidos();
-        cargarComentariosAdmin();
     </script>
 </body>
 </html>
