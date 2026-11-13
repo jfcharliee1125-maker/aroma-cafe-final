@@ -9,7 +9,7 @@
         body { background-color: #faf3e7; color: #3e2723; padding: 30px 8%; }
         
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e7d4ba; padding-bottom: 20px; flex-wrap: wrap; gap: 15px; }
-        h1, h2 { font-family: Georgia, serif; color: #4b3024; }
+        h1, h2, h3 { font-family: Georgia, serif; color: #4b3024; }
         
         .acciones-header { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
         .btn-volver { background-color: #6f4530; color: white; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; transition: 0.3s; }
@@ -89,6 +89,78 @@
         .btn-eliminar-seleccionados { background-color: #e67e22; color: white; border: none; padding: 8px 16px; border-radius: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 14px; }
         .btn-eliminar-seleccionados:hover { background-color: #d35400; }
         .caja-respuesta { background: #f0f7ff; padding: 10px; border-radius: 8px; border-left: 3px solid #3498db; margin-top: 8px; font-size: 13px; }
+
+        /* --- ESTILOS DEL MÓDULO DE PROMOCIONES --- */
+        .panel-promos-wrapper {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            margin-bottom: 40px;
+            border: 1px solid #e7d4ba;
+        }
+        .promo-grid-layout {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 30px;
+            align-items: center;
+            margin-top: 20px;
+        }
+        @media (max-width: 850px) {
+            .promo-grid-layout { grid-template-columns: 1fr; }
+        }
+        .form-promo-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group-full { grid-column: span 2; }
+        .form-promo-inputs label { display: block; font-size: 13px; font-weight: bold; color: #593724; margin-bottom: 5px; }
+        .form-promo-inputs input, .form-promo-inputs select {
+            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #d4b58e; font-size: 14px; background: #fffaf2; color: #3e2723;
+        }
+        .btn-guardar-promo {
+            grid-column: span 2; background-color: #27ae60; color: white; border: none; padding: 12px;
+            border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.3s;
+        }
+        .btn-guardar-promo:hover { background-color: #219150; }
+
+        /* Tarjeta de Vista Previa Automática */
+        .preview-box-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #faf3e7; padding: 20px; border-radius: 12px; border: 2px dashed #c08a54;
+        }
+        .tarjeta-promo-auto {
+            width: 270px;
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            color: #fff8ed;
+            background: linear-gradient(135deg, #38251e, #6f4530);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .promo-badge-etiqueta {
+            background-color: #e67e22; color: white; font-weight: 900; font-size: 12px;
+            padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 12px;
+            letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .promo-img-circulo {
+            width: 125px; height: 125px; border-radius: 50%; object-fit: cover;
+            border: 4px solid #e8c99b; margin: 0 auto 12px auto; display: block;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .promo-titulo-grande {
+            font-family: Georgia, serif; font-size: 22px; font-weight: 900;
+            line-height: 1.15; margin-bottom: 8px; text-transform: uppercase; color: #ffebd2;
+        }
+        .promo-subtitulo { font-size: 13px; color: #e8c99b; margin-bottom: 12px; }
+        .promo-precio-pill {
+            background: #fff8ed; color: #38251e; font-weight: 900; font-size: 20px;
+            padding: 6px 18px; border-radius: 25px; display: inline-block; margin-bottom: 12px;
+        }
+        .promo-btn-demo {
+            background: #c08a54; color: white; border: none; width: 100%; padding: 10px;
+            border-radius: 10px; font-weight: bold; font-size: 14px; cursor: default;
+        }
     </style>
 </head>
 <body>
@@ -128,6 +200,112 @@
             <span class="kpi-title">💬 Total Comentarios</span>
             <span class="kpi-value" id="kpi-comentarios">0</span>
         </div>
+    </div>
+
+    <!-- MÓDULO DE PROMOCIONES AUTOMÁTICAS (Visible para Jefe y Marketing) -->
+    <div id="seccionPromocionesContainer" class="panel-promos-wrapper" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0e1cc; padding-bottom: 12px;">
+            <div>
+                <h2>🏷️ Creador Automático de Promociones</h2>
+                <p style="font-size: 13px; color: #806653;">Arma tu banner publicitario al instante sin diseñar nada. Se activa y desactiva solo según las fechas.</p>
+            </div>
+        </div>
+
+        <div class="promo-grid-layout">
+            <!-- Formulario de configuración -->
+            <form id="form-crear-promo" class="form-promo-inputs" onsubmit="guardarPromocion(event)">
+                <div>
+                    <label>Etiqueta Superior:</label>
+                    <select id="promoEtiqueta" onchange="actualizarVistaPrevia()">
+                        <option value="🔥 OFERTA ESPECIAL">🔥 OFERTA ESPECIAL</option>
+                        <option value="⚡ PROMO 2X1">⚡ PROMO 2X1</option>
+                        <option value="☕ COMBO DEL DÍA">☕ COMBO DEL DÍA</option>
+                        <option value="⭐ NUEVO LANZAMIENTO">⭐ NUEVO LANZAMIENTO</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Foto del Producto (Carpeta static):</label>
+                    <select id="promoImagen" onchange="actualizarVistaPrevia()">
+                        <option value="c.jpg">Taza de Café Especial (c.jpg)</option>
+                        <option value="fino.jpg">Café de la Casa (fino.jpg)</option>
+                        <option value="capuchino.jpg">Cappuccino (capuchino.jpg)</option>
+                        <option value="frappe.jpg">Frappé (frappe.jpg)</option>
+                        <option value="postre.jpg">Postre / Croissant (postre.jpg)</option>
+                    </select>
+                </div>
+
+                <div class="form-group-full">
+                    <label>Título Llamativo de la Promoción:</label>
+                    <input type="text" id="promoTitulo" placeholder="Ej. 2X1 EN CAPPUCCINO" value="2X1 EN CAPPUCCINO" oninput="actualizarVistaPrevia()" required>
+                </div>
+
+                <div>
+                    <label>Descripción corta:</label>
+                    <input type="text" id="promoSubtitulo" placeholder="Ej. Válido en tamaño grande" value="Válido todo el día en tienda" oninput="actualizarVistaPrevia()" required>
+                </div>
+
+                <div>
+                    <label>Precio de Oferta ($ MXN):</label>
+                    <input type="number" id="promoPrecio" step="0.01" min="1" value="65" oninput="actualizarVistaPrevia()" required>
+                </div>
+
+                <div>
+                    <label>Estilo / Color del Banner:</label>
+                    <select id="promoTema" onchange="actualizarVistaPrevia()">
+                        <option value="cafe">☕ Café Clásico (Oscuro)</option>
+                        <option value="dorado">✨ Dorado Premium</option>
+                        <option value="rojo">🔥 Rojo Oferta Urgente</option>
+                        <option value="verde">🌿 Verde Matcha / Fresco</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Fecha de Inicio:</label>
+                    <input type="date" id="promoInicio" required>
+                </div>
+
+                <div class="form-group-full">
+                    <label>Fecha de Fin (Caducidad automática):</label>
+                    <input type="date" id="promoFin" required>
+                </div>
+
+                <button type="submit" class="btn-guardar-promo">🚀 Publicar Promoción en el Menú</button>
+            </form>
+
+            <!-- Vista Previa en Tiempo Real -->
+            <div class="preview-box-container">
+                <span style="font-size: 12px; font-weight: bold; color: #806653; margin-bottom: 10px; text-transform: uppercase;">👁️ Vista Previa en el Menú</span>
+                
+                <div id="tarjetaPreview" class="tarjeta-promo-auto">
+                    <span id="prevEtiqueta" class="promo-badge-etiqueta">🔥 OFERTA ESPECIAL</span>
+                    <img id="prevImg" src="/static/c.jpg" onerror="this.src='https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300'" class="promo-img-circulo" alt="Promo">
+                    <div id="prevTitulo" class="promo-titulo-grande">2X1 EN CAPPUCCINO</div>
+                    <div id="prevSubtitulo" class="promo-subtitulo">Válido todo el día en tienda</div>
+                    <div id="prevPrecio" class="promo-precio-pill">$65.00 MXN</div>
+                    <button type="button" class="promo-btn-demo">🛒 Aprovechar Promo</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Promociones Registradas -->
+        <h3 style="margin-top: 30px; margin-bottom: 12px; font-size: 18px;">📋 Promociones Programadas / Activas</h3>
+        <table style="margin-bottom: 10px;">
+            <thead>
+                <tr>
+                    <th>Promoción</th>
+                    <th>Precio</th>
+                    <th>Vigencia</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-promociones-admin">
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #806653;">Aún no hay promociones guardadas en la base de datos.</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <!-- SECCIÓN DE PEDIDOS (Oculta para rol Marketing) -->
@@ -192,10 +370,13 @@
 
         if (esJefe) {
             document.getElementById("subtituloRol").innerText = "👑 Vista de Administrador (Jefe) - Todos los turnos";
+            document.getElementById("seccionPromocionesContainer").style.display = "block";
         } else if (esMarketing) {
             document.getElementById("tituloPanelPrincipal").innerText = "📢 Panel de Marketing";
             document.getElementById("subtituloRol").innerText = "📈 Vista de Marketing - Promociones y Comentarios";
-            // Ocultar elementos que Marketing no debe ver (Pedidos, KPIs de ventas, botón eliminar completados)
+            document.getElementById("seccionPromocionesContainer").style.display = "block";
+            
+            // Ocultar elementos operativos que Marketing no debe ver
             document.getElementById("seccionPedidosContainer").style.display = "none";
             document.getElementById("kpiContainerSection").style.display = "none";
             document.getElementById("alertaNuevoPedido").style.display = "none";
@@ -204,15 +385,140 @@
             document.getElementById("subtituloRol").innerText = `👤 Vista de Encargado - Turno ${turnoEncargado}`;
         }
 
-        function ocultarAlertaNuevoPedido() {
-            document.getElementById("alertaNuevoPedido").style.display = "none";
+        // --- Fechas por defecto para el formulario de promociones ---
+        window.addEventListener("DOMContentLoaded", () => {
+            const hoy = new Date().toISOString().split('T')[0];
+            const enUnaSemana = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            document.getElementById("promoInicio").value = hoy;
+            document.getElementById("promoFin").value = enUnaSemana;
+            cargarPromocionesAdmin();
+        });
+
+        // --- Lógica de Vista Previa Automática del Banner ---
+        function actualizarVistaPrevia() {
+            const etiqueta = document.getElementById("promoEtiqueta").value;
+            const imagen = document.getElementById("promoImagen").value;
+            const titulo = document.getElementById("promoTitulo").value || "TÍTULO DE PROMO";
+            const subtitulo = document.getElementById("promoSubtitulo").value || "Descripción de la oferta";
+            const precio = Number(document.getElementById("promoPrecio").value || 0).toFixed(2);
+            const tema = document.getElementById("promoTema").value;
+
+            document.getElementById("prevEtiqueta").innerText = etiqueta;
+            document.getElementById("prevImg").src = `/static/${imagen}`;
+            document.getElementById("prevTitulo").innerText = titulo;
+            document.getElementById("prevSubtitulo").innerText = subtitulo;
+            document.getElementById("prevPrecio").innerText = `$${precio} MXN`;
+
+            const tarjeta = document.getElementById("tarjetaPreview");
+            if (tema === "cafe") {
+                tarjeta.style.background = "linear-gradient(135deg, #38251e, #6f4530)";
+            } else if (tema === "dorado") {
+                tarjeta.style.background = "linear-gradient(135deg, #8e5a24, #c08a54)";
+            } else if (tema === "rojo") {
+                tarjeta.style.background = "linear-gradient(135deg, #7b1e1e, #c0392b)";
+            } else if (tema === "verde") {
+                tarjeta.style.background = "linear-gradient(135deg, #1e4d2b, #2e7d32)";
+            }
         }
 
-        function ocultarAlertaNuevoComentario() {
-            document.getElementById("alertaNuevoComentario").style.display = "none";
+        // --- Guardar y Cargar Promociones (Conectado a API / Fallback Local) ---
+        function guardarPromocion(event) {
+            event.preventDefault();
+            const nuevaPromo = {
+                etiqueta: document.getElementById("promoEtiqueta").value,
+                imagen: document.getElementById("promoImagen").value,
+                titulo: document.getElementById("promoTitulo").value.trim(),
+                subtitulo: document.getElementById("promoSubtitulo").value.trim(),
+                precio: Number(document.getElementById("promoPrecio").value),
+                tema: document.getElementById("promoTema").value,
+                fechaInicio: document.getElementById("promoInicio").value,
+                fechaFin: document.getElementById("promoFin").value
+            };
+
+            fetch("/api/promociones", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(nuevaPromo)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Ruta aún no creada en Flask");
+                return res.json();
+            })
+            .then(data => {
+                alert("🎉 ¡Promoción publicada con éxito!");
+                cargarPromocionesAdmin();
+            })
+            .catch(() => {
+                // Guardado temporal en localStorage mientras conectamos app.py
+                let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
+                nuevaPromo._id = Date.now().toString();
+                promosLocales.push(nuevaPromo);
+                localStorage.setItem("promosAroma", JSON.stringify(promosLocales));
+                alert("🎉 ¡Promoción guardada en modo vista previa! (Lista para conectar al servidor)");
+                cargarPromocionesAdmin();
+            });
         }
 
-        // --- Cargar Pedidos y Calcular KPIs (Solo si no es marketing) ---
+        function cargarPromocionesAdmin() {
+            fetch("/api/promociones")
+                .then(res => {
+                    if (!res.ok) throw new Error();
+                    return res.json();
+                })
+                .then(promos => renderizarTablaPromos(promos))
+                .catch(() => {
+                    let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
+                    renderizarTablaPromos(promosLocales);
+                });
+        }
+
+        function renderizarTablaPromos(promos) {
+            const tbody = document.getElementById("tabla-promociones-admin");
+            if (!promos || promos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #806653;">No hay promociones activas o programadas.</td></tr>';
+                return;
+            }
+
+            const hoy = new Date().toISOString().split('T')[0];
+            tbody.innerHTML = "";
+
+            promos.forEach(p => {
+                let activa = (hoy >= p.fechaInicio && hoy <= p.fechaFin);
+                let badgeEstado = activa 
+                    ? `<span class="badge" style="background:#d4edda; color:#155724;">🟢 Activa</span>`
+                    : `<span class="badge" style="background:#f8d7da; color:#721c24;">🔴 Expirada / Programada</span>`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${p.titulo}</strong><br><small style="color:#806653;">${p.etiqueta}</small></td>
+                        <td><strong>$${Number(p.precio).toFixed(2)} MXN</strong></td>
+                        <td>Del ${p.fechaInicio} al ${p.fechaFin}</td>
+                        <td>${badgeEstado}</td>
+                        <td><button onclick="eliminarPromocion('${p._id}')" style="background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:10px; cursor:pointer; font-weight:bold;">🗑️ Quitar</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function eliminarPromocion(id) {
+            if (!confirm("¿Eliminar esta promoción?")) return;
+            fetch(`/api/promociones/${id}`, { method: "DELETE" })
+                .then(res => {
+                    if (!res.ok) throw new Error();
+                    cargarPromocionesAdmin();
+                })
+                .catch(() => {
+                    let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
+                    promosLocales = promosLocales.filter(p => p._id !== id);
+                    localStorage.setItem("promosAroma", JSON.stringify(promosLocales));
+                    cargarPromocionesAdmin();
+                });
+        }
+
+        function ocultarAlertaNuevoPedido() { document.getElementById("alertaNuevoPedido").style.display = "none"; }
+        function ocultarAlertaNuevoComentario() { document.getElementById("alertaNuevoComentario").style.display = "none"; }
+
+        // --- Cargar Pedidos y Calcular KPIs ---
         function cargarPedidos() {
             if (esMarketing) return;
 
@@ -271,9 +577,7 @@
                         if (notasCliente !== "" && notasCliente.toLowerCase() !== "sin observaciones") {
                             let idFilaComentario = `comentario-${index}`;
                             let idBoton = `btn-${index}`;
-                            
                             columnaNotaHTML = `<button id="${idBoton}" class="btn-flecha-nota" onclick="alternarComentario('${idFilaComentario}', '${idBoton}')" title="Ver comentario">➔</button>`;
-                            
                             filaDesplegableHTML = `
                                 <tr id="${idFilaComentario}" class="fila-comentario" style="display: none;">
                                     <td colspan="8">
@@ -309,50 +613,39 @@
                         `;
                     });
                 })
-                .catch(err => {
-                    console.error("Error al obtener pedidos:", err);
-                    document.getElementById('tabla-pedidos').innerHTML = '<tr><td colspan="8" style="text-align: center; color: red;">Error al conectar con el servidor de Flask.</td></tr>';
-                });
+                .catch(err => console.error("Error al obtener pedidos:", err));
         }
 
         function alternarComentario(idFila, idBoton) {
             let fila = document.getElementById(idFila);
             let boton = document.getElementById(idBoton);
-
             if (fila.style.display === "none") {
                 fila.style.display = "table-row";
                 boton.classList.add("rotada");
-                boton.title = "Ocultar comentario";
             } else {
                 fila.style.display = "none";
                 boton.classList.remove("rotada");
-                boton.title = "Ver comentario";
             }
         }
 
         function cambiarEstado(folio, estadoActual) {
             let nuevoEstado = estadoActual.toLowerCase() === 'pendiente' ? 'Completado' : 'Pendiente';
-
             fetch(`/api/pedidos/${folio}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ estado: nuevoEstado })
             })
-            .then(res => res.json())
-            .then(data => cargarPedidos())
-            .catch(err => console.error("Error al actualizar estado:", err));
+            .then(() => cargarPedidos());
         }
 
         function eliminarCompletados() {
             if (!confirm("¿Estás seguro de eliminar todos los pedidos marcados como completados?")) return;
-
             fetch("/api/pedidos/completados", { method: 'DELETE' })
             .then(res => res.json())
             .then(data => {
                 alert(data.mensaje || "Pedidos completados eliminados.");
                 cargarPedidos();
-            })
-            .catch(err => console.error("Error al eliminar completados:", err));
+            });
         }
 
         // --- Cargar y Administrar Comentarios ---
@@ -366,13 +659,10 @@
                     if (masterCb) masterCb.checked = false;
 
                     if (cantidadComentariosAnterior !== null && comentarios.length > cantidadComentariosAnterior) {
-                        let alertaC = document.getElementById("textoAlertaComentario");
-                        if (alertaC) alertaC.innerText = "💬 ¡Tienes nuevos comentarios de clientes!";
-                        let bannerC = document.getElementById("alertaNuevoComentario");
-                        if (bannerC) bannerC.style.display = "block";
+                        document.getElementById("textoAlertaComentario").innerText = "💬 ¡Tienes nuevos comentarios de clientes!";
+                        document.getElementById("alertaNuevoComentario").style.display = "block";
                     }
                     cantidadComentariosAnterior = comentarios.length;
-
                     document.getElementById("kpi-comentarios").innerText = comentarios.length;
 
                     if (comentarios.length === 0) {
@@ -397,31 +687,24 @@
                                 </td>
                                 <td>${respuestaTexto}</td>
                                 <td>
-                                    <div style="display: flex; gap: 6px;">
-                                        <button onclick="responderComentario('${c._id}')" class="btn-responder">💬 Responder</button>
-                                    </div>
+                                    <button onclick="responderComentario('${c._id}')" class="btn-responder">💬 Responder</button>
                                 </td>
                             </tr>
                         `;
                     });
-                })
-                .catch(err => console.error("Error al cargar comentarios:", err));
+                });
         }
 
         function toggleSeleccionarTodo(masterCheckbox) {
-            let checkboxes = document.querySelectorAll('.check-comentario');
-            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+            document.querySelectorAll('.check-comentario').forEach(cb => cb.checked = masterCheckbox.checked);
         }
 
         function eliminarSeleccionados() {
-            let checkboxes = document.querySelectorAll('.check-comentario:checked');
-            let idsSeleccionados = Array.from(checkboxes).map(cb => cb.value);
-
+            let idsSeleccionados = Array.from(document.querySelectorAll('.check-comentario:checked')).map(cb => cb.value);
             if (idsSeleccionados.length === 0) {
                 alert("Por favor selecciona al menos un comentario para eliminar.");
                 return;
             }
-
             if (!confirm(`¿Estás seguro de eliminar los ${idsSeleccionados.length} comentarios seleccionados?`)) return;
 
             fetch("/api/comentarios/multiples", {
@@ -433,8 +716,7 @@
             .then(data => {
                 alert(data.mensaje || "Comentarios eliminados con éxito.");
                 cargarComentariosAdmin();
-            })
-            .catch(err => console.error("Error al eliminar seleccionados:", err));
+            });
         }
 
         function responderComentario(id) {
@@ -446,19 +728,15 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ respuesta: respuesta.trim() })
             })
-            .then(res => res.json())
-            .then(data => {
+            .then(() => {
                 alert("Respuesta publicada con éxito.");
                 cargarComentariosAdmin();
-            })
-            .catch(err => console.error("Error al responder comentario:", err));
+            });
         }
 
-        // --- Carga Inicial ---
         cargarPedidos();
         cargarComentariosAdmin();
 
-        // --- Polling (Monitoreo automático cada 5 segundos) ---
         setInterval(() => {
             cargarPedidos();
             cargarComentariosAdmin();
