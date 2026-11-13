@@ -127,7 +127,7 @@
             background: #faf3e7; padding: 20px; border-radius: 12px; border: 2px dashed #c08a54;
         }
         .tarjeta-promo-auto {
-            width: 270px;
+            width: 280px;
             border-radius: 18px;
             padding: 20px;
             text-align: center;
@@ -143,18 +143,21 @@
             padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 12px;
             letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
+        .promo-img-contenedor {
+            display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 12px;
+        }
         .promo-img-circulo {
-            width: 125px; height: 125px; border-radius: 50%; object-fit: cover;
-            border: 4px solid #e8c99b; margin: 0 auto 12px auto; display: block;
+            width: 110px; height: 110px; border-radius: 50%; object-fit: cover;
+            border: 4px solid #e8c99b; display: block;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         .promo-titulo-grande {
-            font-family: Georgia, serif; font-size: 22px; font-weight: 900;
+            font-family: Georgia, serif; font-size: 20px; font-weight: 900;
             line-height: 1.15; margin-bottom: 8px; text-transform: uppercase; color: #ffebd2;
         }
         .promo-subtitulo { font-size: 13px; color: #e8c99b; margin-bottom: 12px; }
         .promo-precio-pill {
-            background: #fff8ed; color: #38251e; font-weight: 900; font-size: 20px;
+            background: #fff8ed; color: #38251e; font-weight: 900; font-size: 18px;
             padding: 6px 18px; border-radius: 25px; display: inline-block; margin-bottom: 12px;
         }
         .promo-btn-demo {
@@ -183,7 +186,7 @@
 
     <!-- BANNER DE ALERTA DE COMENTARIOS -->
     <div id="alertaNuevoComentario" class="alerta-pedido-nuevo" style="background-color: #2980b9; box-shadow: 0 4px 15px rgba(41, 128, 185, 0.4);" onclick="ocultarAlertaNuevoComentario()">
-        <span id="textoAlertaComentario">💬 ¡Tienes nuevos comentarios de clientes!</span> (Haz clic aquí para ocultar aviso)
+        <span id="textoAlertaComentario">💬 ¡Tienes nuevos comentarios de comentarios de clientes!</span> (Haz clic aquí para ocultar aviso)
     </div>
 
     <!-- TARJETAS DE RESUMEN (KPIS) -->
@@ -202,21 +205,20 @@
         </div>
     </div>
 
-    <!-- MÓDULO DE PROMOCIONES AUTOMÁTICAS (Visible para Jefe y Marketing) -->
+    <!-- MÓDULO DE PROMOCIONES AUTOMÁTICAS -->
     <div id="seccionPromocionesContainer" class="panel-promos-wrapper" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0e1cc; padding-bottom: 12px;">
             <div>
                 <h2>🏷️ Creador Automático de Promociones</h2>
-                <p style="font-size: 13px; color: #806653;">Arma tu banner publicitario al instante sin diseñar nada. Se activa y desactiva solo según las fechas.</p>
+                <p style="font-size: 13px; color: #806653;">Genera banners con las fotos de tu catálogo. Si eliges "Combo del Día", puedes combinar bebida y alimento.</p>
             </div>
         </div>
 
         <div class="promo-grid-layout">
-            <!-- Formulario de configuración -->
             <form id="form-crear-promo" class="form-promo-inputs" onsubmit="guardarPromocion(event)">
                 <div>
                     <label>Etiqueta Superior:</label>
-                    <select id="promoEtiqueta" onchange="actualizarVistaPrevia()">
+                    <select id="promoEtiqueta" onchange="verificarComboDía(); actualizarVistaPrevia();">
                         <option value="🔥 OFERTA ESPECIAL">🔥 OFERTA ESPECIAL</option>
                         <option value="⚡ PROMO 2X1">⚡ PROMO 2X1</option>
                         <option value="☕ COMBO DEL DÍA">☕ COMBO DEL DÍA</option>
@@ -225,24 +227,56 @@
                 </div>
 
                 <div>
-                    <label>Foto del Producto (Carpeta static):</label>
+                    <label>Foto Principal (Bebida / Artículo):</label>
                     <select id="promoImagen" onchange="actualizarVistaPrevia()">
                         <option value="c.jpg">Taza de Café Especial (c.jpg)</option>
                         <option value="fino.jpg">Café de la Casa (fino.jpg)</option>
                         <option value="capuchino.jpg">Cappuccino (capuchino.jpg)</option>
                         <option value="frappe.jpg">Frappé (frappe.jpg)</option>
                         <option value="postre.jpg">Postre / Croissant (postre.jpg)</option>
+                        <option value="americano.jpg">Café Americano (americano.jpg)</option>
+                        <option value="latte.jpg">Café Latte (latte.jpg)</option>
+                        <option value="expresso.jpg">Espresso (expresso.jpg)</option>
+                        <option value="mocha.jpg">Café Mocha (mocha.jpg)</option>
+                        <option value="chocolate.jpg">Chocolate Caliente (chocolate.jpg)</option>
+                        <option value="matcha.jpg">Té Matcha (matcha.jpg)</option>
+                        <option value="pastel.jpg">Pastel de Chocolate (pastel.jpg)</option>
+                        <option value="muffin.jpg">Muffin (muffin.jpg)</option>
+                        <option value="galletas.jpg">Galletas (galletas.jpg)</option>
+                        <option value="waffles.jpg">Waffles (waffles.jpg)</option>
+                        <option value="panini.jpg">Panini (panini.jpg)</option>
+                        <option value="bagel.jpg">Bagel (bagel.jpg)</option>
+                        <option value="ensalada.jpg">Ensalada (ensalada.jpg)</option>
+                        <option value="jugo.jpg">Jugo Natural (jugo.jpg)</option>
+                        <option value="smoothie.jpg">Smoothie (smoothie.jpg)</option>
+                        <option value="te.jpg">Té Variado (te.jpg)</option>
+                    </select>
+                </div>
+
+                <!-- Segunda imagen exclusiva para Combo del Día -->
+                <div id="contenedorSegundaFoto" class="form-group-full" style="display: none; background: #fdf6ec; padding: 12px; border-radius: 8px; border: 1px dashed #c08a54;">
+                    <label style="color: #c08a54;">🍔 Segunda Foto (Alimento / Acompañamiento para el Combo):</label>
+                    <select id="promoImagen2" onchange="actualizarVistaPrevia()">
+                        <option value="postre.jpg">Postre / Croissant (postre.jpg)</option>
+                        <option value="panini.jpg">Panini (panini.jpg)</option>
+                        <option value="bagel.jpg">Bagel (bagel.jpg)</option>
+                        <option value="muffin.jpg">Muffin (muffin.jpg)</option>
+                        <option value="pastel.jpg">Pastel de Chocolate (pastel.jpg)</option>
+                        <option value="galletas.jpg">Galletas (galletas.jpg)</option>
+                        <option value="waffles.jpg">Waffles (waffles.jpg)</option>
+                        <option value="c.jpg">Taza de Café Especial (c.jpg)</option>
+                        <option value="fino.jpg">Café de la Casa (fino.jpg)</option>
                     </select>
                 </div>
 
                 <div class="form-group-full">
                     <label>Título Llamativo de la Promoción:</label>
-                    <input type="text" id="promoTitulo" placeholder="Ej. 2X1 EN CAPPUCCINO" value="2X1 EN CAPPUCCINO" oninput="actualizarVistaPrevia()" required>
+                    <input type="text" id="promoTitulo" placeholder="Ej. SI VIENES CON TU PAREJA..." value="2X1 EN CAPPUCCINO" oninput="actualizarVistaPrevia()" required>
                 </div>
 
                 <div>
                     <label>Descripción corta:</label>
-                    <input type="text" id="promoSubtitulo" placeholder="Ej. Válido en tamaño grande" value="Válido todo el día en tienda" oninput="actualizarVistaPrevia()" required>
+                    <input type="text" id="promoSubtitulo" placeholder="Ej. Válido todo el día en tienda" value="Válido todo el día en tienda" oninput="actualizarVistaPrevia()" required>
                 </div>
 
                 <div>
@@ -279,7 +313,12 @@
                 
                 <div id="tarjetaPreview" class="tarjeta-promo-auto">
                     <span id="prevEtiqueta" class="promo-badge-etiqueta">🔥 OFERTA ESPECIAL</span>
-                    <img id="prevImg" src="/static/c.jpg" onerror="this.src='https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300'" class="promo-img-circulo" alt="Promo">
+                    
+                    <div id="prevContenedorImgs" class="promo-img-contenedor">
+                        <img id="prevImg1" src="/static/c.jpg" onerror="this.src='https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300'" class="promo-img-circulo" alt="Promo 1">
+                        <img id="prevImg2" src="/static/postre.jpg" onerror="this.src='https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300'" class="promo-img-circulo" alt="Promo 2" style="display: none;">
+                    </div>
+
                     <div id="prevTitulo" class="promo-titulo-grande">2X1 EN CAPPUCCINO</div>
                     <div id="prevSubtitulo" class="promo-subtitulo">Válido todo el día en tienda</div>
                     <div id="prevPrecio" class="promo-precio-pill">$65.00 MXN</div>
@@ -288,7 +327,6 @@
             </div>
         </div>
 
-        <!-- Tabla de Promociones Registradas -->
         <h3 style="margin-top: 30px; margin-bottom: 12px; font-size: 18px;">📋 Promociones Programadas / Activas</h3>
         <table style="margin-bottom: 10px;">
             <thead>
@@ -331,7 +369,7 @@
         </table>
     </div>
 
-    <!-- SECCIÓN / PANEL DE COMENTARIOS DE CLIENTES -->
+    <!-- SECCIÓN DE COMENTARIOS -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
         <h2>💬 Panel de Comentarios y Calificaciones</h2>
         <button onclick="eliminarSeleccionados()" class="btn-eliminar-seleccionados">🗑️ Eliminar seleccionados</button>
@@ -376,7 +414,6 @@
             document.getElementById("subtituloRol").innerText = "📈 Vista de Marketing - Promociones y Comentarios";
             document.getElementById("seccionPromocionesContainer").style.display = "block";
             
-            // Ocultar elementos operativos que Marketing no debe ver
             document.getElementById("seccionPedidosContainer").style.display = "none";
             document.getElementById("kpiContainerSection").style.display = "none";
             document.getElementById("alertaNuevoPedido").style.display = "none";
@@ -385,7 +422,6 @@
             document.getElementById("subtituloRol").innerText = `👤 Vista de Encargado - Turno ${turnoEncargado}`;
         }
 
-        // --- Fechas por defecto para el formulario de promociones ---
         window.addEventListener("DOMContentLoaded", () => {
             const hoy = new Date().toISOString().split('T')[0];
             const enUnaSemana = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -394,17 +430,33 @@
             cargarPromocionesAdmin();
         });
 
-        // --- Lógica de Vista Previa Automática del Banner ---
+        // Mostrar o apagar la segunda foto si es Combo del Día
+        function verificarComboDía() {
+            const etiqueta = document.getElementById("promoEtiqueta").value;
+            const contenedorSegunda = document.getElementById("contenedorSegundaFoto");
+            const img2 = document.getElementById("prevImg2");
+
+            if (etiqueta.includes("COMBO DEL DÍA")) {
+                contenedorSegunda.style.display = "block";
+                img2.style.display = "block";
+            } else {
+                contenedorSegunda.style.display = "none";
+                img2.style.display = "none";
+            }
+        }
+
         function actualizarVistaPrevia() {
             const etiqueta = document.getElementById("promoEtiqueta").value;
-            const imagen = document.getElementById("promoImagen").value;
+            const imagen1 = document.getElementById("promoImagen").value;
+            const imagen2 = document.getElementById("promoImagen2").value;
             const titulo = document.getElementById("promoTitulo").value || "TÍTULO DE PROMO";
             const subtitulo = document.getElementById("promoSubtitulo").value || "Descripción de la oferta";
             const precio = Number(document.getElementById("promoPrecio").value || 0).toFixed(2);
             const tema = document.getElementById("promoTema").value;
 
             document.getElementById("prevEtiqueta").innerText = etiqueta;
-            document.getElementById("prevImg").src = `/static/${imagen}`;
+            document.getElementById("prevImg1").src = `/static/${imagen1}`;
+            document.getElementById("prevImg2").src = `/static/${imagen2}`;
             document.getElementById("prevTitulo").innerText = titulo;
             document.getElementById("prevSubtitulo").innerText = subtitulo;
             document.getElementById("prevPrecio").innerText = `$${precio} MXN`;
@@ -421,12 +473,13 @@
             }
         }
 
-        // --- Guardar y Cargar Promociones (Conectado a API / Fallback Local) ---
         function guardarPromocion(event) {
             event.preventDefault();
+            const etiqueta = document.getElementById("promoEtiqueta").value;
             const nuevaPromo = {
-                etiqueta: document.getElementById("promoEtiqueta").value,
+                etiqueta: etiqueta,
                 imagen: document.getElementById("promoImagen").value,
+                imagen2: etiqueta.includes("COMBO DEL DÍA") ? document.getElementById("promoImagen2").value : null,
                 titulo: document.getElementById("promoTitulo").value.trim(),
                 subtitulo: document.getElementById("promoSubtitulo").value.trim(),
                 precio: Number(document.getElementById("promoPrecio").value),
@@ -435,58 +488,37 @@
                 fechaFin: document.getElementById("promoFin").value
             };
 
-            fetch("/api/promociones", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(nuevaPromo)
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("Ruta aún no creada en Flask");
-                return res.json();
-            })
-            .then(data => {
-                alert("🎉 ¡Promoción publicada con éxito!");
-                cargarPromocionesAdmin();
-            })
-            .catch(() => {
-                // Guardado temporal en localStorage mientras conectamos app.py
-                let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
-                nuevaPromo._id = Date.now().toString();
-                promosLocales.push(nuevaPromo);
-                localStorage.setItem("promosAroma", JSON.stringify(promosLocales));
-                alert("🎉 ¡Promoción guardada en modo vista previa! (Lista para conectar al servidor)");
-                cargarPromocionesAdmin();
-            });
+            let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
+            nuevaPromo._id = Date.now().toString();
+            promosLocales.push(nuevaPromo);
+            localStorage.setItem("promosAroma", JSON.stringify(promosLocales));
+            
+            alert("🎉 ¡Promoción publicada y programada con caducidad automática!");
+            cargarPromocionesAdmin();
         }
 
         function cargarPromocionesAdmin() {
-            fetch("/api/promociones")
-                .then(res => {
-                    if (!res.ok) throw new Error();
-                    return res.json();
-                })
-                .then(promos => renderizarTablaPromos(promos))
-                .catch(() => {
-                    let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
-                    renderizarTablaPromos(promosLocales);
-                });
-        }
+            let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
+            const hoy = new Date().toISOString().split('T')[0];
+            
+            // Auto-limpieza (Borrar expiradas automáticamente al cargar)
+            let promosVigentes = promosLocales.filter(p => hoy <= p.fechaFin);
+            if (promosVigentes.length !== promosLocales.length) {
+                localStorage.setItem("promosAroma", JSON.stringify(promosVigentes));
+            }
 
-        function renderizarTablaPromos(promos) {
             const tbody = document.getElementById("tabla-promociones-admin");
-            if (!promos || promos.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #806653;">No hay promociones activas o programadas.</td></tr>';
+            if (promosVigentes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #806653;">No hay promociones activas. Las vencidas se eliminan solas.</td></tr>';
                 return;
             }
 
-            const hoy = new Date().toISOString().split('T')[0];
             tbody.innerHTML = "";
-
-            promos.forEach(p => {
+            promosVigentes.forEach(p => {
                 let activa = (hoy >= p.fechaInicio && hoy <= p.fechaFin);
                 let badgeEstado = activa 
-                    ? `<span class="badge" style="background:#d4edda; color:#155724;">🟢 Activa</span>`
-                    : `<span class="badge" style="background:#f8d7da; color:#721c24;">🔴 Expirada / Programada</span>`;
+                    ? `<span class="badge" style="background:#d4edda; color:#155724;">🟢 Activa en Menú</span>`
+                    : `<span class="badge" style="background:#fff3cd; color:#856404;">⏳ Programada (Próxima)</span>`;
 
                 tbody.innerHTML += `
                     <tr>
@@ -502,130 +534,56 @@
 
         function eliminarPromocion(id) {
             if (!confirm("¿Eliminar esta promoción?")) return;
-            fetch(`/api/promociones/${id}`, { method: "DELETE" })
-                .then(res => {
-                    if (!res.ok) throw new Error();
-                    cargarPromocionesAdmin();
-                })
-                .catch(() => {
-                    let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
-                    promosLocales = promosLocales.filter(p => p._id !== id);
-                    localStorage.setItem("promosAroma", JSON.stringify(promosLocales));
-                    cargarPromocionesAdmin();
-                });
+            let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
+            promosLocales = promosLocales.filter(p => p._id !== id);
+            localStorage.setItem("promosAroma", JSON.stringify(promosLocales));
+            cargarPromocionesAdmin();
         }
 
         function ocultarAlertaNuevoPedido() { document.getElementById("alertaNuevoPedido").style.display = "none"; }
         function ocultarAlertaNuevoComentario() { document.getElementById("alertaNuevoComentario").style.display = "none"; }
 
-        // --- Cargar Pedidos y Calcular KPIs ---
         function cargarPedidos() {
             if (esMarketing) return;
-
             fetch("/api/pedidos")
                 .then(res => res.json())
                 .then(pedidos => {
                     let tbody = document.getElementById('tabla-pedidos');
                     tbody.innerHTML = "";
-
                     let pedidosFiltrados = pedidos;
                     if (!esJefe && turnoEncargado) {
-                        pedidosFiltrados = pedidos.filter(p => {
-                            let turnoPedido = p.turno || "Matutino";
-                            return turnoPedido.toLowerCase() === turnoEncargado.toLowerCase();
-                        });
+                        pedidosFiltrados = pedidos.filter(p => (p.turno || "Matutino").toLowerCase() === turnoEncargado.toLowerCase());
                     }
-
-                    if (cantidadPedidosAnterior !== null && pedidosFiltrados.length > cantidadPedidosAnterior) {
-                        document.getElementById("textoAlertaPedido").innerText = "🔔 ¡Tienes nuevos pedidos registrados!";
-                        document.getElementById("alertaNuevoPedido").style.display = "block";
-                    }
-                    cantidadPedidosAnterior = pedidosFiltrados.length;
-
-                    let totalVentas = 0;
-                    let cantidadPendientes = 0;
-
-                    pedidosFiltrados.forEach(p => {
-                        totalVentas += Number(p.total || 0);
-                        if ((p.estado || "Pendiente").toLowerCase() === "pendiente") {
-                            cantidadPendientes++;
-                        }
-                    });
-
-                    document.getElementById("kpi-ventas").innerText = `$${totalVentas.toFixed(2)} MXN`;
-                    document.getElementById("kpi-pendientes").innerText = cantidadPendientes;
-
                     if (pedidosFiltrados.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No hay pedidos registrados para este turno.</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No hay pedidos registrados.</td></tr>';
                         return;
                     }
+                    let totalVentas = 0, cantidadPendientes = 0;
+                    pedidosFiltrados.forEach(p => {
+                        totalVentas += Number(p.total || 0);
+                        if ((p.estado || "Pendiente").toLowerCase() === "pendiente") cantidadPendientes++;
+                    });
+                    document.getElementById("kpi-ventas").innerText = `$${totalVentas.toFixed(2)} MXN`;
+                    document.getElementById("kpi-pendientes").innerText = cantidadPendientes;
 
                     pedidosFiltrados.reverse().forEach((p, index) => {
                         let productosTxt = Array.isArray(p.productos) ? p.productos.join(", ") : p.productos;
                         let claseEntrega = p.entrega === 'pickup' ? 'badge-pickup' : 'badge-delivery';
-                        let turnoP = p.turno || 'Matutino';
-                        
-                        let metodoPago = p.metodoPago || p.pago || 'No especificado';
-                        if (metodoPago.toLowerCase().startsWith("delivery - ")) {
-                            metodoPago = metodoPago.replace("delivery - ", "");
-                        }
-
-                        let notasCliente = p.notas ? p.notas.trim() : "";
-                        let columnaNotaHTML = "";
-                        let filaDesplegableHTML = "";
-                        
-                        if (notasCliente !== "" && notasCliente.toLowerCase() !== "sin observaciones") {
-                            let idFilaComentario = `comentario-${index}`;
-                            let idBoton = `btn-${index}`;
-                            columnaNotaHTML = `<button id="${idBoton}" class="btn-flecha-nota" onclick="alternarComentario('${idFilaComentario}', '${idBoton}')" title="Ver comentario">➔</button>`;
-                            filaDesplegableHTML = `
-                                <tr id="${idFilaComentario}" class="fila-comentario" style="display: none;">
-                                    <td colspan="8">
-                                        <div class="caja-comentario-desplegada">
-                                            <b>📝 Comentarios / Especificaciones del cliente:</b> ${notasCliente}
-                                        </div>
-                                    </td>
-                                </tr>
-                            `;
-                        } else {
-                            columnaNotaHTML = `<span style="color: #b0a090; font-size: 13px;">Sin comentarios</span>`;
-                        }
-
                         let estadoActual = p.estado || 'Pendiente';
-                        let claseEstadoBtn = estadoActual.toLowerCase() === 'completado' ? 'estado-completado' : 'estado-pendiente';
-
                         tbody.innerHTML += `
                             <tr>
                                 <td><strong>${p.folio || 'N/A'}</strong></td>
                                 <td>${productosTxt}</td>
                                 <td>$${Number(p.total).toFixed(2)} MXN</td>
-                                <td><span class="badge badge-turno">${turnoP}</span></td>
+                                <td><span class="badge badge-turno">${p.turno || 'Matutino'}</span></td>
                                 <td><span class="badge ${claseEntrega}">${p.entrega}</span></td>
-                                <td><span class="badge badge-pago">${metodoPago}</span></td>
-                                <td>${columnaNotaHTML}</td>
-                                <td>
-                                    <button onclick="cambiarEstado('${p.folio}', '${estadoActual}')" class="btn-estado ${claseEstadoBtn}">
-                                        ${estadoActual}
-                                    </button>
-                                </td>
+                                <td><span class="badge badge-pago">${p.metodoPago || 'Efectivo'}</span></td>
+                                <td>${p.notas || 'Sin comentarios'}</td>
+                                <td><button onclick="cambiarEstado('${p.folio}', '${estadoActual}')" class="btn-estado ${estadoActual.toLowerCase() === 'completado' ? 'estado-completado' : 'estado-pendiente'}">${estadoActual}</button></td>
                             </tr>
-                            ${filaDesplegableHTML}
                         `;
                     });
-                })
-                .catch(err => console.error("Error al obtener pedidos:", err));
-        }
-
-        function alternarComentario(idFila, idBoton) {
-            let fila = document.getElementById(idFila);
-            let boton = document.getElementById(idBoton);
-            if (fila.style.display === "none") {
-                fila.style.display = "table-row";
-                boton.classList.add("rotada");
-            } else {
-                fila.style.display = "none";
-                boton.classList.remove("rotada");
-            }
+                });
         }
 
         function cambiarEstado(folio, estadoActual) {
@@ -634,61 +592,34 @@
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ estado: nuevoEstado })
-            })
-            .then(() => cargarPedidos());
+            }).then(() => cargarPedidos());
         }
 
         function eliminarCompletados() {
-            if (!confirm("¿Estás seguro de eliminar todos los pedidos marcados como completados?")) return;
-            fetch("/api/pedidos/completados", { method: 'DELETE' })
-            .then(res => res.json())
-            .then(data => {
-                alert(data.mensaje || "Pedidos completados eliminados.");
-                cargarPedidos();
-            });
+            if (!confirm("¿Eliminar pedidos completados?")) return;
+            fetch("/api/pedidos/completados", { method: 'DELETE' }).then(() => cargarPedidos());
         }
 
-        // --- Cargar y Administrar Comentarios ---
         function cargarComentariosAdmin() {
             fetch("/api/comentarios")
                 .then(res => res.json())
                 .then(comentarios => {
                     let tbody = document.getElementById('tabla-comentarios-admin');
                     tbody.innerHTML = "";
-                    let masterCb = document.getElementById("seleccionarTodos");
-                    if (masterCb) masterCb.checked = false;
-
-                    if (cantidadComentariosAnterior !== null && comentarios.length > cantidadComentariosAnterior) {
-                        document.getElementById("textoAlertaComentario").innerText = "💬 ¡Tienes nuevos comentarios de clientes!";
-                        document.getElementById("alertaNuevoComentario").style.display = "block";
-                    }
-                    cantidadComentariosAnterior = comentarios.length;
                     document.getElementById("kpi-comentarios").innerText = comentarios.length;
-
                     if (comentarios.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay opiniones o comentarios recibidos.</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay comentarios.</td></tr>';
                         return;
                     }
-
                     comentarios.forEach(c => {
-                        let estrellas = "⭐".repeat(c.calificacion || 5);
-                        let respuestaTexto = c.respuesta 
-                            ? `<div class="caja-respuesta"><b>Aroma & Café:</b> ${c.respuesta}</div>` 
-                            : `<span style="color: #999; font-size: 13px;">Sin responder</span>`;
-
                         tbody.innerHTML += `
                             <tr>
                                 <td style="text-align: center;"><input type="checkbox" class="check-comentario" value="${c._id}"></td>
                                 <td><strong>${c.correo || 'usuario desconocido'}</strong></td>
-                                <td style="color: #e67e22;">${estrellas}</td>
-                                <td>
-                                    <p style="margin-bottom: 4px;">${c.comentario}</p>
-                                    <small style="color: #888;">${c.fecha}</small>
-                                </td>
-                                <td>${respuestaTexto}</td>
-                                <td>
-                                    <button onclick="responderComentario('${c._id}')" class="btn-responder">💬 Responder</button>
-                                </td>
+                                <td style="color: #e67e22;">${"⭐".repeat(c.calificacion || 5)}</td>
+                                <td><p>${c.comentario}</p><small>${c.fecha}</small></td>
+                                <td>${c.respuesta ? `<b>Aroma & Café:</b> ${c.respuesta}` : 'Sin responder'}</td>
+                                <td><button onclick="responderComentario('${c._id}')" class="btn-responder">💬 Responder</button></td>
                             </tr>
                         `;
                     });
@@ -700,47 +631,28 @@
         }
 
         function eliminarSeleccionados() {
-            let idsSeleccionados = Array.from(document.querySelectorAll('.check-comentario:checked')).map(cb => cb.value);
-            if (idsSeleccionados.length === 0) {
-                alert("Por favor selecciona al menos un comentario para eliminar.");
-                return;
-            }
-            if (!confirm(`¿Estás seguro de eliminar los ${idsSeleccionados.length} comentarios seleccionados?`)) return;
-
+            let ids = Array.from(document.querySelectorAll('.check-comentario:checked')).map(cb => cb.value);
+            if (ids.length === 0) { alert("Selecciona al menos un comentario."); return; }
+            if (!confirm(`¿Eliminar ${ids.length} comentarios?`)) return;
             fetch("/api/comentarios/multiples", {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ids: idsSeleccionados })
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert(data.mensaje || "Comentarios eliminados con éxito.");
-                cargarComentariosAdmin();
-            });
+                body: JSON.stringify({ ids: ids })
+            }).then(() => cargarComentariosAdmin());
         }
 
         function responderComentario(id) {
-            let respuesta = prompt("Escribe tu respuesta para el cliente:");
-            if (!respuesta || respuesta.trim() === "") return;
-
+            let r = prompt("Escribe tu respuesta:");
+            if (!r || r.trim() === "") return;
             fetch(`/api/comentarios/${id}/responder`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ respuesta: respuesta.trim() })
-            })
-            .then(() => {
-                alert("Respuesta publicada con éxito.");
-                cargarComentariosAdmin();
-            });
+                body: JSON.stringify({ respuesta: r.trim() })
+            }).then(() => cargarComentariosAdmin());
         }
 
         cargarPedidos();
         cargarComentariosAdmin();
-
-        setInterval(() => {
-            cargarPedidos();
-            cargarComentariosAdmin();
-        }, 5000);
     </script>
 </body>
 </html>
