@@ -19,23 +19,9 @@
         .btn-eliminar-completados:hover { background-color: #e74c3c; }
 
         .alerta-pedido-nuevo {
-            display: none;
-            background-color: #27ae60;
-            color: white;
-            text-align: center;
-            padding: 14px 20px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
-            animation: parpadeo 1.2s infinite alternate;
-            cursor: pointer;
-        }
-
-        @keyframes parpadeo {
-            0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0.8; transform: scale(1.01); }
+            display: none; background-color: #27ae60; color: white; text-align: center;
+            padding: 14px 20px; border-radius: 10px; font-weight: bold; font-size: 16px;
+            margin-bottom: 25px; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4); cursor: pointer;
         }
 
         .kpi-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
@@ -54,7 +40,7 @@
         .badge-pago { background-color: #f3e5f5; color: #6a1b9a; }
         .badge-turno { background-color: #e8f5e9; color: #2e7d32; }
         
-        .btn-estado { cursor: pointer; border: none; padding: 6px 14px; border-radius: 15px; font-weight: bold; font-size: 13px; text-transform: uppercase; transition: 0.2s; }
+        .btn-estado { cursor: pointer; border: none; padding: 6px 14px; border-radius: 15px; font-weight: bold; font-size: 13px; text-transform: uppercase; }
         .estado-pendiente { background-color: #fff3cd; color: #856404; }
         .estado-completado { background-color: #d4edda; color: #155724; }
 
@@ -62,7 +48,7 @@
         .btn-eliminar-seleccionados { background-color: #e67e22; color: white; border: none; padding: 8px 16px; border-radius: 15px; font-weight: bold; cursor: pointer; font-size: 14px; }
         .caja-respuesta { background: #f0f7ff; padding: 10px; border-radius: 8px; border-left: 3px solid #3498db; margin-top: 8px; font-size: 13px; }
 
-        /* --- ESTILOS DEL MÓDULO DE PROMOCIONES --- */
+        /* --- MÓDULO DE PROMOCIONES --- */
         .panel-promos-wrapper {
             background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); margin-bottom: 40px; border: 1px solid #e7d4ba;
         }
@@ -91,12 +77,12 @@
         .tarjeta-promo-auto {
             width: 280px; border-radius: 18px; padding: 20px; text-align: center; color: #fff8ed;
             background: linear-gradient(135deg, #38251e, #6f4530); box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            position: relative; overflow: hidden; transition: all 0.3s ease;
+            position: relative; overflow: hidden;
         }
         .promo-badge-etiqueta {
             background-color: #e67e22; color: white; font-weight: 900; font-size: 12px;
             padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 12px;
-            letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            letter-spacing: 1px; text-transform: uppercase;
         }
         .promo-img-contenedor {
             display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 12px;
@@ -133,16 +119,16 @@
         </div>
     </header>
 
-    <div id="alertaNuevoPedido" class="alerta-pedido-nuevo" onclick="ocultarAlertaNuevoPedido()">
-        <span id="textoAlertaPedido">🔔 ¡Tienes nuevos pedidos registrados!</span>
+    <div id="alertaNuevoPedido" class="alerta-pedido-nuevo" onclick="document.getElementById('alertaNuevoPedido').style.display='none'">
+        <span>🔔 ¡Tienes nuevos pedidos registrados!</span>
     </div>
 
-    <div id="alertaNuevoComentario" class="alerta-pedido-nuevo" style="background-color: #2980b9;" onclick="ocultarAlertaNuevoComentario()">
-        <span id="textoAlertaComentario">💬 ¡Tienes nuevos comentarios de clientes!</span>
+    <div id="alertaNuevoComentario" class="alerta-pedido-nuevo" style="background-color: #2980b9;" onclick="document.getElementById('alertaNuevoComentario').style.display='none'">
+        <span>💬 ¡Tienes nuevos comentarios de clientes!</span>
     </div>
 
     <div class="kpi-container" id="kpiContainerSection">
-        <div class="kpi-card" style="border-left-color: #c08a54;">
+        <div class="kpi-card">
             <span class="kpi-title">💰 Ventas Totales</span>
             <span class="kpi-value" id="kpi-ventas">$0.00 MXN</span>
         </div>
@@ -158,12 +144,8 @@
 
     <!-- MÓDULO DE PROMOCIONES AUTOMÁTICAS -->
     <div id="seccionPromocionesContainer" class="panel-promos-wrapper" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0e1cc; padding-bottom: 12px;">
-            <div>
-                <h2>🏷️ Creador Automático de Promociones</h2>
-                <p style="font-size: 13px; color: #806653;">Selecciona bebidas y alimentos por separado para armar tu banner publicitario con 1 o 2 fotos.</p>
-            </div>
-        </div>
+        <h2>🏷️ Creador Automático de Promociones</h2>
+        <p style="font-size: 13px; color: #806653; margin-bottom: 20px;">Selecciona exactamente entre las 10 bebidas y 10 alimentos oficiales de tu carta.</p>
 
         <div class="promo-grid-layout">
             <form id="form-crear-promo" class="form-promo-inputs" onsubmit="guardarPromocion(event)">
@@ -178,36 +160,35 @@
                 </div>
 
                 <div>
-                    <label>☕ Bebida / Opción 1:</label>
+                    <label>☕ Bebida (10 oficiales):</label>
                     <select id="promoBebida" onchange="actualizarVistaPrevia()">
-                        <option value="capu.jpg">Cappuccino (capu.jpg)</option>
-                        <option value="c.jpg">Taza de Café Especial (c.jpg)</option>
-                        <option value="cafe2.jpg">Café de la Casa (cafe2.jpg)</option>
-                        <option value="chai.jpg">Té Chai (chai.jpg)</option>
-                        <option value="choco.jpg">Chocolate Caliente (choco.jpg)</option>
-                        <option value="exp.jpg">Espresso (exp.jpg)</option>
-                        <option value="fino.jpg">Café Fino (fino.jpg)</option>
-                        <option value="frappe.jpg">Frappé (frappe.jpg)</option>
-                        <option value="iced.jpg">Café Helado (iced.jpg)</option>
-                        <option value="latte.jpg">Café Latte (latte.jpg)</option>
-                        <option value="matcha.jpg">Té Matcha (matcha.jpg)</option>
-                        <option value="smoothie.jpg">Smoothie (smoothie.jpg)</option>
-                        <option value="tisana.jpg">Tisana (tisana.jpg)</option>
+                        <option value="exp.jpg">Café Espresso (exp.jpg)</option>
+                        <option value="capu.jpg">Capuchino Clásico (capu.jpg)</option>
+                        <option value="choco.jpg">Chocomilk (choco.jpg)</option>
+                        <option value="latte.jpg">Latte Vainilla/Caramelo (latte.jpg)</option>
+                        <option value="chai.jpg">Chai Tea Latte (chai.jpg)</option>
+                        <option value="iced.jpg">Iced Caramel Macchiato (iced.jpg)</option>
+                        <option value="matcha.jpg">Matcha Latte Helado (matcha.jpg)</option>
+                        <option value="frappe.jpg">Frappuccino Moka (frappe.jpg)</option>
+                        <option value="smoothie.jpg">Smoothie Frutos Rojos (smoothie.jpg)</option>
+                        <option value="tisana.jpg">Tisana Frutal Fría (tisana.jpg)</option>
                     </select>
                 </div>
 
                 <div class="form-group-full" style="background: #fdf6ec; padding: 12px; border-radius: 8px; border: 1px dashed #c08a54;">
-                    <label style="color: #c08a54;">🥐 Alimento / Opción 2 (Opcional o para Combos):</label>
+                    <label style="color: #c08a54;">🥐 Alimento (10 oficiales - Opcional / Para Combos):</label>
                     <select id="promoAlimento" onchange="actualizarVistaPrevia()">
-                        <option value="">-- Ninguna (Solo usar opción 1) --</option>
-                        <option value="waffle.jpg">Waffles (waffle.jpg)</option>
-                        <option value="bagel.jpg">Bagel (bagel.jpg)</option>
-                        <option value="chilaquiles.jpg">Chilaquiles (chilaquiles.jpg)</option>
-                        <option value="club.jpg">Sándwich Club (club.jpg)</option>
-                        <option value="croissant.jpg">Croissant (croissant.jpg)</option>
-                        <option value="ensalada.jpg">Ensalada (ensalada.jpg)</option>
-                        <option value="panini.jpg">Panini (panini.jpg)</option>
-                        <option value="toast.jpg">Toast (toast.jpg)</option>
+                        <option value="">-- Ninguno (Solo usar bebida) --</option>
+                        <option value="pastel.jpg">Pastel de Chocolate (pastel.jpg)</option>
+                        <option value="baguette.jpg">Baguette (baguette.jpg)</option>
+                        <option value="croissant.jpg">Croissant Jamón y Queso (croissant.jpg)</option>
+                        <option value="panini.jpg">Panini Pollo al Pesto (panini.jpg)</option>
+                        <option value="bagel.jpg">Bagel de Salmón (bagel.jpg)</option>
+                        <option value="club.jpg">Club Sandwich Clásico (club.jpg)</option>
+                        <option value="toast.jpg">Toast de Aguacate (toast.jpg)</option>
+                        <option value="chilaquiles.jpg">Chilaquiles con Pollo (chilaquiles.jpg)</option>
+                        <option value="ensalada.jpg">Ensalada César con Pollo (ensalada.jpg)</option>
+                        <option value="waffle.jpg">Waffles con Frutos Rojos (waffle.jpg)</option>
                     </select>
                 </div>
 
@@ -270,7 +251,7 @@
         </div>
 
         <h3 style="margin-top: 30px; margin-bottom: 12px; font-size: 18px;">📋 Promociones Programadas / Activas</h3>
-        <table style="margin-bottom: 10px;">
+        <table>
             <thead>
                 <tr>
                     <th>Promoción</th>
@@ -281,9 +262,7 @@
                 </tr>
             </thead>
             <tbody id="tabla-promociones-admin">
-                <tr>
-                    <td colspan="5" style="text-align: center; color: #806653;">Aún no hay promociones activas.</td>
-                </tr>
+                <tr><td colspan="5" style="text-align: center; color: #806653;">Aún no hay promociones activas.</td></tr>
             </tbody>
         </table>
     </div>
@@ -458,9 +437,6 @@
             localStorage.setItem("promosAroma", JSON.stringify(promosLocales));
             cargarPromocionesAdmin();
         }
-
-        function ocultarAlertaNuevoPedido() { document.getElementById("alertaNuevoPedido").style.display = "none"; }
-        function ocultarAlertaNuevoComentario() { document.getElementById("alertaNuevoComentario").style.display = "none"; }
 
         function cargarPedidos() {
             if (esMarketing) return;
