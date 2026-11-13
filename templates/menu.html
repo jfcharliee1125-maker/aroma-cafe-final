@@ -604,12 +604,10 @@
                 })
                 .then(promosServidor => {
                     let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
-                    // Unimos ambas para asegurar que aparezcan
                     let todas = [...promosServidor, ...promosLocales];
                     renderizarPromos(todas);
                 })
                 .catch(() => {
-                    // Si falla el servidor, lee de localStorage
                     let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
                     renderizarPromos(promosLocales);
                 });
@@ -658,6 +656,9 @@
                 `;
                 contenedor.appendChild(card);
             });
+
+            // Vuelve a verificar si la cafetería está cerrada para bloquear también los nuevos botones de promo recién creados
+            verificarHorarioApertura();
         }
 
         function agregarPromoAlCarrito(tituloPromo, precioPromo, botonElemento) {
