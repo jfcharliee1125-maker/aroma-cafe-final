@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aroma & Café | Panel de Administración</title>
+    <title>Aroma & Café | Panel de Control</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background-color: #faf3e7; color: #3e2723; padding: 30px 8%; }
@@ -84,8 +84,6 @@
         .caja-comentario-desplegada { padding: 12px 20px; border-left: 4px solid #c08a54; color: #593724; font-size: 14px; line-height: 1.5; }
 
         /* Estilos del Panel de Comentarios */
-        .btn-borrar-comentario { background-color: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px; }
-        .btn-borrar-comentario:hover { background-color: #c0392b; }
         .btn-responder { background-color: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px; }
         .btn-responder:hover { background-color: #2980b9; }
         .btn-eliminar-seleccionados { background-color: #e67e22; color: white; border: none; padding: 8px 16px; border-radius: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 14px; }
@@ -97,11 +95,11 @@
 
     <header>
         <div>
-            <h1>☕ Panel de Control de Pedidos</h1>
+            <h1 id="tituloPanelPrincipal">☕ Panel de Control de Pedidos</h1>
             <p id="subtituloRol" style="color: #806653; font-weight: bold; margin-top: 5px;"></p>
         </div>
         <div class="acciones-header">
-            <button onclick="eliminarCompletados()" class="btn-eliminar-completados">🗑️ Eliminar completados</button>
+            <button id="btnEliminarCompletadosHeader" onclick="eliminarCompletados()" class="btn-eliminar-completados">🗑️ Eliminar completados</button>
             <a href="/" class="btn-volver">Volver a la página</a>
         </div>
     </header>
@@ -117,7 +115,7 @@
     </div>
 
     <!-- TARJETAS DE RESUMEN (KPIS) -->
-    <div class="kpi-container">
+    <div class="kpi-container" id="kpiContainerSection">
         <div class="kpi-card" style="border-left-color: #c08a54;">
             <span class="kpi-title">💰 Ventas Totales</span>
             <span class="kpi-value" id="kpi-ventas">$0.00 MXN</span>
@@ -132,26 +130,28 @@
         </div>
     </div>
 
-    <!-- TABLA DE PEDIDOS -->
-    <table>
-        <thead>
-            <tr>
-                <th>Folio</th>
-                <th>Productos</th>
-                <th>Total</th>
-                <th>Turno</th>
-                <th>Entrega</th>
-                <th>Método de Pago</th>
-                <th>Comentarios</th>
-                <th>Estado (Clic para cambiar)</th>
-            </tr>
-        </thead>
-        <tbody id="tabla-pedidos">
-            <tr>
-                <td colspan="8" style="text-align: center; color: #806653;">Cargando pedidos de MongoDB...</td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- SECCIÓN DE PEDIDOS (Oculta para rol Marketing) -->
+    <div id="seccionPedidosContainer">
+        <table id="tablaPedidosWrapper">
+            <thead>
+                <tr>
+                    <th>Folio</th>
+                    <th>Productos</th>
+                    <th>Total</th>
+                    <th>Turno</th>
+                    <th>Entrega</th>
+                    <th>Método de Pago</th>
+                    <th>Comentarios</th>
+                    <th>Estado (Clic para cambiar)</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-pedidos">
+                <tr>
+                    <td colspan="8" style="text-align: center; color: #806653;">Cargando pedidos de MongoDB...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <!-- SECCIÓN / PANEL DE COMENTARIOS DE CLIENTES -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
@@ -180,17 +180,26 @@
     <script>
         let esJefe = sessionStorage.getItem("adminAuth") === "true";
         let turnoEncargado = sessionStorage.getItem("turnoEncargado");
+        let esMarketing = sessionStorage.getItem("marketingAuth") === "true" || sessionStorage.getItem("rol") === "marketing";
 
         let cantidadPedidosAnterior = null;
         let cantidadComentariosAnterior = null;
 
-        if (!esJefe && !turnoEncargado) {
-            alert("Acceso denegado. Debes iniciar sesión como administrador o encargado de turno.");
+        if (!esJefe && !turnoEncargado && !esMarketing) {
+            alert("Acceso denegado. Debes iniciar sesión con las credenciales correspondientes.");
             window.location.href = "/";
         }
 
         if (esJefe) {
             document.getElementById("subtituloRol").innerText = "👑 Vista de Administrador (Jefe) - Todos los turnos";
+        } else if (esMarketing) {
+            document.getElementById("tituloPanelPrincipal").innerText = "📢 Panel de Marketing";
+            document.getElementById("subtituloRol").innerText = "📈 Vista de Marketing - Promociones y Comentarios";
+            // Ocultar elementos que Marketing no debe ver (Pedidos, KPIs de ventas, botón eliminar completados)
+            document.getElementById("seccionPedidosContainer").style.display = "none";
+            document.getElementById("kpiContainerSection").style.display = "none";
+            document.getElementById("alertaNuevoPedido").style.display = "none";
+            document.getElementById("btnEliminarCompletadosHeader").style.display = "none";
         } else {
             document.getElementById("subtituloRol").innerText = `👤 Vista de Encargado - Turno ${turnoEncargado}`;
         }
@@ -203,8 +212,10 @@
             document.getElementById("alertaNuevoComentario").style.display = "none";
         }
 
-        // --- Cargar Pedidos y Calcular KPIs ---
+        // --- Cargar Pedidos y Calcular KPIs (Solo si no es marketing) ---
         function cargarPedidos() {
+            if (esMarketing) return;
+
             fetch("/api/pedidos")
                 .then(res => res.json())
                 .then(pedidos => {
@@ -388,7 +399,6 @@
                                 <td>
                                     <div style="display: flex; gap: 6px;">
                                         <button onclick="responderComentario('${c._id}')" class="btn-responder">💬 Responder</button>
-                                        <button onclick="eliminarComentario('${c._id}')" class="btn-borrar-comentario">🗑️ Borrar</button>
                                     </div>
                                 </td>
                             </tr>
@@ -401,18 +411,6 @@
         function toggleSeleccionarTodo(masterCheckbox) {
             let checkboxes = document.querySelectorAll('.check-comentario');
             checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
-        }
-
-        function eliminarComentario(id) {
-            if (!confirm("¿Deseas eliminar este comentario permanentemente?")) return;
-
-            fetch(`/api/comentarios/${id}`, { method: 'DELETE' })
-                .then(res => res.json())
-                .then(data => {
-                    alert(data.mensaje || "Comentario eliminado.");
-                    cargarComentariosAdmin();
-                })
-                .catch(err => console.error("Error al borrar comentario:", err));
         }
 
         function eliminarSeleccionados() {

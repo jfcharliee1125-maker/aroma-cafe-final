@@ -214,3 +214,16 @@ def cargar_pagina_generica(pagina):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    correo = data.get('correo')
+    password = data.get('password')
+
+    # Credenciales de ejemplo para Marketing
+    if correo == "marketing@aromacafe.com" and password == "marketing123":
+        return jsonify({"exito": True, "rol": "marketing", "mensaje": "Bienvenido al panel de marketing"})
+    
+    # ... tus otras validaciones para jefe o encargados ...
+    return jsonify({"exito": False, "mensaje": "Credenciales incorrectas"})

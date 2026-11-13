@@ -291,6 +291,12 @@
                 cerrarModalLogin();
                 setTimeout(() => { window.location.href = "/admin"; }, 100);
             } 
+            // Ejemplo al procesar el login exitoso
+            if (data.rol === "marketing") {
+                sessionStorage.setItem("marketingAuth", "true");
+                sessionStorage.setItem("rol", "marketing");
+                window.location.href = "/admin"; // Te redirige al panel exclusivo de marketing
+            }
             else {
                 sessionStorage.setItem("clienteActivo", user);
                 sessionStorage.removeItem("adminAuth");
