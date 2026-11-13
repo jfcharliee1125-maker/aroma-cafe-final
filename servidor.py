@@ -65,6 +65,26 @@ def ia():
     return render_template("ia.html")
 
 
+# --- RUTA DE AUTENTICACIÓN (LOGIN) ---
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    correo = data.get('correo')
+    password = data.get('password')
+
+    if correo == "amorycafe@gmail.com" and password == "lara2026":
+        return jsonify({"exito": True, "rol": "admin", "mensaje": "Bienvenido Administrador"})
+    elif correo == "matutino@gmail.com" and password == "matutino2026":
+        return jsonify({"exito": True, "rol": "encargado", "turno": "Matutino", "mensaje": "Bienvenido Encargado Matutino"})
+    elif correo == "vespertino@gmail.com" and password == "vespertino2026":
+        return jsonify({"exito": True, "rol": "encargado", "turno": "Vespertino", "mensaje": "Bienvenido Encargado Vespertino"})
+    elif correo == "marketing@gmail.com" and password == "market2026":
+        return jsonify({"exito": True, "rol": "marketing", "mensaje": "Bienvenido al panel de marketing"})
+    
+    return jsonify({"exito": False, "mensaje": "Credenciales incorrectas"}), 401
+
+
 # --- RUTAS DE PEDIDOS ---
 
 @app.route("/api/guardar-pedido", methods=["POST"])
@@ -200,7 +220,7 @@ def responder_comentario(id):
         return jsonify({"error": str(e)}), 400
 
 
-# --- RUTA COMODÍN PARA CUALQUIER OTRA VISTA HTML ADICIONAL (Delivery, Ticket, etc.) ---
+# --- RUTA COMODÍN PARA CUALQUIER OTRA VISTA HTML ADICIONAL ---
 @app.route('/<path:pagina>')
 def cargar_pagina_generica(pagina):
     if not pagina.endswith('.html'):
@@ -214,16 +234,3 @@ def cargar_pagina_generica(pagina):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
-@app.route('/api/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    correo = data.get('correo')
-    password = data.get('password')
-
-    # Credenciales de ejemplo para Marketing
-    if correo == "marketing@aromacafe.com" and password == "marketing123":
-        return jsonify({"exito": True, "rol": "marketing", "mensaje": "Bienvenido al panel de marketing"})
-    
-    # ... tus otras validaciones para jefe o encargados ...
-    return jsonify({"exito": False, "mensaje": "Credenciales incorrectas"})

@@ -210,16 +210,20 @@
             let clienteActivo = sessionStorage.getItem("clienteActivo");
             let adminAuth = sessionStorage.getItem("adminAuth");
             let turnoEncargado = sessionStorage.getItem("turnoEncargado");
+            let marketingAuth = sessionStorage.getItem("marketingAuth");
 
-            if (clienteActivo || adminAuth || turnoEncargado) {
+            if (clienteActivo || adminAuth || turnoEncargado || marketingAuth) {
                 let btn = document.getElementById("btnSesionNav");
-                let userDisplay = clienteActivo || (adminAuth ? "Admin (Jefe)" : `Encargado (${turnoEncargado})`);
+                let userDisplay = clienteActivo || (adminAuth ? "Admin (Jefe)" : (marketingAuth ? "Marketing" : `Encargado (${turnoEncargado})`));
                 btn.innerHTML = `👤 ${userDisplay}`;
                 
-                if (adminAuth || turnoEncargado) {
-                    let contenedorAdmin = document.getElementById("opcionesAdminContainer");
-                    let textoRol = adminAuth ? "👑 Ir al Panel (Jefe)" : `📋 Panel Turno ${turnoEncargado}`;
-                    contenedorAdmin.innerHTML = `<a href="/admin" style="display: block; padding: 12px 15px; background: #faf3e7; color: #3e2723; text-decoration: none; font-size: 14px; font-weight: bold; border-bottom: 1px solid #f0e1cc;">${textoRol}</a>`;
+                let contenedorAdmin = document.getElementById("opcionesAdminContainer");
+                if (adminAuth) {
+                    contenedorAdmin.innerHTML = `<a href="/admin" style="display: block; padding: 12px 15px; background: #faf3e7; color: #3e2723; text-decoration: none; font-size: 14px; font-weight: bold; border-bottom: 1px solid #f0e1cc;">👑 Ir al Panel (Jefe)</a>`;
+                } else if (marketingAuth) {
+                    contenedorAdmin.innerHTML = `<a href="/admin" style="display: block; padding: 12px 15px; background: #faf3e7; color: #3e2723; text-decoration: none; font-size: 14px; font-weight: bold; border-bottom: 1px solid #f0e1cc;">📢 Panel de Marketing</a>`;
+                } else if (turnoEncargado) {
+                    contenedorAdmin.innerHTML = `<a href="/admin" style="display: block; padding: 12px 15px; background: #faf3e7; color: #3e2723; text-decoration: none; font-size: 14px; font-weight: bold; border-bottom: 1px solid #f0e1cc;">📋 Panel Turno ${turnoEncargado}</a>`;
                 }
             }
 
@@ -230,8 +234,9 @@
             let clienteActivo = sessionStorage.getItem("clienteActivo");
             let adminAuth = sessionStorage.getItem("adminAuth");
             let turnoEncargado = sessionStorage.getItem("turnoEncargado");
+            let marketingAuth = sessionStorage.getItem("marketingAuth");
 
-            if (clienteActivo || adminAuth || turnoEncargado) {
+            if (clienteActivo || adminAuth || turnoEncargado || marketingAuth) {
                 let menu = document.getElementById("menuDesplegable");
                 menu.style.display = menu.style.display === "block" ? "none" : "block";
                 return;
@@ -267,9 +272,10 @@
                 return;
             }
 
-           if (user === "amorycafe@gmail.com" && pass === "lara2026") {
+            if (user === "amorycafe@gmail.com" && pass === "lara2026") {
                sessionStorage.setItem("adminAuth", "true");
                sessionStorage.removeItem("turnoEncargado");
+               sessionStorage.removeItem("marketingAuth");
                sessionStorage.removeItem("clienteActivo");
                alert("Bienvenido Administrador (Jefe)");
                cerrarModalLogin();
@@ -278,6 +284,7 @@
             else if (user === "matutino@gmail.com" && pass === "matutino2026") {
                 sessionStorage.setItem("turnoEncargado", "Matutino");
                 sessionStorage.removeItem("adminAuth");
+                sessionStorage.removeItem("marketingAuth");
                 sessionStorage.removeItem("clienteActivo");
                 alert("Bienvenido Encargado - Turno Matutino");
                 cerrarModalLogin();
@@ -286,21 +293,27 @@
             else if (user === "vespertino@gmail.com" && pass === "vespertino2026") {
                 sessionStorage.setItem("turnoEncargado", "Vespertino");
                 sessionStorage.removeItem("adminAuth");
+                sessionStorage.removeItem("marketingAuth");
                 sessionStorage.removeItem("clienteActivo");
                 alert("Bienvenido Encargado - Turno Vespertino");
                 cerrarModalLogin();
                 setTimeout(() => { window.location.href = "/admin"; }, 100);
-            } 
-            // Ejemplo al procesar el login exitoso
-            if (data.rol === "marketing") {
+            }
+            else if (user === "marketing@gmail.com" && pass === "market2026") {
                 sessionStorage.setItem("marketingAuth", "true");
                 sessionStorage.setItem("rol", "marketing");
-                window.location.href = "/admin"; // Te redirige al panel exclusivo de marketing
+                sessionStorage.removeItem("adminAuth");
+                sessionStorage.removeItem("turnoEncargado");
+                sessionStorage.removeItem("clienteActivo");
+                alert("Bienvenido al Panel de Marketing");
+                cerrarModalLogin();
+                setTimeout(() => { window.location.href = "/admin"; }, 100);
             }
             else {
                 sessionStorage.setItem("clienteActivo", user);
                 sessionStorage.removeItem("adminAuth");
                 sessionStorage.removeItem("turnoEncargado");
+                sessionStorage.removeItem("marketingAuth");
                 alert("Sesión iniciada con éxito");
                 cerrarModalLogin();
                 window.location.reload();
@@ -311,6 +324,8 @@
             sessionStorage.removeItem("clienteActivo");
             sessionStorage.removeItem("adminAuth");
             sessionStorage.removeItem("turnoEncargado");
+            sessionStorage.removeItem("marketingAuth");
+            sessionStorage.removeItem("rol");
             alert("Has cerrado sesión.");
             window.location.href = "/";
         }
@@ -319,6 +334,8 @@
             sessionStorage.removeItem("clienteActivo");
             sessionStorage.removeItem("adminAuth");
             sessionStorage.removeItem("turnoEncargado");
+            sessionStorage.removeItem("marketingAuth");
+            sessionStorage.removeItem("rol");
             
             let menu = document.getElementById("menuDesplegable");
             if (menu) menu.style.display = "none";
@@ -408,6 +425,7 @@
                 if (sessionStorage.getItem("adminAuth")) correoUsuario = "amorycafe@gmail.com";
                 else if (sessionStorage.getItem("turnoEncargado") === "Matutino") correoUsuario = "matutino@gmail.com";
                 else if (sessionStorage.getItem("turnoEncargado") === "Vespertino") correoUsuario = "vespertino@gmail.com";
+                else if (sessionStorage.getItem("marketingAuth")) correoUsuario = "marketing@gmail.com";
                 else correoUsuario = "usuario desconocido";
             }
 
