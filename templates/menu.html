@@ -27,7 +27,56 @@
             font-size: 15px;
         }
 
-        .productos { background-color: #f0e1cc; padding: 70px 8%; min-height: 80vh; }
+        /* --- ESTILOS DE LA SECCIÓN DE BANNERS DINÁMICOS DE PROMOCIONES --- */
+        .contenedor-banners-promo {
+            max-width: 1150px;
+            margin: 30px auto 10px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 0 20px;
+        }
+        .tarjeta-promo-dinamica {
+            border-radius: 18px;
+            padding: 22px;
+            text-align: center;
+            color: #fff8ed;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .promo-badge-tag {
+            background-color: #e67e22; color: white; font-weight: 900; font-size: 11px;
+            padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 10px;
+            letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .promo-imagenes-flex {
+            display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 12px;
+        }
+        .promo-img-redonda {
+            width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
+            border: 3px solid #e8c99b; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: block;
+        }
+        .promo-titulo-card {
+            font-family: Georgia, serif; font-size: 19px; font-weight: 900;
+            line-height: 1.15; margin-bottom: 6px; text-transform: uppercase; color: #ffebd2;
+        }
+        .promo-sub-card { font-size: 13px; color: #e8c99b; margin-bottom: 12px; }
+        .promo-precio-pill {
+            background: #fff8ed; color: #38251e; font-weight: 900; font-size: 17px;
+            padding: 5px 16px; border-radius: 25px; display: inline-block; margin-bottom: 12px;
+        }
+        .btn-aprovechar-promo {
+            background: #c08a54; color: white; border: none; width: 100%; padding: 10px;
+            border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;
+        }
+        .btn-aprovechar-promo:hover { background: #98653b; transform: scale(1.02); }
+
+        .productos { background-color: #f0e1cc; padding: 50px 8%; min-height: 80vh; }
         .encabezado { text-align: center; margin-bottom: 40px; }
         .etiqueta { color: #98653b; font-weight: bold; text-transform: uppercase; letter-spacing: 3px; font-size: 13px; }
         .encabezado h2 { font-size: 38px; color: #4b3024; margin: 12px 0; }
@@ -58,24 +107,10 @@
             transition: background-color 0.3s;
         }
 
-        .categoria-desplegable summary:hover {
-            background-color: #e2ccaebc;
-        }
-
-        .categoria-desplegable summary::-webkit-details-marker {
-            display: none;
-        }
-
-        .categoria-desplegable summary::after {
-            content: '▼';
-            font-size: 16px;
-            color: #c08a54;
-            transition: transform 0.3s;
-        }
-
-        .categoria-desplegable[open] summary::after {
-            transform: rotate(180deg);
-        }
+        .categoria-desplegable summary:hover { background-color: #e2ccaebc; }
+        .categoria-desplegable summary::-webkit-details-marker { display: none; }
+        .categoria-desplegable summary::after { content: '▼'; font-size: 16px; color: #c08a54; transition: transform 0.3s; }
+        .categoria-desplegable[open] summary::after { transform: rotate(180deg); }
 
         .tarjetas { 
             padding: 30px; 
@@ -134,9 +169,7 @@
             outline: none;
             background-color: #fffdf9;
         }
-        .input-cantidad-menu:focus {
-            border-color: #c08a54;
-        }
+        .input-cantidad-menu:focus { border-color: #c08a54; }
 
         .btn-agregar {
             display: inline-flex;
@@ -155,22 +188,9 @@
             flex: 1;
         }
 
-        .btn-agregar:hover {
-            background-color: #98653b;
-            transform: scale(1.02);
-        }
-
-        .btn-agregado {
-            background-color: #4CAF50 !important;
-            color: white !important;
-        }
-
-        .btn-deshabilitado {
-            background-color: #cccccc !important;
-            color: #666666 !important;
-            cursor: not-allowed !important;
-            transform: none !important;
-        }
+        .btn-agregar:hover { background-color: #98653b; transform: scale(1.02); }
+        .btn-agregado { background-color: #4CAF50 !important; color: white !important; }
+        .btn-deshabilitado { background-color: #cccccc !important; color: #666666 !important; cursor: not-allowed !important; transform: none !important; }
 
         footer { background-color: #38251e; text-align: center; padding: 25px 15px; color: #e8c99b; font-size: 14px; }
     </style>
@@ -185,7 +205,7 @@
             <a href="/galeria">Galería</a>
             <a href="/servicios">Servicios</a>
             <a href="/contacto">Contacto</a>
-            <a href="/ordenar" class="btn-ordenar-nav">🛒 Carrito</a>
+            <a href="/ordenar" class="btn-ordenar-nav">🛒 Carrito <span id="contadorCarrito" class="badge-carrito">0</span></a>
         </div>
     </nav>
 
@@ -193,6 +213,9 @@
     <div id="bannerEstado" class="banner-estado">
         🔴 Cafetería Cerrada en este momento. Los pedidos se encuentran temporalmente deshabilitados.
     </div>
+
+    <!-- CONTENEDOR DE BANNERS DE PROMOCIONES DINÁMICAS (Se llena automático desde el Servidor/Marketing) -->
+    <div id="contenedorBannersDinamicos" class="contenedor-banners-promo"></div>
 
     <section class="productos">
         <div class="encabezado">
@@ -202,7 +225,7 @@
         </div>
 
         <!-- CATEGORÍA 1: PLATILLOS -->
-        <details class="categoria-desplegable">
+        <details class="categoria-desplegable" open>
             <summary>🍽️ Platillos (10)</summary>
             <div class="tarjetas">
                 <div class="tarjeta">
@@ -477,37 +500,25 @@
     <script>
         function verificarHorarioApertura() {
             let ahora = new Date();
-            let dia = ahora.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+            let dia = ahora.getDay();
             let hora = ahora.getHours();
             let minutos = ahora.getMinutes();
             let horaDecimal = hora + minutos / 60;
-
             let abierto = false;
 
-            // Lunes a Viernes (1 a 5): 7:00 a.m. a 9:00 p.m. (7 a 21)[cite: 8]
             if (dia >= 1 && dia <= 5) {
-                if (horaDecimal >= 7 && horaDecimal < 21) {
-                    abierto = true;
-                }
-            } 
-            // Sábados (6): 8:00 a.m. a 10:00 p.m. (8 a 22)[cite: 8]
-            else if (dia === 6) {
-                if (horaDecimal >= 8 && horaDecimal < 22) {
-                    abierto = true;
-                }
-            }
-            // Domingos (0): 8:00 a.m. a 9:00 p.m. (8 a 21)[cite: 8]
-            else if (dia === 0) {
-                if (horaDecimal >= 8 && horaDecimal < 21) {
-                    abierto = true;
-                }
+                if (horaDecimal >= 7 && horaDecimal < 21) abierto = true;
+            } else if (dia === 6) {
+                if (horaDecimal >= 8 && horaDecimal < 22) abierto = true;
+            } else if (dia === 0) {
+                if (horaDecimal >= 8 && horaDecimal < 21) abierto = true;
             }
 
             if (!abierto) {
                 let banner = document.getElementById('bannerEstado');
                 if (banner) banner.style.display = 'block';
 
-                let botones = document.querySelectorAll('.btn-agregar');
+                let botones = document.querySelectorAll('.btn-agregar, .btn-aprovechar-promo');
                 let inputs = document.querySelectorAll('.input-cantidad-menu');
 
                 botones.forEach(btn => {
@@ -516,9 +527,7 @@
                     btn.innerText = "🔒 Cerrado";
                 });
 
-                inputs.forEach(input => {
-                    input.disabled = true;
-                });
+                inputs.forEach(input => { input.disabled = true; });
             }
         }
 
@@ -560,10 +569,7 @@
             }
             
             carrito[nombreProducto] = cantidadPreviaProducto + cantidadSeleccionada;
-            
-            if (carrito[nombreProducto] > 20) {
-                carrito[nombreProducto] = 20;
-            }
+            if (carrito[nombreProducto] > 20) carrito[nombreProducto] = 20;
 
             localStorage.setItem('carritoAroma', JSON.stringify(carrito));
             actualizarBadgeCarrito();
@@ -580,9 +586,89 @@
             }, 1200);
         }
 
+        // --- CARGAR PROMOCIONES DINÁMICAS DESDE EL SERVIDOR ---
+        function cargarPromocionesPublicas() {
+            fetch("/api/promociones")
+                .then(res => res.json())
+                .then(promos => {
+                    const contenedor = document.getElementById("contenedorBannersDinamicos");
+                    contenedor.innerHTML = "";
+
+                    if (!promos || promos.length === 0) return;
+
+                    const hoy = new Date().toISOString().split('T')[0];
+                    let promosActivas = promos.filter(p => hoy >= p.fechaInicio && hoy <= p.fechaFin);
+
+                    if (promosActivas.length === 0) return;
+
+                    promosActivas.forEach(p => {
+                        // Gradientes según tema elegido por marketing
+                        let gradiente = "linear-gradient(135deg, #38251e, #6f4530)";
+                        if (p.tema === "dorado") gradiente = "linear-gradient(135deg, #8e5a24, #c08a54)";
+                        if (p.tema === "rojo") gradiente = "linear-gradient(135deg, #7b1e1e, #c0392b)";
+                        if (p.tema === "verde") gradiente = "linear-gradient(135deg, #1e4d2b, #2e7d32)";
+
+                        let imagenesHTML = `<img src="/static/${p.item1}" class="promo-img-redonda" alt="Promo">`;
+                        if (p.item2) {
+                            imagenesHTML = `
+                                <img src="/static/${p.item1}" class="promo-img-redonda" alt="Promo 1">
+                                <img src="/static/${p.item2}" class="promo-img-redonda" alt="Promo 2">
+                            `;
+                        }
+
+                        let card = document.createElement("div");
+                        card.className = "tarjeta-promo-dinamica";
+                        card.style.background = gradiente;
+                        card.innerHTML = `
+                            <div>
+                                <span class="promo-badge-tag">${p.etiqueta}</span>
+                                <div class="promo-imagenes-flex">${imagenesHTML}</div>
+                                <div class="promo-titulo-card">${p.titulo}</div>
+                                <div class="promo-sub-card">${p.subtitulo}</div>
+                                <div class="promo-precio-pill">$${Number(p.precio).toFixed(2)} MXN</div>
+                            </div>
+                            <button type="button" class="btn-aprovechar-promo" onclick="agregarPromoAlCarrito('${p.titulo}', ${p.precio}, this)">🛒 Aprovechar Promo</button>
+                        `;
+                        contenedor.appendChild(card);
+                    });
+                })
+                .catch(() => {
+                    // Fallback local si el servidor tarda
+                    let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
+                    // (Se pueden renderizar igual si fuera necesario)
+                });
+        }
+
+        function agregarPromoAlCarrito(tituloPromo, precioPromo, botonElemento) {
+            let nombreItem = `⭐ PROMO: ${tituloPromo} ($${precioPromo.toFixed(2)})`;
+            let carrito = obtenerCarrito();
+            let totalActual = calcularTotalArticulos(carrito);
+
+            if (totalActual + 1 > 20) {
+                alert("⚠️ Límite excedido: El máximo permitido es de 20 artículos en total por pedido.");
+                return;
+            }
+
+            carrito[nombreItem] = (carrito[nombreItem] || 0) + 1;
+            localStorage.setItem('carritoAroma', JSON.stringify(carrito));
+            actualizarBadgeCarrito();
+
+            let textoOriginal = botonElemento.innerHTML;
+            botonElemento.innerHTML = "✓ ¡Promo Agregada!";
+            botonElemento.classList.add("btn-agregado");
+            botonElemento.disabled = true;
+
+            setTimeout(() => {
+                botonElemento.innerHTML = textoOriginal;
+                botonElemento.classList.remove("btn-agregado");
+                botonElemento.disabled = false;
+            }, 1200);
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             actualizarBadgeCarrito();
             verificarHorarioApertura();
+            cargarPromocionesPublicas();
         });
     </script>
 

@@ -16,6 +16,7 @@ client = MongoClient("mongodb://jfcharliee1125_db_user:bqt3ve2VARr-PjN@ac-fswlmx
 db = client["aroma_cafe"]
 coleccion_pedidos = db["pedidos"]
 coleccion_comentarios = db["comentarios"]
+coleccion_promociones = db["promociones"]  # <-- Nueva colección para las promos dinámicas
 
 
 # --- RUTAS PARA LAS VISTAS HTML PRINCIPALES ---
@@ -172,7 +173,7 @@ def guardar_comentario():
 def obtener_comentarios():
     comentarios = list(coleccion_comentarios.find().sort("_id", -1))
     for c in comentarios:
-        c["_id"] = str(c["_id"])  # Convierte ObjectId a string para que el admin pueda gestionarlos
+        c["_id"] = str(c["_id"])
     return jsonify(comentarios)
 
 @app.route("/api/comentarios/<id>", methods=["DELETE"])
@@ -216,6 +217,35 @@ def responder_comentario(id):
         if resultado.matched_count == 0:
             return jsonify({"error": "Comentario no encontrado"}), 404
         return jsonify({"mensaje": "Respuesta guardada con éxito"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+# --- RUTAS DE PROMOCIONES DINÁMICAS ---
+
+@app.route("/api/promociones", methods=["GET"])
+def obtener_promociones():
+    promociones = list(coleccion_promociones.find())
+    for p in promociones:
+        p["_id"] = str(p["_id"])
+    return jsonify(promociones)
+
+@app.route("/api/promociones", methods=["POST"])
+def guardar_promocion():
+    datos = request.json
+    if not datos:
+        return jsonify({"error": "No se recibieron datos de la promoción"}), 400
+
+    resultado = coleccion_promociones.insert_one(datos)
+    return jsonify({"mensaje": "¡Promoción guardada en MongoDB con éxito!", "id": str(resultado.inserted_id)}), 200
+
+@app.route("/api/promociones/<id>", methods=["DELETE"])
+def eliminar_promocion(id):
+    try:
+        resultado = coleccion_promociones.delete_one({"_id": ObjectId(id)})
+        if resultado.deleted_count == 0:
+            return jsonify({"error": "Promoción no encontrada"}), 404
+        return jsonify({"mensaje": "Promoción eliminada con éxito"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
