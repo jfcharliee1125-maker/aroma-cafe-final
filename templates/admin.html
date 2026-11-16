@@ -174,7 +174,7 @@
         </div>
     </div>
 
-    <!-- MÓDULO DE PROMOCIONES AUTOMÁTICAS -->
+    <!-- MÓDULO DE PROMOCIONES AUTOMÁTICAS (EXCLUSIVO PARA MARKETING) -->
     <div id="seccionPromocionesContainer" class="panel-promos-wrapper" style="display: none;">
         <h2>🏷️ Creador Automático de Promociones</h2>
         <p style="font-size: 13px; color: #806653; margin-bottom: 20px;">Si es oferta normal usa 1 producto; si es Combo del Día puedes elegir 2 productos libres (bebidas o alimentos).</p>
@@ -221,7 +221,6 @@
                     </select>
                 </div>
 
-                <!-- Selector del Producto 2 (Exclusivo para Combo del Día) -->
                 <div id="seccionItem2" class="form-group-full" style="display: none; background: #fdf6ec; padding: 12px; border-radius: 8px; border: 1px dashed #c08a54;">
                     <label style="color: #c08a54;">🍔 Producto 2 para el Combo (Elige otro alimento o bebida):</label>
                     <select id="promoItem2" onchange="actualizarVistaPrevia()">
@@ -290,7 +289,6 @@
                 <button type="submit" class="btn-guardar-promo">🚀 Publicar Promoción en el Menú</button>
             </form>
 
-            <!-- Vista Previa en Tiempo Real -->
             <div class="preview-box-container">
                 <span style="font-size: 12px; font-weight: bold; color: #806653; margin-bottom: 10px; text-transform: uppercase;">👁️ Vista Previa en el Menú</span>
                 
@@ -380,27 +378,33 @@
             window.location.href = "/";
         }
 
+        // Configuración correcta de roles y visibilidad
         if (esJefe) {
             document.getElementById("subtituloRol").innerText = "👑 Vista de Administrador (Jefe)";
-            document.getElementById("seccionPromocionesContainer").style.display = "block";
+            document.getElementById("seccionPromocionesContainer").style.display = "none"; // Oculto para el Jefe
         } else if (esMarketing) {
             document.getElementById("tituloPanelPrincipal").innerText = "📢 Panel de Marketing";
             document.getElementById("subtituloRol").innerText = "📈 Vista de Marketing - Promociones y Comentarios";
-            document.getElementById("seccionPromocionesContainer").style.display = "block";
+            document.getElementById("seccionPromocionesContainer").style.display = "block"; // Visible solo para Marketing
             document.getElementById("seccionPedidosContainer").style.display = "none";
             document.getElementById("kpiContainerSection").style.display = "none";
             document.getElementById("btnEliminarCompletadosHeader").style.display = "none";
         } else {
             document.getElementById("subtituloRol").innerText = `👤 Encargado - Turno ${turnoEncargado}`;
+            document.getElementById("seccionPromocionesContainer").style.display = "none"; // Oculto para encargados
         }
 
         window.addEventListener("DOMContentLoaded", () => {
             const hoy = new Date().toISOString().split('T')[0];
             const enUnaSemana = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-            document.getElementById("promoInicio").value = hoy;
-            document.getElementById("promoFin").value = enUnaSemana;
-            verificarTipoPromo();
-            cargarPromocionesAdmin();
+            
+            if (esMarketing) {
+                document.getElementById("promoInicio").value = hoy;
+                document.getElementById("promoFin").value = enUnaSemana;
+                verificarTipoPromo();
+                cargarPromocionesAdmin();
+            }
+            
             if (!esMarketing) cargarPedidos();
             cargarComentariosAdmin();
         });
@@ -451,7 +455,6 @@
             else if (tema === "verde") tarjeta.style.background = "linear-gradient(135deg, #1e4d2b, #2e7d32)";
         }
 
-        // --- GUARDAR PROMOCIÓN EN MONGODB ATLAS (SERVIDOR) ---
         async function guardarPromocion(event) {
             event.preventDefault();
             const etiqueta = document.getElementById("promoEtiqueta").value;
@@ -478,7 +481,6 @@
                 if (respuesta.ok) {
                     alert("🎉 ¡Promoción publicada y sincronizada con éxito en la base de datos!");
                     document.getElementById("form-crear-promo").reset();
-                    // Restaurar fechas por defecto
                     const hoy = new Date().toISOString().split('T')[0];
                     const enUnaSemana = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
                     document.getElementById("promoInicio").value = hoy;
@@ -494,7 +496,6 @@
             }
         }
 
-        // --- CARGAR PROMOCIONES DESDE MONGODB ATLAS (SERVIDOR) ---
         async function cargarPromocionesAdmin() {
             try {
                 let res = await fetch("/api/promociones");
@@ -531,7 +532,6 @@
             }
         }
 
-        // --- ELIMINAR PROMOCIÓN DE MONGODB ATLAS (SERVIDOR) ---
         async function eliminarPromocion(id) {
             if (!confirm("¿Estás seguro de eliminar esta promoción?")) return;
             try {
@@ -574,7 +574,8 @@
                         let productosTxt = Array.isArray(p.productos) ? p.productos.join(", ") : p.productos;
                         let estadoActual = p.estado || 'Pendiente';
                         
-                        let tieneNota = p.notas && p.notas.trim() !== "" && p.notas !== "Sin comentarios";
+                        // Solo muestra el botón desplegable si realmente hay notas escritas y no están vacías
+                        let tieneNota = p.notas && p.notas.trim() !== "" && p.notas !== "Sin comentarios" && p.notas !== "Sin observaciones";
                         let comentariosHtml = "";
 
                         if (tieneNota) {
@@ -626,6 +627,65 @@
         function eliminarCompletados() {
             if (!confirm("¿Eliminar pedidos completados?")) return;
             fetch("/api/pedidos/completados", { method: 'DELETE' }).then(() => cargarPedidos());
+        }
+
+        function cargarComentariosAdmin() {
+            fetch("/api/comentarios")
+                .then(res => res.json())
+                .then(comentarios => {
+                    let tbody = document.getElementById('tabla-comentarios-admin');
+                    tbody.innerHTML = "";
+                    document.getElementById("kpi-comentarios").innerText = comentarios.length;
+                    if (comentarios.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay comentarios.</td></tr>';
+                        return;
+                    }
+                    comentarios.forEach(c => {
+                        let idComentario = c._id || c.id;
+                        let respuestaHtml = c.respuesta ? `<div class="caja-respuesta"><b>Respuesta:</b> ${c.respuesta}</div>` : `<span style="color: #999; font-style: italic;">Sin responder</span>`;
+                        tbody.innerHTML += `
+                            <tr>
+                                <td style="text-align: center;"><input type="checkbox" class="check-comentario" value="${idComentario}"></td>
+                                <td><strong>${c.correo || 'Anónimo'}</strong></td>
+                                <td style="color: #e67e22;">${"⭐".repeat(Number(c.calificacion || 5))}</td>
+                                <td>${c.comentario}<br><small style="color:#888;">${c.fecha}</small></td>
+                                <td>${respuestaHtml}</td>
+                                <td><button onclick="responderComentario('${idComentario}')" class="btn-responder">Responder</button></td>
+                            </tr>
+                        `;
+                    });
+                });
+        }
+
+        function responderComentario(id) {
+            let respuesta = prompt("Escribe una respuesta oficial para este cliente:");
+            if (respuesta === null) return;
+            fetch(`/api/comentarios/${id}/responder`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ respuesta: respuesta })
+            }).then(() => cargarComentariosAdmin());
+        }
+
+        function toggleSeleccionarTodo(master) {
+            let checks = document.querySelectorAll('.check-comentario');
+            checks.forEach(chk => chk.checked = master.checked);
+        }
+
+        function eliminarSeleccionados() {
+            let checks = document.querySelectorAll('.check-comentario:checked');
+            if (checks.length === 0) {
+                alert("Selecciona al menos un comentario para eliminar.");
+                return;
+            }
+            if (!confirm(`¿Eliminar ${checks.length} comentarios seleccionados?`)) return;
+
+            let ids = Array.from(checks).map(chk => chk.value);
+            fetch('/api/comentarios/eliminar-multiples', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: ids })
+            }).then(() => cargarComentariosAdmin());
         }
     </script>
 </body>
