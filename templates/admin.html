@@ -48,36 +48,37 @@
         .btn-eliminar-seleccionados { background-color: #e67e22; color: white; border: none; padding: 8px 16px; border-radius: 15px; font-weight: bold; cursor: pointer; font-size: 14px; }
         .caja-respuesta { background: #f0f7ff; padding: 10px; border-radius: 8px; border-left: 3px solid #3498db; margin-top: 8px; font-size: 13px; }
 
-        /* Botón Circular Desplegable de Comentarios */
+        /* Botón Circular Café con Flecha Blanca (Estilo de la imagen 1) */
         .btn-desplegar-nota {
-            background-color: #3498db;
+            background-color: #a76b3f;
             color: white;
             border: none;
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 3px 6px rgba(52, 152, 219, 0.4);
+            box-shadow: 0 3px 6px rgba(167, 107, 63, 0.4);
             transition: all 0.2s ease;
-            font-size: 13px;
+            font-size: 14px;
         }
         .btn-desplegar-nota:hover {
-            background-color: #2980b9;
+            background-color: #8c5731;
             transform: scale(1.08);
         }
-        .nota-desplegable-contenido {
+        .fila-detalle-nota {
             display: none;
-            background: #f0f7ff;
-            padding: 10px 14px;
-            border-radius: 8px;
-            border-left: 3px solid #3498db;
-            margin-top: 8px;
-            font-size: 13px;
-            color: #2c3e50;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            background-color: #fdfaf6;
+        }
+        .caja-detalle-nota {
+            padding: 12px 20px;
+            border-left: 4px solid #a76b3f;
+            background: #fff8ee;
+            font-size: 14px;
+            color: #4b3024;
+            border-bottom: 1px solid #f0e1cc;
         }
 
         /* --- MÓDULO DE PROMOCIONES --- */
@@ -378,20 +379,19 @@
             window.location.href = "/";
         }
 
-        // Configuración correcta de roles y visibilidad
         if (esJefe) {
             document.getElementById("subtituloRol").innerText = "👑 Vista de Administrador (Jefe)";
-            document.getElementById("seccionPromocionesContainer").style.display = "none"; // Oculto para el Jefe
+            document.getElementById("seccionPromocionesContainer").style.display = "none";
         } else if (esMarketing) {
             document.getElementById("tituloPanelPrincipal").innerText = "📢 Panel de Marketing";
             document.getElementById("subtituloRol").innerText = "📈 Vista de Marketing - Promociones y Comentarios";
-            document.getElementById("seccionPromocionesContainer").style.display = "block"; // Visible solo para Marketing
+            document.getElementById("seccionPromocionesContainer").style.display = "block";
             document.getElementById("seccionPedidosContainer").style.display = "none";
             document.getElementById("kpiContainerSection").style.display = "none";
             document.getElementById("btnEliminarCompletadosHeader").style.display = "none";
         } else {
             document.getElementById("subtituloRol").innerText = `👤 Encargado - Turno ${turnoEncargado}`;
-            document.getElementById("seccionPromocionesContainer").style.display = "none"; // Oculto para encargados
+            document.getElementById("seccionPromocionesContainer").style.display = "none";
         }
 
         window.addEventListener("DOMContentLoaded", () => {
@@ -574,18 +574,24 @@
                         let productosTxt = Array.isArray(p.productos) ? p.productos.join(", ") : p.productos;
                         let estadoActual = p.estado || 'Pendiente';
                         
-                        // Solo muestra el botón desplegable si realmente hay notas escritas y no están vacías
                         let tieneNota = p.notas && p.notas.trim() !== "" && p.notas !== "Sin comentarios" && p.notas !== "Sin observaciones";
                         let comentariosHtml = "";
+                        let filaDetalleHtml = "";
 
                         if (tieneNota) {
-                            let uniqueId = `nota_${index}_${Math.random().toString(36).substring(2, 7)}`;
-                            comentariosHtml = `
-                                <button onclick="toggleNota('${uniqueId}', this)" class="btn-desplegar-nota" title="Ver comentarios">▶</button>
-                                <div id="${uniqueId}" class="nota-desplegable-contenido">${p.notas}</div>
+                            let uniqueId = `nota_fila_${index}_${Math.random().toString(36).substring(2, 7)}`;
+                            comentariosHtml = `<button onclick="toggleNota('${uniqueId}', this)" class="btn-desplegar-nota" title="Ver comentarios">➔</button>`;
+                            filaDetalleHtml = `
+                                <tr id="${uniqueId}" class="fila-detalle-nota">
+                                    <td colspan="8">
+                                        <div class="caja-detalle-nota">
+                                            <strong>💬 Comentarios / Especificaciones del cliente:</strong> ${p.notas}
+                                        </div>
+                                    </td>
+                                </tr>
                             `;
                         } else {
-                            comentariosHtml = `<span style="color: #888; font-style: italic;">Sin observaciones</span>`;
+                            comentariosHtml = `<span style="color: #888; font-style: italic; font-size: 13px;">Sin comentarios</span>`;
                         }
 
                         tbody.innerHTML += `
@@ -599,18 +605,19 @@
                                 <td>${comentariosHtml}</td>
                                 <td><button onclick="cambiarEstado('${p.folio}', '${estadoActual}')" class="btn-estado ${estadoActual.toLowerCase() === 'completado' ? 'estado-completado' : 'estado-pendiente'}">${estadoActual}</button></td>
                             </tr>
+                            ${filaDetalleHtml}
                         `;
                     });
                 });
         }
 
         function toggleNota(id, btn) {
-            let caja = document.getElementById(id);
-            if (caja.style.display === "block") {
-                caja.style.display = "none";
+            let fila = document.getElementById(id);
+            if (fila.style.display === "table-row") {
+                fila.style.display = "none";
                 btn.style.transform = "rotate(0deg)";
             } else {
-                caja.style.display = "block";
+                fila.style.display = "table-row";
                 btn.style.transform = "rotate(90deg)";
             }
         }
