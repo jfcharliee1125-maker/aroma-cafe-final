@@ -545,6 +545,12 @@
                     pedidosFiltrados.reverse().forEach(p => {
                         let productosTxt = Array.isArray(p.productos) ? p.productos.join(", ") : p.productos;
                         let estadoActual = p.estado || 'Pendiente';
+                        
+                        // Flechita azul y formato para los comentarios del cliente
+                        let notasCliente = p.notas && p.notas.trim() !== "" && p.notas !== "Sin comentarios"
+                            ? `<span style="color: #3498db; font-weight: bold;">▶</span> ${p.notas}`
+                            : `<span style="color: #888; font-style: italic;">Sin observaciones</span>`;
+
                         tbody.innerHTML += `
                             <tr>
                                 <td><strong>${p.folio || 'N/A'}</strong></td>
@@ -553,7 +559,7 @@
                                 <td><span class="badge badge-turno">${p.turno || 'Matutino'}</span></td>
                                 <td><span class="badge ${p.entrega === 'pickup' ? 'badge-pickup' : 'badge-delivery'}">${p.entrega}</span></td>
                                 <td><span class="badge badge-pago">${p.metodoPago || 'Efectivo'}</span></td>
-                                <td>${p.notas || 'Sin comentarios'}</td>
+                                <td>${notasCliente}</td>
                                 <td><button onclick="cambiarEstado('${p.folio}', '${estadoActual}')" class="btn-estado ${estadoActual.toLowerCase() === 'completado' ? 'estado-completado' : 'estado-pendiente'}">${estadoActual}</button></td>
                             </tr>
                         `;
