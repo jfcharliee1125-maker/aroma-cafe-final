@@ -30,7 +30,7 @@
         .kpi-value { font-size: 20px; font-weight: 600; color: #38251e; }
         
         table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 40px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #f0e1cc; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #f0e1cc; vertical-align: middle; }
         th { background-color: #38251e; color: #e8c99b; font-weight: 600; }
         tr:hover { background-color: #faf3e7; }
         
@@ -47,6 +47,38 @@
         .btn-responder { background-color: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 12px; }
         .btn-eliminar-seleccionados { background-color: #e67e22; color: white; border: none; padding: 8px 16px; border-radius: 15px; font-weight: bold; cursor: pointer; font-size: 14px; }
         .caja-respuesta { background: #f0f7ff; padding: 10px; border-radius: 8px; border-left: 3px solid #3498db; margin-top: 8px; font-size: 13px; }
+
+        /* Botón Circular Desplegable de Comentarios */
+        .btn-desplegar-nota {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(52, 152, 219, 0.4);
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+        .btn-desplegar-nota:hover {
+            background-color: #2980b9;
+            transform: scale(1.08);
+        }
+        .nota-desplegable-contenido {
+            display: none;
+            background: #f0f7ff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border-left: 3px solid #3498db;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #2c3e50;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
 
         /* --- MÓDULO DE PROMOCIONES --- */
         .panel-promos-wrapper {
@@ -142,7 +174,7 @@
         </div>
     </div>
 
-    <!-- MÓDULO DE PROMOCIONES AUTOMÁTICAS (EXCLUSIVO PARA MARKETING) -->
+    <!-- MÓDULO DE PROMOCIONES AUTOMÁTICAS -->
     <div id="seccionPromocionesContainer" class="panel-promos-wrapper" style="display: none;">
         <h2>🏷️ Creador Automático de Promociones</h2>
         <p style="font-size: 13px; color: #806653; margin-bottom: 20px;">Si es oferta normal usa 1 producto; si es Combo del Día puedes elegir 2 productos libres (bebidas o alimentos).</p>
@@ -348,33 +380,28 @@
             window.location.href = "/";
         }
 
-        // Control estricto de vistas según el rol
-        if (esMarketing) {
+        if (esJefe) {
+            document.getElementById("subtituloRol").innerText = "👑 Vista de Administrador (Jefe)";
+            document.getElementById("seccionPromocionesContainer").style.display = "block";
+        } else if (esMarketing) {
             document.getElementById("tituloPanelPrincipal").innerText = "📢 Panel de Marketing";
             document.getElementById("subtituloRol").innerText = "📈 Vista de Marketing - Promociones y Comentarios";
-            document.getElementById("seccionPromocionesContainer").style.display = "block"; // Único rol con acceso a promociones
+            document.getElementById("seccionPromocionesContainer").style.display = "block";
             document.getElementById("seccionPedidosContainer").style.display = "none";
             document.getElementById("kpiContainerSection").style.display = "none";
             document.getElementById("btnEliminarCompletadosHeader").style.display = "none";
-        } else if (esJefe) {
-            document.getElementById("subtituloRol").innerText = "👑 Vista de Administrador (Jefe)";
-            document.getElementById("seccionPromocionesContainer").style.display = "none"; // Oculto para el Jefe
         } else {
             document.getElementById("subtituloRol").innerText = `👤 Encargado - Turno ${turnoEncargado}`;
-            document.getElementById("seccionPromocionesContainer").style.display = "none"; // Oculto para Encargados
         }
 
         window.addEventListener("DOMContentLoaded", () => {
-            if (esMarketing) {
-                const hoy = new Date().toISOString().split('T')[0];
-                const enUnaSemana = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-                document.getElementById("promoInicio").value = hoy;
-                document.getElementById("promoFin").value = enUnaSemana;
-                verificarTipoPromo();
-                cargarPromocionesAdmin();
-            } else {
-                cargarPedidos();
-            }
+            const hoy = new Date().toISOString().split('T')[0];
+            const enUnaSemana = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            document.getElementById("promoInicio").value = hoy;
+            document.getElementById("promoFin").value = enUnaSemana;
+            verificarTipoPromo();
+            cargarPromocionesAdmin();
+            if (!esMarketing) cargarPedidos();
             cargarComentariosAdmin();
         });
 
@@ -451,6 +478,7 @@
                 if (respuesta.ok) {
                     alert("🎉 ¡Promoción publicada y sincronizada con éxito en la base de datos!");
                     document.getElementById("form-crear-promo").reset();
+                    // Restaurar fechas por defecto
                     const hoy = new Date().toISOString().split('T')[0];
                     const enUnaSemana = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
                     document.getElementById("promoInicio").value = hoy;
@@ -542,14 +570,22 @@
                     document.getElementById("kpi-ventas").innerText = `$${totalVentas.toFixed(2)} MXN`;
                     document.getElementById("kpi-pendientes").innerText = cantidadPendientes;
 
-                    pedidosFiltrados.reverse().forEach(p => {
+                    pedidosFiltrados.reverse().forEach((p, index) => {
                         let productosTxt = Array.isArray(p.productos) ? p.productos.join(", ") : p.productos;
                         let estadoActual = p.estado || 'Pendiente';
                         
-                        // Flechita azul y formato para los comentarios del cliente
-                        let notasCliente = p.notas && p.notas.trim() !== "" && p.notas !== "Sin comentarios"
-                            ? `<span style="color: #3498db; font-weight: bold;">▶</span> ${p.notas}`
-                            : `<span style="color: #888; font-style: italic;">Sin observaciones</span>`;
+                        let tieneNota = p.notas && p.notas.trim() !== "" && p.notas !== "Sin comentarios";
+                        let comentariosHtml = "";
+
+                        if (tieneNota) {
+                            let uniqueId = `nota_${index}_${Math.random().toString(36).substring(2, 7)}`;
+                            comentariosHtml = `
+                                <button onclick="toggleNota('${uniqueId}', this)" class="btn-desplegar-nota" title="Ver comentarios">▶</button>
+                                <div id="${uniqueId}" class="nota-desplegable-contenido">${p.notas}</div>
+                            `;
+                        } else {
+                            comentariosHtml = `<span style="color: #888; font-style: italic;">Sin observaciones</span>`;
+                        }
 
                         tbody.innerHTML += `
                             <tr>
@@ -559,12 +595,23 @@
                                 <td><span class="badge badge-turno">${p.turno || 'Matutino'}</span></td>
                                 <td><span class="badge ${p.entrega === 'pickup' ? 'badge-pickup' : 'badge-delivery'}">${p.entrega}</span></td>
                                 <td><span class="badge badge-pago">${p.metodoPago || 'Efectivo'}</span></td>
-                                <td>${notasCliente}</td>
+                                <td>${comentariosHtml}</td>
                                 <td><button onclick="cambiarEstado('${p.folio}', '${estadoActual}')" class="btn-estado ${estadoActual.toLowerCase() === 'completado' ? 'estado-completado' : 'estado-pendiente'}">${estadoActual}</button></td>
                             </tr>
                         `;
                     });
                 });
+        }
+
+        function toggleNota(id, btn) {
+            let caja = document.getElementById(id);
+            if (caja.style.display === "block") {
+                caja.style.display = "none";
+                btn.style.transform = "rotate(0deg)";
+            } else {
+                caja.style.display = "block";
+                btn.style.transform = "rotate(90deg)";
+            }
         }
 
         function cambiarEstado(folio, estadoActual) {
@@ -579,65 +626,6 @@
         function eliminarCompletados() {
             if (!confirm("¿Eliminar pedidos completados?")) return;
             fetch("/api/pedidos/completados", { method: 'DELETE' }).then(() => cargarPedidos());
-        }
-
-        function cargarComentariosAdmin() {
-            fetch("/api/comentarios")
-                .then(res => res.json())
-                .then(comentarios => {
-                    let tbody = document.getElementById('tabla-comentarios-admin');
-                    tbody.innerHTML = "";
-                    document.getElementById("kpi-comentarios").innerText = comentarios.length;
-                    if (comentarios.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay comentarios.</td></tr>';
-                        return;
-                    }
-                    comentarios.forEach(c => {
-                        let idComentario = c._id || c.id;
-                        let respuestaHtml = c.respuesta ? `<div class="caja-respuesta"><b>Respuesta:</b> ${c.respuesta}</div>` : `<span style="color: #999; font-style: italic;">Sin responder</span>`;
-                        tbody.innerHTML += `
-                            <tr>
-                                <td style="text-align: center;"><input type="checkbox" class="check-comentario" value="${idComentario}"></td>
-                                <td><strong>${c.correo || 'Anónimo'}</strong></td>
-                                <td style="color: #e67e22;">${"⭐".repeat(Number(c.calificacion || 5))}</td>
-                                <td>${c.comentario}<br><small style="color:#888;">${c.fecha}</small></td>
-                                <td>${respuestaHtml}</td>
-                                <td><button onclick="responderComentario('${idComentario}')" class="btn-responder">Responder</button></td>
-                            </tr>
-                        `;
-                    });
-                });
-        }
-
-        function responderComentario(id) {
-            let respuesta = prompt("Escribe una respuesta oficial para este cliente:");
-            if (respuesta === null) return;
-            fetch(`/api/comentarios/${id}/responder`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ respuesta: respuesta })
-            }).then(() => cargarComentariosAdmin());
-        }
-
-        function toggleSeleccionarTodo(master) {
-            let checks = document.querySelectorAll('.check-comentario');
-            checks.forEach(chk => chk.checked = master.checked);
-        }
-
-        function eliminarSeleccionados() {
-            let checks = document.querySelectorAll('.check-comentario:checked');
-            if (checks.length === 0) {
-                alert("Selecciona al menos un comentario para eliminar.");
-                return;
-            }
-            if (!confirm(`¿Eliminar ${checks.length} comentarios seleccionados?`)) return;
-
-            let ids = Array.from(checks).map(chk => chk.value);
-            fetch('/api/comentarios/eliminar-multiples', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ids: ids })
-            }).then(() => cargarComentariosAdmin());
         }
     </script>
 </body>
