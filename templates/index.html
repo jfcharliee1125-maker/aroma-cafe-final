@@ -98,7 +98,7 @@
         </div>
     </nav>
 
-    <!-- MODAL / POPUP DE NUEVAS PROMOCIONES AL ENTRAR (RESPONSIVE CELULAR / PC) -->
+    <!-- MODAL / POPUP DE NUEVAS PROMOCIONES AL ENTRAR (CONECTADO EXCLUSIVAMENTE A MONGODB) -->
     <div id="modalPromosInicio">
         <div class="contenido-modal-promos">
             <span onclick="cerrarModalPromos()" style="position: absolute; top: 12px; right: 18px; cursor: pointer; font-size: 22px; color: #593724; font-weight: bold;">&times;</span>
@@ -199,20 +199,22 @@
     </footer>
 
     <script>
-        // --- VERIFICAR Y MOSTRAR PROMOCIONES NUEVAS AL ENTRAR (SOLO UNA VEZ POR SESIÓN) ---
+        // --- LIMPIAR RESIDUOS VIEJOS Y CONSULTAR EXCLUSIVAMENTE DE MONGODB ATLAS ---
         async function verificarPromosInicio() {
+            // Eliminar cualquier rastro viejo de localStorage en el dispositivo
+            localStorage.removeItem("promosAroma");
+
             if (sessionStorage.getItem("avisoPromosVisto") === "true") {
                 return;
             }
 
             try {
                 let res = await fetch("/api/promociones");
+                if (!res.ok) return;
+                
                 let promosServidor = await res.json();
-                let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
-                let todas = [...promosServidor, ...promosLocales];
-
                 const hoy = new Date().toISOString().split('T')[0];
-                let activas = todas.filter(p => hoy >= p.fechaInicio && hoy <= p.fechaFin);
+                let activas = promosServidor.filter(p => hoy >= p.fechaInicio && hoy <= p.fechaFin);
 
                 if (activas.length > 0) {
                     let listaHTML = "";
@@ -225,20 +227,7 @@
                     sessionStorage.setItem("avisoPromosVisto", "true");
                 }
             } catch (e) {
-                let promosLocales = JSON.parse(localStorage.getItem("promosAroma") || "[]");
-                const hoy = new Date().toISOString().split('T')[0];
-                let activas = promosLocales.filter(p => hoy >= p.fechaInicio && hoy <= p.fechaFin);
-
-                if (activas.length > 0) {
-                    let listaHTML = "";
-                    activas.forEach(p => {
-                        listaHTML += `<li>☕ <b>${p.titulo}</b> - $${Number(p.precio).toFixed(2)} MXN <i>(${p.subtitulo || p.etiqueta})</i></li>`;
-                    });
-                    document.getElementById("ulPromosInicio").innerHTML = listaHTML;
-                    document.getElementById("modalPromosInicio").style.display = "flex";
-                    
-                    sessionStorage.setItem("avisoPromosVisto", "true");
-                }
+                console.error("Error al consultar promociones en MongoDB:", e);
             }
         }
 

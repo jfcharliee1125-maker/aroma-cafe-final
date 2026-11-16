@@ -142,7 +142,7 @@
         </div>
     </div>
 
-    <!-- MÓDULO DE PROMOCIONES AUTOMÁTICAS -->
+    <!-- MÓDULO DE PROMOCIONES AUTOMÁTICAS (EXCLUSIVO PARA MARKETING) -->
     <div id="seccionPromocionesContainer" class="panel-promos-wrapper" style="display: none;">
         <h2>🏷️ Creador Automático de Promociones</h2>
         <p style="font-size: 13px; color: #806653; margin-bottom: 20px;">Si es oferta normal usa 1 producto; si es Combo del Día puedes elegir 2 productos libres (bebidas o alimentos).</p>
@@ -348,28 +348,33 @@
             window.location.href = "/";
         }
 
-        if (esJefe) {
-            document.getElementById("subtituloRol").innerText = "👑 Vista de Administrador (Jefe)";
-            document.getElementById("seccionPromocionesContainer").style.display = "block";
-        } else if (esMarketing) {
+        // Control estricto de vistas según el rol
+        if (esMarketing) {
             document.getElementById("tituloPanelPrincipal").innerText = "📢 Panel de Marketing";
             document.getElementById("subtituloRol").innerText = "📈 Vista de Marketing - Promociones y Comentarios";
-            document.getElementById("seccionPromocionesContainer").style.display = "block";
+            document.getElementById("seccionPromocionesContainer").style.display = "block"; // Único rol con acceso a promociones
             document.getElementById("seccionPedidosContainer").style.display = "none";
             document.getElementById("kpiContainerSection").style.display = "none";
             document.getElementById("btnEliminarCompletadosHeader").style.display = "none";
+        } else if (esJefe) {
+            document.getElementById("subtituloRol").innerText = "👑 Vista de Administrador (Jefe)";
+            document.getElementById("seccionPromocionesContainer").style.display = "none"; // Oculto para el Jefe
         } else {
             document.getElementById("subtituloRol").innerText = `👤 Encargado - Turno ${turnoEncargado}`;
+            document.getElementById("seccionPromocionesContainer").style.display = "none"; // Oculto para Encargados
         }
 
         window.addEventListener("DOMContentLoaded", () => {
-            const hoy = new Date().toISOString().split('T')[0];
-            const enUnaSemana = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-            document.getElementById("promoInicio").value = hoy;
-            document.getElementById("promoFin").value = enUnaSemana;
-            verificarTipoPromo();
-            cargarPromocionesAdmin();
-            if (!esMarketing) cargarPedidos();
+            if (esMarketing) {
+                const hoy = new Date().toISOString().split('T')[0];
+                const enUnaSemana = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                document.getElementById("promoInicio").value = hoy;
+                document.getElementById("promoFin").value = enUnaSemana;
+                verificarTipoPromo();
+                cargarPromocionesAdmin();
+            } else {
+                cargarPedidos();
+            }
             cargarComentariosAdmin();
         });
 
@@ -446,7 +451,6 @@
                 if (respuesta.ok) {
                     alert("🎉 ¡Promoción publicada y sincronizada con éxito en la base de datos!");
                     document.getElementById("form-crear-promo").reset();
-                    // Restaurar fechas por defecto
                     const hoy = new Date().toISOString().split('T')[0];
                     const enUnaSemana = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
                     document.getElementById("promoInicio").value = hoy;
